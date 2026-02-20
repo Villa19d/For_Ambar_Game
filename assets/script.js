@@ -1,42 +1,12 @@
-/**
- * script.js — Para Ámbar 💛
- * ══════════════════════════════════════════════════════════════════
- *
- * ARQUITECTURA (orden de lectura recomendado):
- *   0.  CONFIGURACIÓN PERSONALIZABLE  ← edita esto primero
- *   1.  Setup: renderer, escena, cámara, luces
- *   2.  Mundo físico (Cannon.js)
- *   3.  Suelo (visual + físico)
- *   4.  Carrito (visual + físico)
- *   5.  Checkpoints (los 3 objetos interactivos)
- *   6.  Partículas decorativas flotantes
- *   7.  Controles de teclado
- *   8.  Audio (Howler.js)
- *   9.  Sistema de modales (GSAP)
- *  10.  Loop de animación (requestAnimationFrame)
- *  11.  Resize handler
- *  12.  UI: Intro & botones
- *
- * CÓMO AÑADIR TUS FOTOS:
- *   En index.html busca la clase .photo-inner y cambia el contenido
- *   por: <img src="carpeta/tu-foto.jpg" alt="descripción">
- *
- * CÓMO PERSONALIZAR LA CARTA:
- *   Edita la constante CARTA_TEXTO más abajo.
- * ══════════════════════════════════════════════════════════════════
- */
+/* ═══════════════════════════════════════════════════════════
+   script.js — Para Ámbar 💛
+   VERSION FINAL — sin Cannon.js para el movimiento
+   Movimiento 100% en Three.js (simple, robusto, funciona)
+═══════════════════════════════════════════════════════════ */
 
-'use strict';
-
-/* ══════════════════════════════════════════════════════════════════
-   0. CONFIGURACIÓN PERSONALIZABLE
-   ══════════════════════════════════════════════════════════════════ */
-
-/**
- * Texto de la carta (modal 3).
- * Escribe aquí tu mensaje real. Usa \n para saltos de línea.
- */
-const CARTA_TEXTO = `Hay lugares en el mundo que no están en ningún mapa,
+/* ─── 0. TEXTO DE LA CARTA — edita esto ──────────────────── */
+const CARTA_TEXTO =
+`Hay lugares en el mundo que no están en ningún mapa,
 pero que existen porque tú los iluminaste.
 
 Este pequeño rincón lo construí pensando en ti,
@@ -45,912 +15,482 @@ y en cómo todo se vuelve más bonito cuando estás cerca.
 
 Gracias por ser mi lugar favorito.`;
 
-/**
- * Posiciones de los 3 checkpoints [x, z].
- * El carrito empieza en (0,0). Ajusta las distancias según quieras.
- */
-const CHECKPOINT_CONFIG = [
-  {
-    id: 1,
-    label: 'El Cofre',
-    position: { x: -12, z: -8 },
-    color: '#c9963c',       // dorado
-    emissive: '#6b4d10',
-    modal: 'modal-1',
-    icon: '🗝️',
-  },
-  {
-    id: 2,
-    label: 'La Radio',
-    position: { x: 14, z: -6 },
-    color: '#e8714a',       // naranja
-    emissive: '#7a2c0f',
-    modal: 'modal-2',
-    icon: '📻',
-  },
-  {
-    id: 3,
-    label: 'El Faro',
-    position: { x: 2, z: -22 },
-    color: '#a8d4a0',       // verde suave
-    emissive: '#2a5c25',
-    modal: 'modal-3',
-    icon: '🏮',
-  },
+/* ─── 0b. CHECKPOINTS — posiciones en el mapa ────────────── */
+const CHECKPOINTS_DATA = [
+  { id:'modal-1', label:'El Cofre', icon:'🗝️', x:-12, z:-8,  color:0xc9963c, emissive:0x6b4d10 },
+  { id:'modal-2', label:'La Radio', icon:'📻', x: 14, z:-6,  color:0xe8714a, emissive:0x7a2c0f },
+  { id:'modal-3', label:'El Faro',  icon:'🏮', x:  2, z:-22, color:0xa8d4a0, emissive:0x2a5c25 },
 ];
 
-/** Distancia en unidades 3D para activar un checkpoint */
-const TRIGGER_DISTANCE = 3.2;
+const TRIGGER_DIST  = 3.5;   // distancia para activar checkpoint
+const CAR_ACCEL     = 30;    // aceleración (unidades/s²)
+const CAR_MAX_SPEED = 12;    // velocidad tope (unidades/s)
+const CAR_FRICTION  = 0.87;  // multiplicador de frenado por frame
+const CAR_TURN_SPD  = 130;   // grados por segundo al girar
 
-/** Fuerza que se aplica al carrito con cada tecla */
-const CART_FORCE = 18;
-
-/**
- * Velocidad angular de giro (rad/s).
- * En Cannon 0.6.2 no existe applyTorque, así que
- * seteamos angularVelocity.y directamente.
- */
-const CART_TURN_SPEED = 2.2;
-
-/** Máxima velocidad lineal del carrito (unidades/s) */
-const MAX_SPEED = 14;
-
-
-/* ══════════════════════════════════════════════════════════════════
-   1. SETUP: RENDERER, ESCENA, CÁMARA, LUCES
-   ══════════════════════════════════════════════════════════════════ */
-
-const canvas = document.getElementById('webgl-canvas');
-
-// ── Renderer ────────────────────────────────────────────────────
-// WebGLRenderer es el motor que convierte objetos 3D en píxeles.
+/* ═══════════════════════════════════════════════════════════
+   1. RENDERER + ESCENA + CÁMARA + LUCES
+═══════════════════════════════════════════════════════════ */
 const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true,    // bordes suavizados
-  powerPreference: 'high-performance',
+  canvas: document.getElementById('webgl-canvas'),
+  antialias: true
 });
-renderer.setSize(window.innerWidth, window.innerHeight);
-// pixelRatio cap en 2 para no sobrecargar pantallas retina de alta gama
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-// Tone mapping cinematográfico — da ese look de "película cálida"
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
-renderer.outputEncoding = THREE.sRGBEncoding;
 
-// ── Escena ───────────────────────────────────────────────────────
-// La Scene es el contenedor de TODOS los objetos, luces y cámaras.
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#130903');
-// La niebla hace que los objetos distantes se desvanezcan — efecto infinito
-scene.fog = new THREE.FogExp2('#1f0c04', 0.028);
+scene.background = new THREE.Color(0x130903);
+scene.fog = new THREE.FogExp2(0x1f0c04, 0.024);
 
-// ── Cámara ───────────────────────────────────────────────────────
-// PerspectiveCamera(fov, aspect, near, far)
-// FOV 50° da vista más "cinematográfica" que 75°
-const camera = new THREE.PerspectiveCamera(
-  50,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  120,
-);
-// Offset de cámara: elevada y ligeramente detrás (vista cenital inclinada)
-const CAM_OFFSET = new THREE.Vector3(0, 14, 10);
+const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 150);
+// offset fijo de cámara: arriba y detrás del carrito (vista cenital Bruno Simon)
+const CAM_OFFSET = new THREE.Vector3(0, 16, 13);
 camera.position.copy(CAM_OFFSET);
 camera.lookAt(0, 0, 0);
 
-// ── Luces ────────────────────────────────────────────────────────
+// Luces
+scene.add(new THREE.HemisphereLight(0xffe4b5, 0x3d1a04, 0.9));
 
-// Luz ambiental hemisférica: cielo cálido, suelo oscuro
-const hemiLight = new THREE.HemisphereLight('#ffe4b5', '#3d1a04', 0.7);
-scene.add(hemiLight);
-
-// Luz direccional principal (el "sol")
-const sunLight = new THREE.DirectionalLight('#ffd580', 2.0);
-sunLight.position.set(15, 25, 10);
-sunLight.castShadow = true;
-sunLight.shadow.mapSize.set(2048, 2048);
-sunLight.shadow.camera.near = 0.5;
-sunLight.shadow.camera.far = 100;
-sunLight.shadow.camera.left   = -40;
-sunLight.shadow.camera.right  =  40;
-sunLight.shadow.camera.top    =  40;
-sunLight.shadow.camera.bottom = -40;
-sunLight.shadow.bias = -0.001; // reduce el "shadow acne"
-scene.add(sunLight);
-
-// Luz de relleno naranja (ambiente cálido desde el suelo)
-const fillLight = new THREE.PointLight('#ff7c2a', 1.2, 50);
-fillLight.position.set(-8, 3, 5);
-scene.add(fillLight);
-
-
-/* ══════════════════════════════════════════════════════════════════
-   2. MUNDO FÍSICO (CANNON.JS)
-   ══════════════════════════════════════════════════════════════════
-   Cannon.js simula la física: gravedad, colisiones, fuerzas.
-   Cada objeto Three.js tiene un "cuerpo" Cannon equivalente.
-   En el loop, copiamos la posición/rotación de Cannon → Three.
-   ══════════════════════════════════════════════════════════════════ */
-
-const physWorld = new CANNON.World();
-physWorld.gravity.set(0, -25, 0);   // gravedad negativa en Y = hacia abajo
-physWorld.broadphase = new CANNON.SAPBroadphase(physWorld); // más rápido que Naive
-physWorld.solver.iterations = 12;
-physWorld.allowSleep = true; // objetos en reposo "duermen" (optimización)
-
-// ContactMaterial: define fricción y rebote entre materiales
-const groundMat = new CANNON.Material('ground');
-const cartMat   = new CANNON.Material('cart');
-const contactMat = new CANNON.ContactMaterial(groundMat, cartMat, {
-  friction: 0.5,
-  restitution: 0.15,
+const sun = new THREE.DirectionalLight(0xffd580, 2.2);
+sun.position.set(15, 25, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.setScalar(2048);
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far  = 100;
+[-45, 45].forEach(v => {
+  sun.shadow.camera.left   = sun.shadow.camera.bottom = -45;
+  sun.shadow.camera.right  = sun.shadow.camera.top    =  45;
 });
-physWorld.addContactMaterial(contactMat);
+sun.shadow.bias = -0.001;
+scene.add(sun);
 
-// Array de pares {mesh, body} para sincronizar Three ↔ Cannon
-const physicsObjects = [];
+const fill = new THREE.PointLight(0xff7c2a, 1.0, 60);
+fill.position.set(-8, 4, 5);
+scene.add(fill);
 
-/**
- * Registra un par Three.Mesh + CANNON.Body para sincronización automática.
- */
-function registerPhysics(mesh, body) {
-  physicsObjects.push({ mesh, body });
-  physWorld.addBody(body);
-}
+/* ═══════════════════════════════════════════════════════════
+   2. SUELO
+═══════════════════════════════════════════════════════════ */
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(300, 300),
+  new THREE.MeshStandardMaterial({ color: 0xc96d3a, roughness: 0.9 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
 
-
-/* ══════════════════════════════════════════════════════════════════
-   3. SUELO
-   ══════════════════════════════════════════════════════════════════ */
-
-// ── Visual (Three.js) ────────────────────────────────────────────
-// PlaneGeometry(ancho, alto, segX, segY) — muy grande para parecer infinito
-const groundGeo = new THREE.PlaneGeometry(300, 300, 60, 60);
-const groundMesh3 = new THREE.MeshStandardMaterial({
-  color: '#c96d3a',
-  roughness: 0.88,
-  metalness: 0.02,
-});
-const groundMesh = new THREE.Mesh(groundGeo, groundMesh3);
-groundMesh.rotation.x = -Math.PI / 2; // rotar de vertical a horizontal
-groundMesh.receiveShadow = true;
-scene.add(groundMesh);
-
-// Cuadrícula decorativa encima del suelo
-const grid = new THREE.GridHelper(300, 100, '#a5562a', '#a5562a');
-grid.material.opacity = 0.18;
+const grid = new THREE.GridHelper(300, 100, 0xa5562a, 0xa5562a);
+grid.material.opacity = 0.14;
 grid.material.transparent = true;
-grid.position.y = 0.01; // ligeramente elevada para evitar z-fighting
+grid.position.y = 0.01;
 scene.add(grid);
 
-// ── Físico (Cannon.js) ───────────────────────────────────────────
-// El suelo físico es un plano infinito (mass=0 → estático, no se mueve)
-const groundBody = new CANNON.Body({
-  mass: 0,
-  shape: new CANNON.Plane(),
-  material: groundMat,
-});
-// El plano Cannon es vertical por defecto; lo rotamos -90° en X = horizontal
-groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-physWorld.addBody(groundBody);
+/* ═══════════════════════════════════════════════════════════
+   3. CARRITO
+═══════════════════════════════════════════════════════════ */
+const car = new THREE.Group();
+scene.add(car);
 
-
-/* ══════════════════════════════════════════════════════════════════
-   4. CARRITO (placeholder: grupo de cubos)
-   ══════════════════════════════════════════════════════════════════ */
-
-// ── Visual ───────────────────────────────────────────────────────
-// Usamos un Group para agrupar cuerpo, cabina y ruedas
-const cartGroup = new THREE.Group();
-scene.add(cartGroup);
-
-// Cuerpo principal
-const bodyGeo = new THREE.BoxGeometry(1.4, 0.65, 2.4);
-const bodyMat = new THREE.MeshStandardMaterial({
-  color: '#d63a2f',
-  roughness: 0.25,
-  metalness: 0.35,
-});
-const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
-bodyMesh.position.y = 0.35;
-bodyMesh.castShadow = true;
-cartGroup.add(bodyMesh);
+// Cuerpo
+const carBody = new THREE.Mesh(
+  new THREE.BoxGeometry(1.4, 0.65, 2.4),
+  new THREE.MeshStandardMaterial({ color: 0xd63a2f, roughness: 0.25, metalness: 0.35 })
+);
+carBody.position.y = 0.35;
+carBody.castShadow = true;
+car.add(carBody);
 
 // Cabina
-const cabinGeo = new THREE.BoxGeometry(1.1, 0.55, 1.1);
-const cabinMat = new THREE.MeshStandardMaterial({
-  color: '#eb5a4e',
-  roughness: 0.2,
-  metalness: 0.2,
-});
-const cabinMesh = new THREE.Mesh(cabinGeo, cabinMat);
-cabinMesh.position.set(0, 0.97, -0.3);
-cabinMesh.castShadow = true;
-cartGroup.add(cabinMesh);
+const cabin = new THREE.Mesh(
+  new THREE.BoxGeometry(1.1, 0.55, 1.1),
+  new THREE.MeshStandardMaterial({ color: 0xeb5a4e, roughness: 0.2, metalness: 0.2 })
+);
+cabin.position.set(0, 0.97, -0.3);
+cabin.castShadow = true;
+car.add(cabin);
 
-// Ventana (vidrio azul oscuro)
-const windshieldGeo = new THREE.BoxGeometry(1.05, 0.38, 0.05);
-const windshieldMat = new THREE.MeshStandardMaterial({
-  color: '#1a3a5c',
-  roughness: 0.0,
-  metalness: 0.8,
-  transparent: true,
-  opacity: 0.7,
-});
-const windshield = new THREE.Mesh(windshieldGeo, windshieldMat);
-windshield.position.set(0, 1.0, 0.26);
-cartGroup.add(windshield);
+// Parabrisas
+const glass = new THREE.Mesh(
+  new THREE.BoxGeometry(1.05, 0.38, 0.05),
+  new THREE.MeshStandardMaterial({ color: 0x1a3a5c, metalness: 0.8, transparent: true, opacity: 0.7 })
+);
+glass.position.set(0, 1.0, 0.26);
+car.add(glass);
 
-// Ruedas — 4 cilindros
+// Ruedas
 const wheelGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.22, 20);
-const wheelMat = new THREE.MeshStandardMaterial({ color: '#1a1a1a', roughness: 0.9 });
-const wheelRimGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.23, 12);
-const wheelRimMat = new THREE.MeshStandardMaterial({ color: '#c8c8c8', roughness: 0.3, metalness: 0.8 });
+const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+const rimGeo   = new THREE.CylinderGeometry(0.18, 0.18, 0.23, 12);
+const rimMat   = new THREE.MeshStandardMaterial({ color: 0xc8c8c8, roughness: 0.3, metalness: 0.8 });
+const wheelMeshes = [];
 
-const wheelPos = [
-  { x:  0.78, z:  0.75 },
-  { x: -0.78, z:  0.75 },
-  { x:  0.78, z: -0.75 },
-  { x: -0.78, z: -0.75 },
-];
-
-const wheelMeshes = []; // referencia para animar rotación
-wheelPos.forEach(({ x, z }) => {
+[[0.78,0.75],[-0.78,0.75],[0.78,-0.75],[-0.78,-0.75]].forEach(([x,z]) => {
   const w = new THREE.Mesh(wheelGeo, wheelMat);
   w.rotation.z = Math.PI / 2;
   w.position.set(x, 0, z);
   w.castShadow = true;
-  cartGroup.add(w);
+  car.add(w);
+  wheelMeshes.push(w);
 
-  const r = new THREE.Mesh(wheelRimGeo, wheelRimMat);
+  const r = new THREE.Mesh(rimGeo, rimMat);
   r.rotation.z = Math.PI / 2;
   r.position.set(x, 0, z);
-  cartGroup.add(r);
-
-  wheelMeshes.push(w);
+  car.add(r);
 });
 
-// ── Físico ───────────────────────────────────────────────────────
-const cartBody = new CANNON.Body({
-  mass: 1.2,
-  // Box(halfExtents): la mitad de las dimensiones del mesh
-  shape: new CANNON.Box(new CANNON.Vec3(0.7, 0.4, 1.2)),
-  material: cartMat,
-  linearDamping: 0.65,  // amortiguación al moverse (frena solo)
-  angularDamping: 0.95, // evita que el carrito gire locamente
-});
-cartBody.position.set(0, 1, 0);
-physWorld.addBody(cartBody);
+// Estado del movimiento — todo en Three.js, sin física externa
+const carVel = new THREE.Vector3();   // velocidad actual
+let   carYaw = 0;                     // rotación Y (radianes)
 
-// En Cannon 0.6.2 no existe angularFactor, pero podemos bloquear
-// los ejes X y Z del angularVelocity en cada frame para evitar volcados.
-// Esto se hace en el tick() después del step.
+/* ═══════════════════════════════════════════════════════════
+   4. CHECKPOINTS
+═══════════════════════════════════════════════════════════ */
+const checkpoints = [];
 
-// Alineamos el group visual con el body físico inicialmente
-cartGroup.position.copy(cartBody.position);
+CHECKPOINTS_DATA.forEach(cfg => {
+  const g = new THREE.Group();
+  g.position.set(cfg.x, 0, cfg.z);
+  scene.add(g);
 
-
-/* ══════════════════════════════════════════════════════════════════
-   5. CHECKPOINTS — Los 3 objetos interactivos
-   ══════════════════════════════════════════════════════════════════ */
-
-const checkpoints = []; // array con refs a mesh, body, config y estado
-
-CHECKPOINT_CONFIG.forEach((cfg) => {
-  // ── Visual: torre (caja + esfera en la punta) ──────────────────
-  const group = new THREE.Group();
-  scene.add(group);
-  group.position.set(cfg.position.x, 0, cfg.position.z);
-
-  // Base cilíndrica
-  const baseGeo = new THREE.CylinderGeometry(0.5, 0.7, 0.3, 16);
-  const baseMat = new THREE.MeshStandardMaterial({ color: '#2e1608', roughness: 0.8 });
-  const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-  baseMesh.position.y = 0.15;
-  baseMesh.castShadow = true;
-  baseMesh.receiveShadow = true;
-  group.add(baseMesh);
+  // Base
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.5, 0.7, 0.3, 16),
+    new THREE.MeshStandardMaterial({ color: 0x2e1608, roughness: 0.8 })
+  );
+  base.position.y = 0.15;
+  base.castShadow = base.receiveShadow = true;
+  g.add(base);
 
   // Columna
-  const colGeo = new THREE.CylinderGeometry(0.18, 0.2, 2.5, 10);
-  const colMat = new THREE.MeshStandardMaterial({ color: '#3d2010', roughness: 0.7 });
-  const colMesh = new THREE.Mesh(colGeo, colMat);
-  colMesh.position.y = 1.55;
-  colMesh.castShadow = true;
-  group.add(colMesh);
+  const col = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.18, 0.2, 2.5, 10),
+    new THREE.MeshStandardMaterial({ color: 0x3d2010, roughness: 0.7 })
+  );
+  col.position.y = 1.55;
+  col.castShadow = true;
+  g.add(col);
 
-  // Cubo luminoso en la punta (con emissive = brillo propio)
-  const cubeGeo = new THREE.BoxGeometry(1.1, 1.1, 1.1);
-  const cubeMat = new THREE.MeshStandardMaterial({
+  // Cubo flotante luminoso
+  const mat = new THREE.MeshStandardMaterial({
     color: cfg.color,
     emissive: cfg.emissive,
     emissiveIntensity: 0.8,
     roughness: 0.2,
     metalness: 0.4,
   });
-  const cubeMesh = new THREE.Mesh(cubeGeo, cubeMat);
-  cubeMesh.position.y = 3.35;
-  cubeMesh.castShadow = true;
-  group.add(cubeMesh);
+  const cube = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 1.1), mat);
+  cube.position.y = 3.35;
+  cube.castShadow = true;
+  g.add(cube);
 
-  // Luz puntual del mismo color (da brillo al suelo)
-  const pointLight = new THREE.PointLight(cfg.color, 1.5, 12);
-  pointLight.position.y = 3.5;
-  group.add(pointLight);
+  // Luz de color
+  const pt = new THREE.PointLight(cfg.color, 2.0, 14);
+  pt.position.y = 3.5;
+  g.add(pt);
 
-  // Etiqueta flotante (sprite con canvas 2D)
-  const labelSprite = makeLabelSprite(cfg.icon + ' ' + cfg.label);
-  labelSprite.position.y = 5.2;
-  group.add(labelSprite);
+  // Etiqueta sprite
+  const label = makeLabel(cfg.icon + ' ' + cfg.label);
+  label.position.y = 5.2;
+  g.add(label);
 
-  // ── Físico: caja colisionable ────────────────────────────────
-  const cpBody = new CANNON.Body({
-    mass: 0, // estático
-    shape: new CANNON.Box(new CANNON.Vec3(0.55, 1.7, 0.55)),
-  });
-  cpBody.position.set(cfg.position.x, 0, cfg.position.z);
-  physWorld.addBody(cpBody);
-
-  // Guardamos todo en el array
-  checkpoints.push({
-    config: cfg,
-    group,
-    cubeMesh,
-    cubeMat,
-    pointLight,
-    labelSprite,
-    body: cpBody,
-    triggered: false,   // ¿ya se mostró el modal?
-    inRange: false,     // ¿el carrito está cerca ahora mismo?
-  });
+  checkpoints.push({ cfg, cube, mat, triggered: false, wasInRange: false });
 });
 
-/**
- * Crea un THREE.Sprite con texto — útil como etiqueta 3D.
- * Sprite = siempre mira a la cámara (billboard).
- */
-function makeLabelSprite(text) {
+function makeLabel(text) {
   const cv = document.createElement('canvas');
   cv.width = 512; cv.height = 128;
   const ctx = cv.getContext('2d');
-
-  // Fondo redondeado
-  ctx.fillStyle = 'rgba(20,10,4,0.7)';
+  ctx.fillStyle = 'rgba(20,10,4,0.78)';
   ctx.beginPath();
-  ctx.roundRect(8, 8, cv.width - 16, cv.height - 16, 20);
+  ctx.roundRect(8, 8, 496, 112, 20);
   ctx.fill();
-
-  // Texto
   ctx.fillStyle = '#f5e8d0';
-  ctx.font = 'bold 44px Cormorant Garamond, serif';
+  ctx.font = 'bold 44px serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, cv.width / 2, cv.height / 2);
-
-  const tex = new THREE.CanvasTexture(cv);
-  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
-  const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(4.5, 1.1, 1);
-  return sprite;
+  ctx.fillText(text, 256, 64);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: new THREE.CanvasTexture(cv),
+    transparent: true,
+    depthTest: false
+  }));
+  sp.scale.set(4.5, 1.1, 1);
+  return sp;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════
-   6. PARTÍCULAS DECORATIVAS (polvo dorado flotando)
-   ══════════════════════════════════════════════════════════════════ */
-
-(function createParticles() {
-  const count = 300;
-  const positions = new Float32Array(count * 3);
-  const range = 60;
-
-  for (let i = 0; i < count; i++) {
-    positions[i * 3]     = (Math.random() - 0.5) * range; // x
-    positions[i * 3 + 1] = Math.random() * 10;            // y (altura)
-    positions[i * 3 + 2] = (Math.random() - 0.5) * range; // z
+/* ═══════════════════════════════════════════════════════════
+   5. PARTÍCULAS
+═══════════════════════════════════════════════════════════ */
+(function(){
+  const n = 300, r = 60, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    pos[i*3]   = (Math.random()-0.5)*r;
+    pos[i*3+1] = Math.random()*10;
+    pos[i*3+2] = (Math.random()-0.5)*r;
   }
-
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-  const mat = new THREE.PointsMaterial({
-    color: '#c9963c',
-    size: 0.06,
-    sizeAttenuation: true,   // más pequeños con la distancia
-    transparent: true,
-    opacity: 0.55,
-    depthWrite: false,
-  });
-
-  const particles = new THREE.Points(geo, mat);
-  scene.add(particles);
-
-  // Las guardamos para animarlas en el loop
-  window._particles = particles;
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({
+    color: 0xc9963c, size: 0.07, sizeAttenuation: true,
+    transparent: true, opacity: 0.5, depthWrite: false
+  }));
+  scene.add(pts);
+  window._pts = pts;
 })();
 
-
-/* ══════════════════════════════════════════════════════════════════
-   7. CONTROLES DE TECLADO
-   ══════════════════════════════════════════════════════════════════ */
-
-// Usamos un objeto plano para registrar qué teclas están presionadas.
-// Esto es más eficiente que manejar eventos "keydown/keyup" en el loop.
-const keys = {
-  ArrowUp: false, w: false, W: false,
-  ArrowDown: false, s: false, S: false,
-  ArrowLeft: false, a: false, A: false,
-  ArrowRight: false, d: false, D: false,
-  e: false, E: false,
-};
-
-window.addEventListener('keydown', (e) => {
-  if (e.key in keys) { keys[e.key] = true; e.preventDefault(); }
+/* ═══════════════════════════════════════════════════════════
+   6. TECLADO
+═══════════════════════════════════════════════════════════ */
+const keys = new Set();
+window.addEventListener('keydown', e => {
+  keys.add(e.key);
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))
+    e.preventDefault();
 });
-window.addEventListener('keyup', (e) => {
-  if (e.key in keys) { keys[e.key] = false; }
-});
+window.addEventListener('keyup', e => keys.delete(e.key));
 
-/** Devuelve true si la tecla "adelante" está activa (W o ArrowUp) */
-const goFwd  = () => keys.ArrowUp    || keys.w || keys.W;
-const goBwd  = () => keys.ArrowDown  || keys.s || keys.S;
-const goLeft = () => keys.ArrowLeft  || keys.a || keys.A;
-const goRight= () => keys.ArrowRight || keys.d || keys.D;
-const doOpen = () => keys.e || keys.E;
+const pressing = (...k) => k.some(x => keys.has(x));
+const fwd   = () => pressing('ArrowUp',    'w', 'W');
+const bwd   = () => pressing('ArrowDown',  's', 'S');
+const left  = () => pressing('ArrowLeft',  'a', 'A');
+const right = () => pressing('ArrowRight', 'd', 'D');
+const open  = () => pressing('e', 'E');
 
-// Estado interno
-let closestCheckpoint = null; // el checkpoint más cercano (si está en rango)
-let lastOpenKey = false;      // para detectar "flanco de subida" de E
+/* ═══════════════════════════════════════════════════════════
+   7. AUDIO
+═══════════════════════════════════════════════════════════ */
+let _actx = null;
+const actx = () => _actx || (_actx = new (AudioContext || webkitAudioContext)());
 
-
-/* ══════════════════════════════════════════════════════════════════
-   8. AUDIO (Howler.js)
-   ══════════════════════════════════════════════════════════════════
-   Howler maneja audio cross-browser, incluyendo WebAudio API.
-   Generamos sonidos con osciladores cuando no hay archivos .mp3.
-   ══════════════════════════════════════════════════════════════════ */
-
-/**
- * Genera un sonido sintético usando Web Audio API.
- * Esto elimina la necesidad de archivos .mp3 externos.
- * @param {number} freq   - frecuencia en Hz
- * @param {number} dur    - duración en segundos
- * @param {'sine'|'square'|'triangle'} type - forma de onda
- */
-function playTone(freq = 440, dur = 0.15, type = 'sine') {
+function tone(freq, dur, type='sine', vol=0.18) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    osc.start();
-    osc.stop(ctx.currentTime + dur);
-  } catch (_) { /* silencio si el navegador no soporta AudioContext */ }
+    const c = actx(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.start(); o.stop(c.currentTime + dur);
+  } catch(_){}
+}
+const sfxProx = () => tone(660, 0.18, 'sine', 0.16);
+const sfxOpen = () => { tone(523,0.1,'triangle',0.14); setTimeout(()=>tone(784,0.2,'triangle',0.14),90); };
+
+/* ═══════════════════════════════════════════════════════════
+   8. MODALES
+═══════════════════════════════════════════════════════════ */
+let currentModal = null;
+let discovered   = 0;
+const discEl  = document.getElementById('disc-count');
+const hintEl  = document.getElementById('proximity-hint');
+
+function openModal(id) {
+  if (currentModal === id) return;
+  if (currentModal) closeModal(currentModal);
+  currentModal = id;
+  const el = document.getElementById(id);
+  el.classList.add('open');
+  el.setAttribute('aria-hidden','false');
+  sfxOpen();
+  if (id === 'modal-3') typewrite();
 }
 
-/** Sonido de "entrada en zona" del checkpoint */
-const playProximitySound = () => playTone(660, 0.2, 'sine');
-
-/** Sonido de "abrir modal" */
-const playOpenSound = () => {
-  playTone(523, 0.1, 'triangle');
-  setTimeout(() => playTone(784, 0.15, 'triangle'), 80);
-};
-
-/** Sonido de motor (llama cada frame mientras se mueve) */
-let motorPlaying = false;
-let motorCtx = null;
-let motorGain = null;
-let motorOsc = null;
-
-function startMotor() {
-  if (motorPlaying) return;
-  motorPlaying = true;
-  try {
-    motorCtx = new (window.AudioContext || window.webkitAudioContext)();
-    motorOsc = motorCtx.createOscillator();
-    motorGain = motorCtx.createGain();
-    motorOsc.connect(motorGain);
-    motorGain.connect(motorCtx.destination);
-    motorOsc.type = 'sawtooth';
-    motorOsc.frequency.setValueAtTime(80, motorCtx.currentTime);
-    motorGain.gain.setValueAtTime(0.04, motorCtx.currentTime);
-    motorOsc.start();
-  } catch (_) {}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  gsap.to(el, { opacity:0, duration:0.25, ease:'power2.in', onComplete:() => {
+    el.classList.remove('open');
+    el.setAttribute('aria-hidden','true');
+    gsap.set(el, { clearProps:'opacity' });
+  }});
+  if (currentModal === id) currentModal = null;
 }
 
-function stopMotor() {
-  if (!motorPlaying) return;
-  motorPlaying = false;
-  if (motorGain) motorGain.gain.setValueAtTime(0, motorCtx.currentTime);
-  if (motorOsc) { motorOsc.stop(); motorOsc = null; }
-}
-
-function updateMotorPitch(speed) {
-  if (motorOsc && motorCtx) {
-    const targetFreq = 60 + speed * 8;
-    motorOsc.frequency.setTargetAtTime(targetFreq, motorCtx.currentTime, 0.05);
-  }
-}
-
-
-/* ══════════════════════════════════════════════════════════════════
-   9. SISTEMA DE MODALES (GSAP)
-   ══════════════════════════════════════════════════════════════════ */
-
-let activeModal = null;       // id del modal abierto actualmente
-let discoveredCount = 0;      // contador de checkpoints visitados
-const discCountEl = document.getElementById('disc-count');
-const proximityHint = document.getElementById('proximity-hint');
-
-/**
- * Abre un modal.
- * GSAP anima la opacidad del backdrop y la posición del panel.
- */
-function openModal(modalId) {
-  if (activeModal === modalId) return;
-  if (activeModal) closeModal(activeModal);
-
-  const backdrop = document.getElementById(modalId);
-  if (!backdrop) return;
-
-  activeModal = modalId;
-  backdrop.classList.add('open');
-  backdrop.setAttribute('aria-hidden', 'false');
-
-  playOpenSound();
-
-  // Si es el modal de la carta, iniciamos el efecto typewriter
-  if (modalId === 'modal-3') {
-    startTypewriter();
-  }
-}
-
-/**
- * Cierra un modal con animación GSAP.
- */
-function closeModal(modalId) {
-  const backdrop = document.getElementById(modalId);
-  if (!backdrop) return;
-
-  gsap.to(backdrop, {
-    opacity: 0,
-    duration: 0.25,
-    ease: 'power2.in',
-    onComplete: () => {
-      backdrop.classList.remove('open');
-      backdrop.setAttribute('aria-hidden', 'true');
-      gsap.set(backdrop, { opacity: '' }); // limpiar inline style
-    },
-  });
-
-  if (activeModal === modalId) activeModal = null;
-}
-
-// ── Botones de cierre ────────────────────────────────────────────
-document.querySelectorAll('.modal-close').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const id = btn.dataset.modal;
-    closeModal(id);
-  });
+document.querySelectorAll('.modal-close').forEach(b =>
+  b.addEventListener('click', () => closeModal(b.dataset.modal))
+);
+document.querySelectorAll('.modal-backdrop').forEach(el =>
+  el.addEventListener('click', e => { if (e.target===el) closeModal(el.id); })
+);
+window.addEventListener('keydown', e => {
+  if (e.key==='Escape' && currentModal) closeModal(currentModal);
 });
 
-// Cerrar con Escape
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && activeModal) closeModal(activeModal);
-});
-
-// Cerrar al hacer clic en el backdrop
-document.querySelectorAll('.modal-backdrop').forEach((el) => {
-  el.addEventListener('click', (e) => {
-    if (e.target === el) closeModal(el.id);
-  });
-});
-
-
-/* ── Efecto typewriter ───────────────────────────────────────────
-   Escribe la carta letra por letra en el DOM.
-*/
-let typewriterTimer = null;
-
-function startTypewriter() {
+let twTimer = null;
+function typewrite() {
   const el = document.getElementById('typewriter-out');
   if (!el) return;
-  el.textContent = '';
-  el.classList.remove('done');
-
-  let i = 0;
-  clearInterval(typewriterTimer);
-
-  typewriterTimer = setInterval(() => {
-    if (i < CARTA_TEXTO.length) {
-      el.textContent += CARTA_TEXTO[i];
-      i++;
-    } else {
-      clearInterval(typewriterTimer);
-      el.classList.add('done'); // oculta el cursor parpadeante
-    }
-  }, 38); // velocidad en ms por carácter
+  el.textContent = ''; el.classList.remove('done');
+  let i = 0; clearInterval(twTimer);
+  twTimer = setInterval(() => {
+    if (i < CARTA_TEXTO.length) el.textContent += CARTA_TEXTO[i++];
+    else { clearInterval(twTimer); el.classList.add('done'); }
+  }, 36);
 }
 
-
-/* ── Pantalla final ──────────────────────────────────────────────
-   Se muestra cuando los 3 checkpoints han sido visitados.
-*/
-function showFinalScreen() {
+function finalScreen() {
   setTimeout(() => {
-    const screen = document.getElementById('final-screen');
-    screen.classList.remove('hidden');
-
-    // Corazones flotantes decorativos
-    const container = document.getElementById('final-hearts');
-    const emojis = ['💛', '🌻', '💫', '✨', '🌼', '💕'];
-    for (let i = 0; i < 20; i++) {
-      const h = document.createElement('span');
-      h.className = 'heart-float';
-      h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      h.style.setProperty('--l', `${Math.random() * 100}%`);
-      h.style.setProperty('--d', `${3 + Math.random() * 5}s`);
-      h.style.setProperty('--del', `${Math.random() * 3}s`);
-      container.appendChild(h);
-    }
-  }, 800);
+    document.getElementById('final-screen').classList.remove('hidden');
+    const cont = document.getElementById('final-hearts');
+    ['💛','🌻','💫','✨','🌼','💕'].forEach((e,i) => {
+      for (let j=0; j<4; j++) {
+        const h = document.createElement('span');
+        h.className = 'heart-float'; h.textContent = e;
+        h.style.setProperty('--l', Math.random()*100+'%');
+        h.style.setProperty('--d', (3+Math.random()*5)+'s');
+        h.style.setProperty('--del', Math.random()*3+'s');
+        cont.appendChild(h);
+      }
+    });
+  }, 600);
 }
 
-// Botón "Volver a explorar" — recarga la página
-document.getElementById('replay-btn').addEventListener('click', () => {
-  window.location.reload();
-});
+document.getElementById('replay-btn').addEventListener('click', () => location.reload());
 
-
-/* ══════════════════════════════════════════════════════════════════
-   10. LOOP DE ANIMACIÓN
-   ══════════════════════════════════════════════════════════════════
-   requestAnimationFrame llama a esta función ~60 veces por segundo.
-   Es el corazón de cualquier aplicación Three.js.
-   ══════════════════════════════════════════════════════════════════ */
-
-const clock = new THREE.Clock();
-
-// Vector reutilizable para evitar crear objetos en cada frame (garbage collection)
-const _cameraTarget   = new THREE.Vector3();
-const _cameraPosition = new THREE.Vector3();
-const _cartPos2D      = new THREE.Vector2(); // posición en XZ para distancias
-const _cpPos2D        = new THREE.Vector2();
+/* ═══════════════════════════════════════════════════════════
+   9. LOOP DE ANIMACIÓN
+═══════════════════════════════════════════════════════════ */
+const clock    = new THREE.Clock();
+const _camPos  = new THREE.Vector3();
+const _camLook = new THREE.Vector3();
+const _fwd     = new THREE.Vector3();
+const _car2D   = new THREE.Vector2();
+const _cp2D    = new THREE.Vector2();
+let gameOn     = false;
+let lastOpen   = false;
+let closestCp  = null;
 
 function tick() {
   requestAnimationFrame(tick);
 
-  // Si el juego no ha comenzado, no actualizamos nada
-  if (!gameStarted) {
-    renderer.render(scene, camera);
-    return;
-  }
+  /* Siempre renderizamos — esto es vital para que la escena
+     sea visible ANTES de que el usuario pulse "Comenzar"     */
+  renderer.render(scene, camera);
 
-  const delta = Math.min(clock.getDelta(), 0.05); // cap en 50ms para evitar saltos
+  if (!gameOn) return;   // lógica de juego solo si comenzó
 
-  // ── A. Actualizar físicas ──────────────────────────────────────
-  // Step del mundo físico: (timestep fijo, delta real, max sub-steps)
-  physWorld.step(1 / 60, delta, 3);
+  const dt = Math.min(clock.getDelta(), 0.05);
 
-  // Bloquear rotación en X y Z para que el carrito no se vuelque.
-  // (En Cannon 0.6.2 no existe angularFactor, lo hacemos manual)
-  cartBody.angularVelocity.x = 0;
-  cartBody.angularVelocity.z = 0;
-  // Extraer solo la rotación Y del quaternion y reconstruirlo limpio
-  // Esto evita que el carrito se incline aunque la física empuje en X/Z
-  const quat = cartBody.quaternion;
-  const sinY = 2 * (quat.w * quat.y);
-  const cosY = 1 - 2 * (quat.y * quat.y);
-  const angleY = Math.atan2(sinY, cosY);
-  cartBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), angleY);
+  /* ── MOVIMIENTO ─────────────────────────────────────────
+     1. Rotar el yaw según A / D
+     2. Calcular dirección adelante a partir del yaw
+     3. Acumular velocidad con W / S
+     4. Aplicar fricción (frena solo al soltar)
+     5. Mover y mantener en Y=0                           */
 
-  // ── B. Controles → fuerzas sobre el carrito ───────────────────
-  //
-  // CANNON.js 0.6.2 NO tiene applyTorque() ni applyLocalForce().
-  // Solución:
-  //   • Movimiento: applyForce() con vector rotado al espacio mundial.
-  //   • Giro: modificar angularVelocity.y directamente.
-  //
-  const isMoving = goFwd() || goBwd() || goLeft() || goRight();
+  if (left())  carYaw += THREE.MathUtils.degToRad(CAR_TURN_SPD) * dt;
+  if (right()) carYaw -= THREE.MathUtils.degToRad(CAR_TURN_SPD) * dt;
 
-  if (isMoving) {
-    startMotor();
-    const speed = cartBody.velocity.length();
-    updateMotorPitch(speed);
+  car.rotation.y = carYaw;
 
-    // Obtener el vector "adelante" del carrito en espacio mundial.
-    // El carrito apunta hacia (0,0,-1) localmente; vmult lo rota.
-    const localFwd = new CANNON.Vec3(0, 0, -1);
-    const worldFwd = new CANNON.Vec3();
-    cartBody.quaternion.vmult(localFwd, worldFwd);
+  // Dirección adelante en espacio mundial
+  _fwd.set(-Math.sin(carYaw), 0, -Math.cos(carYaw));
 
-    if (speed < MAX_SPEED) {
-      if (goFwd()) {
-        cartBody.applyForce(
-          new CANNON.Vec3(worldFwd.x * CART_FORCE, 0, worldFwd.z * CART_FORCE),
-          cartBody.position
-        );
-      }
-      if (goBwd()) {
-        cartBody.applyForce(
-          new CANNON.Vec3(-worldFwd.x * CART_FORCE, 0, -worldFwd.z * CART_FORCE),
-          cartBody.position
-        );
-      }
-    }
+  if (fwd()) carVel.addScaledVector(_fwd,  CAR_ACCEL * dt);
+  if (bwd()) carVel.addScaledVector(_fwd, -CAR_ACCEL * dt);
 
-    // Giro directo sobre angularVelocity.y (funciona en Cannon 0.6.2)
-    if (goLeft())  cartBody.angularVelocity.y =  CART_TURN_SPEED;
-    if (goRight()) cartBody.angularVelocity.y = -CART_TURN_SPEED;
-    if (!goLeft() && !goRight()) cartBody.angularVelocity.y *= 0.85;
+  // Fricción y tope de velocidad
+  carVel.multiplyScalar(CAR_FRICTION);
+  if (carVel.length() > CAR_MAX_SPEED)
+    carVel.normalize().multiplyScalar(CAR_MAX_SPEED);
 
-  } else {
-    stopMotor();
-    cartBody.angularVelocity.y *= 0.8;
-  }
+  car.position.addScaledVector(carVel, dt);
+  car.position.y = 0;  // siempre pegado al suelo
 
-  // ── C. Sincronizar Three.js ↔ Cannon.js ──────────────────────
-  // Copiamos posición y rotación del cuerpo físico al mesh visual
-  cartGroup.position.copy(cartBody.position);
-  cartGroup.quaternion.copy(cartBody.quaternion);
+  // Rotar ruedas según velocidad
+  const spd = carVel.length();
+  wheelMeshes.forEach(w => { w.rotation.x -= spd * dt * 1.6; });
 
-  // Animar ruedas: rotan proporcional a la velocidad
-  const cartSpeed = cartBody.velocity.length();
-  wheelMeshes.forEach((w) => { w.rotation.x -= cartSpeed * delta * 1.5; });
-
-  // ── D. Cámara suave (lerp = interpolación lineal) ─────────────
-  // Calculamos dónde debería estar la cámara basándonos en la posición del carrito
-  _cameraPosition.set(
-    cartBody.position.x + CAM_OFFSET.x,
-    cartBody.position.y + CAM_OFFSET.y,
-    cartBody.position.z + CAM_OFFSET.z,
+  /* ── CÁMARA ─────────────────────────────────────────────
+     Sigue al carrito con lerp (movimiento suave/perezoso)  */
+  _camPos.set(
+    car.position.x + CAM_OFFSET.x,
+    car.position.y + CAM_OFFSET.y,
+    car.position.z + CAM_OFFSET.z
   );
-  // lerp(target, alpha): alpha=0.05 → movimiento muy suave (cámara "perezosa")
-  camera.position.lerp(_cameraPosition, 0.06);
+  camera.position.lerp(_camPos, 0.08);
+  _camLook.set(car.position.x, car.position.y + 0.5, car.position.z);
+  camera.lookAt(_camLook);
 
-  // La cámara siempre mira al carrito (con pequeño offset vertical)
-  _cameraTarget.set(
-    cartBody.position.x,
-    cartBody.position.y + 1,
-    cartBody.position.z,
-  );
-  camera.lookAt(_cameraTarget);
+  /* ── CHECKPOINTS ────────────────────────────────────────
+     Distancia 2D (XZ) entre carrito y cada checkpoint.
+     Al entrar en rango → hint. Tecla E → abrir modal.     */
+  _car2D.set(car.position.x, car.position.z);
+  closestCp = null;
+  let minD = Infinity;
 
-  // ── E. Checkpoints: detección de proximidad ───────────────────
-  _cartPos2D.set(cartBody.position.x, cartBody.position.z);
-  closestCheckpoint = null;
-  let minDist = Infinity;
-
-  checkpoints.forEach((cp) => {
-    // Animación flotante del cubo
+  checkpoints.forEach(cp => {
+    // Animación flotante + giro del cubo
     const t = Date.now() * 0.001;
-    cp.cubeMesh.position.y = 3.35 + Math.sin(t * 1.8 + cp.config.id) * 0.25;
-    cp.cubeMesh.rotation.y += delta * 0.9;
+    cp.cube.position.y    = 3.35 + Math.sin(t * 1.8 + cp.cfg.x) * 0.3;
+    cp.cube.rotation.y   += dt * 0.9;
+    cp.mat.emissiveIntensity = 0.5 + Math.sin(t * 2 + cp.cfg.z) * 0.45;
 
-    // Pulso en el brillo emissive
-    cp.cubeMat.emissiveIntensity = 0.6 + Math.sin(t * 2 + cp.config.id) * 0.4;
+    if (cp.triggered) return;
 
-    // Etiqueta siempre mira a la cámara (ya lo hace THREE.Sprite automático)
+    _cp2D.set(cp.cfg.x, cp.cfg.z);
+    const d = _car2D.distanceTo(_cp2D);
 
-    if (cp.triggered) return; // ya visitado, no revisamos distancia
-
-    _cpPos2D.set(cp.config.position.x, cp.config.position.z);
-    const dist = _cartPos2D.distanceTo(_cpPos2D);
-
-    if (dist < TRIGGER_DISTANCE) {
-      cp.inRange = true;
-      if (dist < minDist) {
-        minDist = dist;
-        closestCheckpoint = cp;
-      }
-
-      // Primera vez que entra en rango: sonido de proximidad
-      if (!cp._enteredRange) {
-        cp._enteredRange = true;
-        playProximitySound();
-      }
+    if (d < TRIGGER_DIST) {
+      if (!cp.wasInRange) { cp.wasInRange = true; sfxProx(); }
+      if (d < minD) { minD = d; closestCp = cp; }
     } else {
-      cp.inRange = false;
-      cp._enteredRange = false;
+      cp.wasInRange = false;
     }
   });
 
-  // Mostrar/ocultar el hint de "presiona E"
-  if (closestCheckpoint && !activeModal) {
-    proximityHint.classList.remove('hidden');
-  } else {
-    proximityHint.classList.add('hidden');
-  }
+  // Hint "Presiona E"
+  if (closestCp && !currentModal) hintEl.classList.remove('hidden');
+  else                             hintEl.classList.add('hidden');
 
-  // Detectar tecla E (flanco de subida para evitar repetición)
-  const openNow = doOpen();
-  if (openNow && !lastOpenKey && closestCheckpoint && !activeModal) {
-    const cp = closestCheckpoint;
-    openModal(cp.config.modal);
-
-    if (!cp.triggered) {
-      cp.triggered = true;
-      discoveredCount++;
-      discCountEl.textContent = discoveredCount;
-
-      // Efecto visual: brillo intenso al descubrir
-      gsap.to(cp.cubeMat, { emissiveIntensity: 3, duration: 0.3, yoyo: true, repeat: 3 });
-
-      if (discoveredCount === 3) {
-        setTimeout(showFinalScreen, 1200);
-      }
+  // Abrir modal (flanco de subida de E)
+  const openNow = open();
+  if (openNow && !lastOpen && closestCp && !currentModal) {
+    openModal(closestCp.cfg.id);
+    if (!closestCp.triggered) {
+      closestCp.triggered = true;
+      discovered++;
+      discEl.textContent = discovered;
+      gsap.to(closestCp.mat, { emissiveIntensity:3, duration:0.25, yoyo:true, repeat:4 });
+      if (discovered === 3) finalScreen();
     }
   }
-  lastOpenKey = openNow;
+  lastOpen = openNow;
 
-  // ── F. Animar partículas (rotación lenta) ─────────────────────
-  if (window._particles) {
-    window._particles.rotation.y += delta * 0.03;
-  }
-
-  // ── G. Renderizar ─────────────────────────────────────────────
-  renderer.render(scene, camera);
+  if (window._pts) window._pts.rotation.y += dt * 0.02;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════
-   11. RESIZE HANDLER
-   ══════════════════════════════════════════════════════════════════
-   Cuando el usuario redimensiona la ventana, actualizamos
-   el renderer y el aspect ratio de la cámara.
-   ══════════════════════════════════════════════════════════════════ */
-
+/* ═══════════════════════════════════════════════════════════
+   10. RESIZE
+═══════════════════════════════════════════════════════════ */
 window.addEventListener('resize', () => {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-
-  // Actualizar proporción de la cámara
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix(); // ← SIEMPRE llamar tras cambiar propiedades
-
-  // Actualizar tamaño del renderer
-  renderer.setSize(w, h);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 });
 
-
-/* ══════════════════════════════════════════════════════════════════
-   12. UI: INTRO & CONTROLES
-   ══════════════════════════════════════════════════════════════════ */
-
-let gameStarted = false;
-
-// Partículas decorativas de la intro (generadas con JS)
-(function spawnIntroParticles() {
-  const container = document.getElementById('intro-particles');
-  for (let i = 0; i < 35; i++) {
+/* ═══════════════════════════════════════════════════════════
+   11. INTRO
+═══════════════════════════════════════════════════════════ */
+// Partículas CSS de la intro
+(function(){
+  const c = document.getElementById('intro-particles');
+  if (!c) return;
+  for (let i=0; i<35; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
-    const size = 2 + Math.random() * 5;
-    p.style.cssText = `
-      width:${size}px;
-      height:${size}px;
-      left:${Math.random() * 100}%;
-      bottom:${Math.random() * 40}%;
-      --dur:${4 + Math.random() * 6}s;
-      --delay:${Math.random() * 5}s;
-    `;
-    container.appendChild(p);
+    const s = 2 + Math.random()*5;
+    p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;bottom:${Math.random()*40}%;--dur:${4+Math.random()*6}s;--delay:${Math.random()*5}s;`;
+    c.appendChild(p);
   }
 })();
 
-// Botón de inicio
 document.getElementById('start-btn').addEventListener('click', () => {
   const intro = document.getElementById('intro-screen');
-
   gsap.to(intro, {
     opacity: 0,
     duration: 0.7,
@@ -958,18 +498,13 @@ document.getElementById('start-btn').addEventListener('click', () => {
     onComplete: () => {
       intro.style.display = 'none';
       document.getElementById('hud').classList.remove('hidden');
-      gameStarted = true;
-      clock.start();
-    },
+      gameOn = true;
+      clock.start();     // reinicia el clock para que delta sea 0 el primer frame
+    }
   });
 });
 
-// Arrancar el loop inmediatamente (renderiza la escena antes del clic para
-// que la carga de assets no cause lag al iniciar)
+// Arrancar el loop (renderiza la escena desde el primer momento)
 tick();
 
-console.log(
-  '%c💛 Para Ámbar %c— Hecho con amor y Three.js',
-  'color:#c9963c;font-size:1.2rem;font-weight:bold',
-  'color:#7a4a2a;font-size:.9rem',
-);
+console.log('%c💛 Para Ámbar — Hecho con amor', 'color:#c9963c;font-size:1.2rem;font-weight:bold');
