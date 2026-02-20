@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para Ámbar 💛</title>
+  <!-- Favicon inline — elimina el error 404 de favicon.ico -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💛</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       CANVAS — Three.js pinta la escena aquí
+  ══════════════════════════════════════════ -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA DE INTRO
+  ══════════════════════════════════════════ -->
+  <div id="intro-screen">
+    <div class="intro-inner">
+      <div class="intro-tag">un pequeño universo hecho para ti</div>
+      <h1 class="intro-title">Para<br><em>Ámbar</em></h1>
+      <p class="intro-body">
+        Conduce por el mapa y descubre<br>
+        los tres lugares que guardé para nosotros.
+      </p>
+      <div class="intro-controls">
+        <div class="keys-group">
+          <div class="key-row"><kbd>W</kbd></div>
+          <div class="key-row"><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+        </div>
+        <span class="key-sep">o</span>
+        <div class="keys-group">
+          <div class="key-row"><kbd>↑</kbd></div>
+          <div class="key-row"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
+        </div>
+        <p class="key-label">Mueve el carrito · <kbd>E</kbd> para abrir</p>
+      </div>
+      <button id="start-btn">
+        <span>Comenzar</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="intro-particles" id="intro-particles"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       HUD (heads-up display durante el juego)
+  ══════════════════════════════════════════ -->
+  <div id="hud" class="hidden">
+    <div id="hud-discoveries">
+      <span id="disc-count">0</span><span class="disc-sep"> / 3</span>
+      <p>descubiertos</p>
+    </div>
+    <div id="proximity-hint" class="hidden">
+      <span class="ping-dot"></span>
+      Presiona <kbd>E</kbd> para abrir
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL 1 — El Cofre de Recuerdos
+  ══════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-1" aria-hidden="true">
+    <div class="modal-panel">
+      <button class="modal-close" data-modal="modal-1">✕</button>
+      <div class="modal-num">01</div>
+      <div class="modal-icon floating">🗝️</div>
+      <h2 class="modal-title">El Cofre<br>de Recuerdos</h2>
+      <p class="modal-sub">
+        Cada imagen guarda un momento que me cambió para siempre.
+        Reemplaza las fotos con tus imágenes reales en el código.
+      </p>
+      <div class="photo-grid">
+        <!-- Cambia el contenido de .photo-inner por <img src="tu-foto.jpg"> -->
+        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 1</span></div>
+        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 2</span></div>
+        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 3</span></div>
+        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 4</span></div>
+        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 5</span></div>
+        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 6</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL 2 — La Radio
+  ══════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-2" aria-hidden="true">
+    <div class="modal-panel">
+      <button class="modal-close" data-modal="modal-2">✕</button>
+      <div class="modal-num">02</div>
+      <div class="modal-icon pulsing">📻</div>
+      <h2 class="modal-title">Nuestra<br>Radio</h2>
+      <p class="modal-sub">Las canciones que suenan en mi cabeza cuando pienso en ti.</p>
+      <ul class="playlist">
+        <!-- Añade aquí las canciones reales de ustedes -->
+        <li class="track"><span class="track-n">01</span><div class="track-info"><b>Canción especial #1</b><small>Artista</small></div><span class="track-dur">3:24</span></li>
+        <li class="track"><span class="track-n">02</span><div class="track-info"><b>Canción especial #2</b><small>Artista</small></div><span class="track-dur">4:01</span></li>
+        <li class="track"><span class="track-n">03</span><div class="track-info"><b>Canción especial #3</b><small>Artista</small></div><span class="track-dur">3:47</span></li>
+        <li class="track"><span class="track-n">04</span><div class="track-info"><b>Canción especial #4</b><small>Artista</small></div><span class="track-dur">4:55</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODAL 3 — El Faro (carta con typewriter)
+  ══════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-3" aria-hidden="true">
+    <div class="modal-panel modal-letter">
+      <button class="modal-close" data-modal="modal-3">✕</button>
+      <div class="modal-num">03</div>
+      <div class="modal-icon">🏮</div>
+      <h2 class="modal-title">El Faro</h2>
+      <div class="letter">
+        <p class="letter-open">Querida Ámbar,</p>
+        <!-- El mensaje aparece letra a letra via JS. Edítalo en script.js → CARTA_TEXTO -->
+        <p class="letter-body" id="typewriter-out"></p>
+        <p class="letter-sign">Con todo mi amor, <em>tú sabes quién</em> 💛</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA FINAL (al descubrir los 3 lugares)
+  ══════════════════════════════════════════ -->
+  <div id="final-screen" class="hidden">
+    <div class="final-inner">
+      <div class="final-hearts" id="final-hearts"></div>
+      <p class="final-pre">lo encontraste todo</p>
+      <h2 class="final-title">Te quiero<br><em>muchísimo</em></h2>
+      <p class="final-body">
+        Espero que este pequeño mundo te haya hecho sonreír<br>
+        aunque sea un segundo. 🌻
+      </p>
+      <button id="replay-btn">Volver a explorar</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       LIBRERÍAS — CDN (sin npm, funciona en GitHub Pages)
+  ══════════════════════════════════════════ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  <script src="./assets/script.js"></script>
+</body>
+</html>
