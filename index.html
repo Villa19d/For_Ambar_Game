@@ -33,8 +33,7 @@
           <div class="key-row"><kbd>↑</kbd></div>
           <div class="key-row"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
         </div>
-        <p style="margin-bottom: 15px;" class="key-label">Mover · <kbd>E</kbd> abrir · <kbd>␣</kbd> saltar</p>
-        <p class="key-label">Click derecho y mantener para girar la camara</p>
+        <p class="key-label">Mover · <kbd>E</kbd> abrir · <kbd>␣</kbd> saltar</p>
       </div>
       <button id="start-btn">
         <span>Comenzar</span>
@@ -156,19 +155,41 @@
     </div>
   </div>
 
-  <!-- Flip hint — fuera del HUD para no solaparse -->
-  <!-- <div id="flip-hint">A / D para levantarte</div> -->
+
 
   <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/Game/Input.js"></script>
-  <script src="assets/js/Game/Audio.js"></script>
-  <script src="assets/js/World/World.js"></script>
+
+  <!-- ══ CONFIGURACIÓN ══════════════════════════════════════════ -->
+  <script src="assets/js/Config.js"></script>
+
+  <!-- ══ FÍSICA ════════════════════════════════════════════════ -->
   <script src="assets/js/Physics/Vehicle.js"></script>
+
+  <!-- ══ MUNDO — orden importante: base primero, islas después ══ -->
+  <script src="assets/js/World/Ground.js"></script>
+  <script src="assets/js/World/Track.js"></script>
+  <script src="assets/js/World/Foliage.js"></script>
+
+  <!-- Islas — clase base antes que las subclases -->
+  <script src="assets/js/World/Islands/IslandBase.js"></script>
+  <script src="assets/js/World/Islands/IslandCofre.js"></script>
+  <script src="assets/js/World/Islands/IslandRadio.js"></script>
+  <script src="assets/js/World/Islands/IslandFaro.js"></script>
+  <script src="assets/js/World/Islands/IslandRocola.js"></script>
+  <!-- Para agregar una isla: <script src="assets/js/World/Islands/IslandNueva.js"></script> -->
+
+  <!-- Orquestador — debe ir después de todos los módulos -->
+  <script src="assets/js/World/World.js"></script>
+
+  <!-- ══ ENTRADA / CÁMARA / AUDIO ═══════════════════════════════ -->
+  <script src="assets/js/Game/Input.js"></script>
   <script src="assets/js/Game/Camera.js"></script>
-  <script src="assets/js/World/Checkpoints.js"></script>
-  <script src="assets/js/main.js"></script>
+  <script src="assets/js/Game/Audio.js"></script>
+  <script src="assets/js/Game/ModalManager.js"></script>
+
+  <!-- ══ MAIN — entrada del juego ═══════════════════════════════ -->
+  <script src="assets/js/Main.js"></script>
 </body>
 </html>
