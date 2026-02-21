@@ -4,29 +4,22 @@
 
 /* ── 0. CONFIGURACIÓN ─────────────────────────────────────── */
 const CFG = {
-  // --- MOVIMIENTO ---
-  speed:      18,    // velocidad máxima real (unidades/s) — antes 60, era demasiado
-  accel:      28,    // aceleración (unidades/s²) — suave pero responsiva
-  brakeForce: 55,    // fuerza de freno al ir hacia atrás
-  friction:   0.015, // fricción por segundo (fracción de velocidad que se pierde)
-                     // Se aplica como: vel *= (1 - friction * 60 * dt) → frame-rate independiente
-
+  // --- MOVIMIENTO (estilo Bruno Simon) ---
+  speed:      120,   // velocidad máxima (un poco más rápido)
+  accel:      220,   // aceleración fuerte para respuesta inmediata
+  friction:   0.92,  // 0.92 = MUCHO agarre (casi nada de derrape)
+  
   // --- GIRO ---
-  turn:       90,    // grados/segundo de giro máximo
-  steerLerp:  8,     // suavidad del volante (más alto = más rápido)
-
-  // --- DERRAPE ---
-  grip:       0.82,  // qué tanto agarra las ruedas (0=hielo, 1=grip perfecto)
-                     // La magia del derrape está aquí: la velocidad lateral no se cancela 100%
+  turn:       200,   // velocidad de giro
+  steerLerp:  12,    // respuesta del volante más rápida
 
   // --- CÁMARA ---
-  camLerp:    0.08,  // suavidad de cámara
+  camLerp:   0.09,
 
   // --- SALTO ---
-  jumpForce:  9,     // impulso vertical inicial
-  gravity:    22,    // gravedad (más bajo = más flotante, más alto = más pesado)
+  jumpForce:  11,
+  gravity:    42,
 };
-
 const CHECKPOINTS = [
   { id:'modal-1', label:'El Cofre',  icon:'🗝️', x:-14, z:-10, color:0xc9963c, emissive:0x6b4d10 },
   { id:'modal-2', label:'La Radio',  icon:'📻', x: 16, z: -8, color:0xe8714a, emissive:0x7a2c0f },
@@ -1003,19 +996,11 @@ let gameOn = false, lastOpen = false, closestCp = null;
 
 // ── ESTADO FÍSICO ────────────────────────────────────────────
 const state = {
-  // Velocidad en world space (XZ)
-  velX: 0,
-  velZ: 0,
-
-  // Vertical
-  velY:     0,
-  onGround: true,
-
-  // Orientación
-  yaw:      0,  // rotación actual del carro (rad)
-  steer:    0,  // ángulo del volante (-1 = izq, +1 = der)
-
-  // Inclinación visual en curvas (cosmético, no afecta física)
+  vel:        new THREE.Vector3(),  // velocidad XZ — igual que el original (carVel)
+  velY:       0,
+  onGround:   true,
+  yaw:        0,
+  steer:      0,
   visualRoll: 0,
 };
 
@@ -1055,98 +1040,54 @@ function tick(){
   const t  = Date.now() * 0.001;
 
   /* ════════════════════════════════════════════════════════
-     FÍSICA — MOVIMIENTO
+     FÍSICA — MOVIMIENTO (estilo original: simple y natural)
   ════════════════════════════════════════════════════════ */
 
-  // 1. Dirección actual del carro
-  const sinYaw = Math.sin(state.yaw);
-  const cosYaw = Math.cos(state.yaw);
-
   // Velocidad total
-  const speed = Math.sqrt(state.velX * state.velX + state.velZ * state.velZ);
+  const spd = state.vel.length();
 
-  // ── GIRO (yaw) ────────────────────────────────────────────
-  // El carro puede girar desde velocidades muy bajas
-  // A más velocidad → gira un poco menos (comportamiento real)
-  if (state.onGround) {
-    // turnFactor: 0.35 en parado, 1.0 a velocidad máxima
-    // Esto permite girar incluso lento, sin quedarse "clavado"
-    const turnFactor = 0.35 + 0.65 * Math.min(speed / CFG.speed, 1.0);
-    const turnRad = THREE.MathUtils.degToRad(CFG.turn) * dt * turnFactor;
+  // ── GIRO — proporcional a velocidad, igual que el original ───
+  const tf = Math.min(spd / 6, 1.0);
+  if (left())  state.yaw += THREE.MathUtils.degToRad(CFG.turn) * dt * tf;
+  if (right()) state.yaw -= THREE.MathUtils.degToRad(CFG.turn) * dt * tf;
 
-    if (left())  state.yaw += turnRad;
-    if (right()) state.yaw -= turnRad;
-  }
-
-  // ── VOLANTE (visual) ──────────────────────────────────────
+  // ── VOLANTE visual ────────────────────────────────────────
   const targetSteer = left() ? 1 : right() ? -1 : 0;
   state.steer += (targetSteer - state.steer) * CFG.steerLerp * dt;
 
+  // ── DIRECCIÓN del carro ───────────────────────────────────
+  _fwdDir.set(-Math.sin(state.yaw), 0, -Math.cos(state.yaw));
+
   // ── TRACCIÓN ──────────────────────────────────────────────
-  if (state.onGround) {
-    if (fwd()) {
-      state.velX += -sinYaw * CFG.accel * dt;
-      state.velZ += -cosYaw * CFG.accel * dt;
-    }
-    if (bwd()) {
-      // Freno/marcha atrás: más fuerte si ya va hacia adelante (freno real)
-      const isBraking = (state.velX * -sinYaw + state.velZ * -cosYaw) > 0;
-      const force = isBraking ? CFG.brakeForce : CFG.accel * 0.5;
-      state.velX -= -sinYaw * force * dt;
-      state.velZ -= -cosYaw * force * dt;
-    }
-  }
+  if (fwd()) state.vel.addScaledVector(_fwdDir,  CFG.accel * dt);
+  if (bwd()) state.vel.addScaledVector(_fwdDir, -(spd > 2 ? CFG.accel * 1.4 : CFG.accel * 0.6) * dt);
 
-  // ── LÍMITE DE VELOCIDAD ───────────────────────────────────
-  if (speed > CFG.speed) {
-    const scale = CFG.speed / speed;
-    state.velX *= scale;
-    state.velZ *= scale;
-  }
+  // ── FRICCIÓN — frame-rate independent ────────────────────
+  // Convierte CFG.friction (que era "por frame a 60fps") a "por segundo"
+  // Así la física es igual en 30fps, 60fps o 144fps — sin latigazos
+  // Fórmula: si friction=0.80 a 60fps → equivale a decay=0.80^60 ≈ 0.0000013/s
+  // Pero nosotros queremos un decay SUAVE, así que usamos un valor razonable:
+  //   friDecay = cuánta velocidad QUEDA después de 1 segundo sin input
+  //   0.08 → queda 8% → frena fuerte  |  0.25 → queda 25% → frena suave
+  const friDecay = state.onGround ? CFG.friction : 0.85;
+  state.vel.multiplyScalar(Math.pow(friDecay, dt));
 
-  // ── DERRAPE (grip) ────────────────────────────────────────
-  // Separamos la velocidad en componente longitudinal y lateral
-  // Componente longitudinal: proyección sobre el eje del carro
-  const fwdX = -sinYaw, fwdZ = -cosYaw; // dirección "adelante" del carro
-  const latX =  cosYaw, latZ = -sinYaw; // dirección "lateral" del carro (perpendicular)
-
-  // Cuánto de la velocidad va en cada dirección
-  const velFwd = state.velX * fwdX + state.velZ * fwdZ; // escalar
-  const velLat = state.velX * latX + state.velZ * latZ; // escalar
-
-  // El grip reduce la velocidad lateral (el derrape)
-  // Frame-rate independent: grip por segundo
-  const gripFactor = Math.pow(CFG.grip, 60 * dt); // equivale a: velLat *= grip cada 1/60 s
-  const newVelLat  = velLat * gripFactor;
-
-  // Recombinar: la longitudinal no cambia, la lateral se reduce
-  state.velX = fwdX * velFwd + latX * newVelLat;
-  state.velZ = fwdZ * velFwd + latZ * newVelLat;
-
-  // ── FRICCIÓN (desaceleración general) ─────────────────────
-  // Frame-rate independent
-  if (!fwd() && !bwd()) {
-    // Sin input: fricción más agresiva (frena solo)
-    const frictionFactor = Math.pow(1 - CFG.friction * 4, 60 * dt);
-    state.velX *= frictionFactor;
-    state.velZ *= frictionFactor;
-  } else {
-    // Con input: fricción normal (resistencia del aire)
-    const frictionFactor = Math.pow(1 - CFG.friction, 60 * dt);
-    state.velX *= frictionFactor;
-    state.velZ *= frictionFactor;
-  }
-
-  // Parar completamente si la velocidad es muy baja
-  const newSpeed = Math.sqrt(state.velX * state.velX + state.velZ * state.velZ);
-  if (newSpeed < 0.05 && !fwd() && !bwd()) {
-    state.velX = 0;
-    state.velZ = 0;
+  // ── LÍMITE DE VELOCIDAD — suave, sin corte brusco ────────
+  // En vez de clampear duro (que causa latigazo), frenamos suave
+  // cuando superamos el límite
+  const currentSpd = state.vel.length();
+  if (currentSpd > CFG.speed) {
+    // Reducir suavemente hacia el límite — sin corte
+    state.vel.multiplyScalar(CFG.speed / currentSpd * 0.92 + 0.08);
   }
 
   // ── MOVER EN XZ ──────────────────────────────────────────
-  car.position.x += state.velX * dt;
-  car.position.z += state.velZ * dt;
+  car.position.addScaledVector(state.vel, dt);
+
+  // Para el resto del código (ruedas, cámara, etc.)
+  const speed    = spd;
+  const newSpeed = state.vel.length();
+  const velFwd   = state.vel.dot(_fwdDir);
 
   /* ════════════════════════════════════════════════════════
      FÍSICA — ALTURA (gravedad + pista elevada)
@@ -1210,14 +1151,11 @@ function tick(){
       car.position.x += nx * (md - d);
       car.position.z += nz * (md - d);
 
-      // Rebotar la componente de velocidad que apunta al obstáculo
-      const dot = state.velX * nx + state.velZ * nz;
+      const dot = state.vel.x * nx + state.vel.z * nz;
       if (dot < 0) {
-        state.velX -= dot * nx * 1.4; // pequeño rebote
-        state.velZ -= dot * nz * 1.4;
-        // Perder algo de velocidad en el impacto
-        state.velX *= 0.55;
-        state.velZ *= 0.55;
+        state.vel.x -= dot * nx * 1.4;
+        state.vel.z -= dot * nz * 1.4;
+        state.vel.multiplyScalar(0.55);
         if (Math.abs(dot) > 3) tone(110 + Math.random()*40, 0.3, 'sawtooth', 0.08);
       }
     }
@@ -1247,6 +1185,7 @@ function tick(){
   ════════════════════════════════════════════════════════ */
   carGlow.intensity = 0.3 + speedRatio * 2.5;
   carGlow.color.setHSL(0.54 + Math.sin(t * 1.5) * 0.06, 1, 0.55);
+
 
   /* ════════════════════════════════════════════════════════
      CÁMARA — Seguimiento + Órbita con click derecho
@@ -1418,7 +1357,6 @@ function tick(){
       closestCp.triggered = true;
       discovered++;
       discEl.textContent = discovered;
-      if(closestCp.mat) gsap.to(closestCp.mat,{emissiveIntensity:3,duration:0.25,yoyo:true,repeat:4});
       if(discovered === 3) finalScreen();
     }
   }
