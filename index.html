@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ámbar 💛</title>
+  <title>Para Ámbar 💛</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💛</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,7 +18,7 @@
   <div id="intro-screen">
     <div class="intro-inner">
       <div class="intro-tag">un pequeño universo hecho para ti</div>
-      <!-- <h1 class="intro-title">Para<br><em>Ámbar</em></h1> -->
+      <h1 class="intro-title">Para<br><em>Ámbar</em></h1>
       <p class="intro-body">
         Conduce por el mapa y descubre<br>
         los lugares que guardé para nosotros.
@@ -33,7 +33,7 @@
           <div class="key-row"><kbd>↑</kbd></div>
           <div class="key-row"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
         </div>
-        <p class="key-label">Mover · <kbd>E</kbd> abrir</p>
+        <p class="key-label">Mover · <kbd>E</kbd> abrir · <kbd>␣</kbd> saltar</p>
       </div>
       <button id="start-btn">
         <span>Comenzar</span>
@@ -53,6 +53,7 @@
       <span class="ping-dot"></span>
       Presiona <kbd>E</kbd> para abrir
     </div>
+
   </div>
 
   <!-- ══ MODAL 1 — El Cofre ════════════════════════════════════ -->
@@ -153,6 +154,9 @@
       <button id="replay-btn">Volver a explorar</button>
     </div>
   </div>
+
+  <!-- Flip hint — fuera del HUD para no solaparse -->
+  <div id="flip-hint">A / D para levantarte</div>
 
   <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
