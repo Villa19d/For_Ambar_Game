@@ -4,9 +4,9 @@
 
 /* ── 0. CONFIGURACIÓN ─────────────────────────────────────── */
 const CFG = {
-  speed:     80,   // velocidad máxima (unidades/s) — ajustado por usuario
-  accel:    500,   // aceleración (unidades/s²)
-  friction: 0.87,  // frenado por frame (0=resbaladizo 1=frena ya)
+  speed:     60,   // velocidad máxima (unidades/s) — ajustado por usuario
+  accel:    300,   // aceleración (unidades/s²)
+  friction: 0.90,  // frenado por frame (0=resbaladizo 1=frena ya)
   turn:     170,   // grados/segundo de giro
   camLerp:  0.09,  // suavidad de cámara
   jumpForce: 6,    // impulso del salto — más corto y natural
@@ -60,8 +60,8 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.15;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x130903);
-scene.fog = new THREE.FogExp2(0x1f0c04, 0.022);
+scene.background = new THREE.Color(0x1a0a2e);   // azul-morado oscuro (atardecer)
+scene.fog = new THREE.FogExp2(0x2a0a3e, 0.016); // niebla violeta suave
 
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 200);
 // Offset: cámara arriba-atrás del carro (eje Z positivo = detrás)
@@ -77,34 +77,379 @@ window.addEventListener('wheel', e => {
   camZoom  = Math.max(0.4, Math.min(2.8, camZoom));
 }, { passive: true });
 
-scene.add(new THREE.HemisphereLight(0xffe4b5, 0x3d1a04, 0.9));
-const sun = new THREE.DirectionalLight(0xffd580, 2.4);
-sun.position.set(15, 25, 10);
+// Cielo atardecer — naranja-rosado arriba, morado oscuro abajo
+scene.add(new THREE.HemisphereLight(0xff6030, 0x1a0a2e, 1.1));
+
+// Sol rasante — naranja muy cálido, sombras largas
+const sun = new THREE.DirectionalLight(0xff8040, 2.8);
+sun.position.set(30, 18, 20);
 sun.castShadow = true;
 sun.shadow.mapSize.setScalar(2048);
-sun.shadow.camera.left = sun.shadow.camera.bottom = -60;
-sun.shadow.camera.right = sun.shadow.camera.top   =  60;
-sun.shadow.camera.far   = 120;
+sun.shadow.camera.left = sun.shadow.camera.bottom = -70;
+sun.shadow.camera.right = sun.shadow.camera.top   =  70;
+sun.shadow.camera.far   = 150;
 sun.shadow.bias = -0.001;
 scene.add(sun);
-const fillLight = new THREE.PointLight(0xff7c2a, 1.2, 80);
-fillLight.position.set(-8, 4, 5);
+
+// Luz de relleno azul-violeta desde abajo (rebote del cielo)
+const fillLight = new THREE.PointLight(0x6020ff, 0.8, 120);
+fillLight.position.set(-10, 2, 8);
 scene.add(fillLight);
 
-/* ── 2. SUELO ─────────────────────────────────────────────── */
+// Luz ambiente suave morada para dar profundidad
+const ambientPurple = new THREE.PointLight(0xff2090, 0.5, 200);
+ambientPurple.position.set(0, 15, 0);
+scene.add(ambientPurple);
+
+/* ═══════════════════════════════════════════════════════════
+   2. MUNDO — Suelo, Pista, Río, Árboles, Partículas
+   Estilo: atardecer violeta-naranja, low-poly animado
+═══════════════════════════════════════════════════════════ */
+
+// ── SUELO — terreno anaranjado-rosa (como imagen referencia) ──
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(400, 400),
-  new THREE.MeshStandardMaterial({ color: 0xb85e2e, roughness: 0.95 })
+  new THREE.PlaneGeometry(400, 400, 1, 1),
+  new THREE.MeshStandardMaterial({
+    color: 0xc84820,          // rojo-naranja oscuro
+    roughness: 0.92,
+    metalness: 0.0,
+  })
 );
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(400, 120, 0x9a4c22, 0x9a4c22);
-grid.material.opacity = 0.12;
+// Grid sutil para dar textura al suelo (cuadriculado como en imagen)
+const grid = new THREE.GridHelper(400, 80, 0xe05020, 0xe05020);
+grid.material.opacity = 0.18;
 grid.material.transparent = true;
 grid.position.y = 0.01;
 scene.add(grid);
+
+/* ─────────────────────────────────────────────────────────
+   PISTA CON MONTAÑA NATURAL — sin bordes feos, física real
+───────────────────────────────────────────────────────── */
+(function buildCleanTrack() {
+  // =========================================================
+  // PUNTOS DE CONTROL — Montaña GRANDE y natural
+  // =========================================================
+  const trackPoints = [
+    new THREE.Vector3(-35, 0.1,  30),  // Inicio
+    new THREE.Vector3(-40, 0.1,  10),  // Curva
+    
+    // MONTAÑA GRANDE (más natural, suave)
+    new THREE.Vector3(-38, 1.2,  -5),  // Subida suave
+    new THREE.Vector3(-35, 3.2, -10),  // PICO de la montaña (altura 3.2)
+    new THREE.Vector3(-30, 2.5, -15),  // Bajada
+    new THREE.Vector3(-20, 1.0, -20),  // Fin de montaña
+    
+    new THREE.Vector3(  0, 0.1, -25),  // Curva
+    new THREE.Vector3( 15, 0.8, -15),  // Tope pequeño
+    new THREE.Vector3( 25, 0.1,   0),  // Recta
+    new THREE.Vector3( 30, 3.5,  15),  // ¡SALTO GRANDE!
+    new THREE.Vector3( 20, 0.1,  25),  // Aterrizaje
+    new THREE.Vector3(  0, 0.1,  30),  // Curva final
+    new THREE.Vector3(-20, 0.5,  28),  // Último tope
+    new THREE.Vector3(-35, 0.1,  30),  // Regreso
+  ];
+
+  const curve = new THREE.CatmullRomCurve3(trackPoints, true);
+  const SEGMENTS = 400;
+  const TRACK_W = 8.5;
+
+  window._trackCurve = curve;
+
+  // =========================================================
+  // 1. BASE DE LA PISTA (oculta) — solo para colisiones
+  // =========================================================
+  // Esta capa NO se ve, solo sirve para que el carro choque
+  const collisionPositions = [];
+  const collisionIndices = [];
+
+  for(let i = 0; i <= SEGMENTS; i++) {
+    const t = i / SEGMENTS;
+    const p = curve.getPoint(t);
+    
+    const tNext = (i + 1) / SEGMENTS;
+    const pNext = curve.getPoint(tNext);
+    
+    const tan = new THREE.Vector3().subVectors(pNext, p).normalize();
+    const norm = new THREE.Vector3(-tan.z, 0, tan.x).normalize();
+    
+    // Capa de colisión: más angosta que la pista visual
+    const colWidth = TRACK_W - 1.0;  // Un poco más angosta
+    const colThickness = 0.2;         // Muy delgada (invisible)
+    
+    const left = p.clone().addScaledVector(norm, -colWidth * 0.5);
+    const right = p.clone().addScaledVector(norm, colWidth * 0.5);
+    
+    // Punto inferior (un poco más abajo)
+    const leftBottom = left.clone();
+    leftBottom.y = p.y - colThickness;
+    
+    const rightBottom = right.clone();
+    rightBottom.y = p.y - colThickness;
+    
+    // Punto superior (superficie)
+    const leftTop = left.clone();
+    leftTop.y = p.y;
+    
+    const rightTop = right.clone();
+    rightTop.y = p.y;
+    
+    collisionPositions.push(
+      leftBottom.x, leftBottom.y, leftBottom.z,
+      rightBottom.x, rightBottom.y, rightBottom.z,
+      leftTop.x, leftTop.y, leftTop.z,
+      rightTop.x, rightTop.y, rightTop.z
+    );
+    
+    if(i < SEGMENTS) {
+      const b = i * 4;
+      collisionIndices.push(b, b+1, b+2);
+      collisionIndices.push(b+1, b+3, b+2);
+      collisionIndices.push(b+2, b+3, b+6);
+      collisionIndices.push(b+3, b+7, b+6);
+    }
+  }
+
+  const collisionGeo = new THREE.BufferGeometry();
+  collisionGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(collisionPositions), 3));
+  collisionGeo.setIndex(collisionIndices);
+  collisionGeo.computeVertexNormals();
+
+  // Material INVISIBLE (no se renderiza)
+  const collisionMat = new THREE.MeshStandardMaterial({
+    color: 0xff00ff,
+    visible: false,  // ¡No se ve!
+    transparent: true,
+    opacity: 0
+  });
+
+  const collisionMesh = new THREE.Mesh(collisionGeo, collisionMat);
+  collisionMesh.receiveShadow = false;
+  collisionMesh.castShadow = false;
+  scene.add(collisionMesh);
+  window._trackCollision = collisionMesh;  // Para colisiones
+
+  // =========================================================
+  // 2. PISTA VISUAL (rosa) — SOLO lo que se ve
+  // =========================================================
+  const visPositions = [];
+  const visUvs = [];
+  const visIndices = [];
+
+  for(let i = 0; i <= SEGMENTS; i++) {
+    const t = i / SEGMENTS;
+    const p = curve.getPoint(t);
+    
+    const tNext = (i + 1) / SEGMENTS;
+    const pNext = curve.getPoint(tNext);
+    
+    const tan = new THREE.Vector3().subVectors(pNext, p).normalize();
+    const norm = new THREE.Vector3(-tan.z, 0, tan.x).normalize();
+    
+    const left = p.clone().addScaledVector(norm, -TRACK_W * 0.5);
+    const right = p.clone().addScaledVector(norm, TRACK_W * 0.5);
+    
+    // La pista visual va EXACTAMENTE en la superficie
+    left.y = p.y + 0.02;   // +0.02 para evitar z-fighting
+    right.y = p.y + 0.02;
+    
+    visPositions.push(left.x, left.y, left.z);
+    visPositions.push(right.x, right.y, right.z);
+    
+    visUvs.push(0, i * 0.4);
+    visUvs.push(1, i * 0.4);
+    
+    if(i < SEGMENTS) {
+      const b = i * 2;
+      visIndices.push(b, b+1, b+2);
+      visIndices.push(b+1, b+3, b+2);
+    }
+  }
+
+  const visGeo = new THREE.BufferGeometry();
+  visGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(visPositions), 3));
+  visGeo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(visUvs), 2));
+  visGeo.setIndex(visIndices);
+  visGeo.computeVertexNormals();
+
+  const visMat = new THREE.MeshStandardMaterial({
+    color: 0xe83a6f,
+    roughness: 0.6,
+    metalness: 0.05,
+    emissive: 0x3a0f1a,
+    emissiveIntensity: 0.15,
+  });
+
+  const visMesh = new THREE.Mesh(visGeo, visMat);
+  visMesh.receiveShadow = true;
+  visMesh.castShadow = false;
+  scene.add(visMesh);
+  window._trackMesh = visMesh;
+
+  // =========================================================
+  // 3. TOPES A CUADROS (opcional, los dejamos bonitos)
+  // =========================================================
+  const checkerW = 1.2;
+  const checkerH = 0.15;  // Más delgados
+  const checkerD = 1.2;
+  const steps = 200;
+
+  [-0.52, 0.52].forEach((side, sideIdx) => {
+    for(let i = 0; i < steps; i++) {
+      if(i % 3 === 0) continue;  // Espaciado para que no se vean tan densos
+      
+      const t = i / steps;
+      const p = curve.getPoint(t);
+      const pNext = curve.getPoint((i + 0.02) / steps);
+      
+      const tan = new THREE.Vector3().subVectors(pNext, p).normalize();
+      const norm = new THREE.Vector3(-tan.z, 0, tan.x).normalize();
+      
+      const pos = p.clone().addScaledVector(norm, side * (TRACK_W * 0.5 + 0.3));
+      pos.y = p.y + 0.08;
+      
+      const isWhite = (i + sideIdx) % 2 === 0;
+      const curb = new THREE.Mesh(
+        new THREE.BoxGeometry(checkerW, checkerH, checkerD),
+        new THREE.MeshStandardMaterial({
+          color: isWhite ? 0xffffff : 0xc41e3a,
+          roughness: 0.5,
+        })
+      );
+      curb.position.copy(pos);
+      curb.rotation.y = Math.atan2(tan.x, tan.z);
+      
+      curb.castShadow = true;
+      curb.receiveShadow = true;
+      scene.add(curb);
+    }
+  });
+
+  console.log('%c🏁 Pista limpia con montaña natural', 'color:#e83a6f;font-weight:bold');
+})();
+
+/* ─────────────────────────────────────────────────────────
+   RÍO ANIMADO — shader de agua con ondas y color
+   Posición: serpentea al lado de la pista
+───────────────────────────────────────────────────────── */
+(function buildRiver(){
+  // Trazado del río (paralelo a parte de la pista pero más irregular)
+  const riverPoints = [
+    new THREE.Vector3( 25, -0.1,  30),
+    new THREE.Vector3( 28, -0.1,  10),
+    new THREE.Vector3( 26, -0.1, -10),
+    new THREE.Vector3( 18, -0.1, -22),
+    new THREE.Vector3(  8, -0.1, -30),
+    new THREE.Vector3( -5, -0.1, -28),
+  ];
+  const riverCurve  = new THREE.CatmullRomCurve3(riverPoints, false);
+  const RIVER_SEG   = 60;
+  const RIVER_W     = 5.5;
+
+  const rPos = [], rUV = [], rIdx = [];
+
+  for(let i = 0; i <= RIVER_SEG; i++){
+    const t0 = i / RIVER_SEG;
+    const t1 = Math.min((i + 0.01) / RIVER_SEG, 1);
+    const p  = riverCurve.getPoint(t0);
+    const p2 = riverCurve.getPoint(t1);
+    const tan  = new THREE.Vector3().subVectors(p2, p).normalize();
+    if(tan.length() < 0.001) tan.set(1,0,0);
+    const norm = new THREE.Vector3(-tan.z, 0, tan.x);
+    const L = p.clone().addScaledVector(norm, -RIVER_W * 0.5);
+    const R = p.clone().addScaledVector(norm,  RIVER_W * 0.5);
+    rPos.push(L.x, -0.1, L.z,  R.x, -0.1, R.z);
+    rUV.push(0, t0 * 8,  1, t0 * 8);
+    if(i < RIVER_SEG){
+      const b = i*2;
+      rIdx.push(b, b+1, b+2,  b+1, b+3, b+2);
+    }
+  }
+
+  const rGeo = new THREE.BufferGeometry();
+  rGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(rPos), 3));
+  rGeo.setAttribute('uv',       new THREE.BufferAttribute(new Float32Array(rUV), 2));
+  rGeo.setIndex(rIdx);
+  rGeo.computeVertexNormals();
+
+  // Material agua: MeshStandardMaterial con envMap-like approach
+  const waterMat = new THREE.MeshStandardMaterial({
+    color:       0x2255ff,
+    emissive:    0x001144,
+    emissiveIntensity: 0.4,
+    roughness:   0.05,
+    metalness:   0.6,
+    transparent: true,
+    opacity:     0.82,
+    side:        THREE.DoubleSide,
+  });
+
+  const riverMesh = new THREE.Mesh(rGeo, waterMat);
+  riverMesh.receiveShadow = true;
+  scene.add(riverMesh);
+  window._riverMesh = riverMesh;
+
+  // ── Espuma / orillas — tira clara a cada lado ───────────────
+  [0.55, -0.55].forEach(side => {
+    const foamPos = [], foamUV = [], foamIdx = [];
+    for(let i = 0; i <= RIVER_SEG; i++){
+      const t0 = i / RIVER_SEG;
+      const t1 = Math.min((i+0.01)/RIVER_SEG, 1);
+      const p  = riverCurve.getPoint(t0);
+      const p2 = riverCurve.getPoint(t1);
+      const tan  = new THREE.Vector3().subVectors(p2, p).normalize();
+      if(tan.length() < 0.001) tan.set(1,0,0);
+      const norm = new THREE.Vector3(-tan.z, 0, tan.x);
+      const inner = p.clone().addScaledVector(norm, side * RIVER_W * 0.5);
+      const outer = p.clone().addScaledVector(norm, side * (RIVER_W * 0.5 + 0.8));
+      foamPos.push(inner.x,-0.05,inner.z, outer.x,-0.05,outer.z);
+      foamUV.push(0,t0*6,  1,t0*6);
+      if(i<RIVER_SEG){ const b=i*2; foamIdx.push(b,b+1,b+2,b+1,b+3,b+2); }
+    }
+    const fg = new THREE.BufferGeometry();
+    fg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(foamPos),3));
+    fg.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(foamUV),2));
+    fg.setIndex(foamIdx); fg.computeVertexNormals();
+    const foam = new THREE.Mesh(fg, new THREE.MeshStandardMaterial({
+      color:0xffffff, emissive:0xaaddff, emissiveIntensity:0.5,
+      transparent:true, opacity:0.65, roughness:0.9,
+    }));
+    scene.add(foam);
+  });
+
+  // ── Partículas de agua flotando sobre el río ────────────────
+  const WATER_PARTS = 120;
+  const wpPos = new Float32Array(WATER_PARTS * 3);
+  const wpData = [];  // {t, offset, speed, y}
+
+  for(let i = 0; i < WATER_PARTS; i++){
+    const t  = Math.random();
+    const p  = riverCurve.getPoint(t);
+    const off = (Math.random() - 0.5) * RIVER_W * 0.8;
+    wpPos[i*3]   = p.x + off;
+    wpPos[i*3+1] = 0.15 + Math.random() * 0.3;
+    wpPos[i*3+2] = p.z;
+    wpData.push({ t, off, speed: 0.004 + Math.random() * 0.006 });
+  }
+  const wpGeo = new THREE.BufferGeometry();
+  wpGeo.setAttribute('position', new THREE.BufferAttribute(wpPos, 3));
+  const wpMesh = new THREE.Points(wpGeo, new THREE.PointsMaterial({
+    color: 0x88ccff, size: 0.18, sizeAttenuation: true,
+    transparent: true, opacity: 0.7, depthWrite: false,
+  }));
+  scene.add(wpMesh);
+  window._riverParticles = { mesh: wpMesh, data: wpData, curve: riverCurve, W: RIVER_W };
+
+  // Luz azul pulsante sobre el río
+  const riverLight = new THREE.PointLight(0x2255ff, 2.5, 18);
+  riverLight.position.set(22, 2, 5);
+  scene.add(riverLight);
+  window._riverLight = riverLight;
+
+})();
 
 /* ══════════════════════════════════════════════════════════════
    3. JEEP TÁCTICO — low-poly, estilo imagen de referencia
@@ -116,13 +461,7 @@ scene.add(grid);
 const car = new THREE.Group();
 scene.add(car);
 
-/* Estado de movimiento */
-const carVel      = new THREE.Vector3();
-let   carYaw      = 0;   // rotación Y (hacia dónde mira)
-let   carVelY     = 0;   // velocidad vertical
-let   carRoll     = 0;   // ángulo Z actual (inclinación)
-let   isOnGround  = true;
-let   isFlipped   = false; // true cuando está boca arriba / de lado
+/* estado del carro → ver objeto 'state' antes del tick */
 
 /* Underglow */
 const carGlow = new THREE.PointLight(0xff6600, 0, 7);
@@ -346,139 +685,305 @@ for(let i=0;i<4;i++){
 console.log('%c🚙 Jeep táctico listo', 'color:#ffaa00;font-weight:bold');
 
 
-/* ── 4. COLISIONES ────────────────────────────────────────── */
-const colliders = [];
-function addCollider(x, z, r) { colliders.push({ x, z, r }); }
+/* ── 4. COLLIDERS — registro de obstáculos para colisiones ── */
+const _pendingColliders = [];   // ← declarado ANTES de addCollider y makeTree
+function addCollider(x, z, r){ _pendingColliders.push({x, z, r}); }
 
-function resolveCollisions() {
-  const R = 0.9;
-  for (const col of colliders) {
-    const dx = car.position.x - col.x;
-    const dz = car.position.z - col.z;
-    const d  = Math.sqrt(dx*dx + dz*dz);
-    const md = R + col.r;
-    if (d < md && d > 0.001) {
-      const overlap = md - d;
-      const nx = dx/d, nz = dz/d;
+/* ═══════════════════════════════════════════════════════════
+   5. MUNDO — Árboles animados, rocas, partículas de hojas
+═══════════════════════════════════════════════════════════ */
 
-      // Separar el carro del obstáculo
-      car.position.x += nx * overlap;
-      car.position.z += nz * overlap;
+// Registro de árboles para animación de viento
+window._trees = [];
 
-      // Velocidad de impacto (componente en la dirección de colisión)
-      const dot = carVel.x*nx + carVel.z*nz;
-      if (dot < 0) {
-        // Rebote — cuánto rebota depende de la velocidad
-        const bounce = 1.2;
-        carVel.x -= dot * nx * bounce;
-        carVel.z -= dot * nz * bounce;
-
-        // ── VOLTEO por impacto fuerte ──────────────────────────
-        // Si choca con velocidad > 35% del máximo y está en el suelo → voltea
-        const impactSpd = Math.abs(dot);
-        const flipThreshold = CFG.speed * 0.35;   // ~28 u/s
-
-        if(impactSpd > flipThreshold && isOnGround && !isFlipped){
-          isFlipped = true;
-          // Dirección del volteo: depende del lado del impacto
-          // Producto cruzado simplificado: si el impacto viene de la derecha → vuelca a la izq
-          const cross = nx * Math.cos(carYaw) - nz * Math.sin(carYaw);
-          carRoll = cross > 0 ? 1.8 : -1.8;   // ~103°, boca de lado
-          carVel.multiplyScalar(0.25);          // pierde velocidad al chocar
-          tone(120, 0.4, 'sawtooth', 0.12);    // SFX choque
-        }
-      }
-    }
-  }
-}
-
-/* ── 5. MUNDO — Árboles, rocas, pasto, vallas ─────────────── */
-function makeTree(x, z, s=1) {
-  const g = new THREE.Group();
+/* ─── TIPOS DE ÁRBOL ────────────────────────────────────────
+   type 0: roble naranja — copa redondeada múltiple
+   type 1: pino alto — cono apilado
+   type 2: árbol de flor — copa rosa baja y ancha
+   type 3: árbol amarillo — copa cúbica low-poly
+───────────────────────────────────────────────────────── */
+function makeTree(x, z, s=1, type=-1){
+  const kind = type >= 0 ? type : Math.floor(Math.random() * 4);
+  const g    = new THREE.Group();
   g.position.set(x, 0, z);
+  g.userData.windPhase  = Math.random() * Math.PI * 2;
+  g.userData.windSpeed  = 0.6 + Math.random() * 0.8;
+  g.userData.treeScale  = s;
+
+  // Trunk colors por tipo
+  const trunkColor = [0x5c2e08, 0x3a2208, 0x6b2a10, 0x4a3010][kind];
   const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.18*s, 0.25*s, 1.8*s, 8),
-    new THREE.MeshStandardMaterial({ color:0x5c3317, roughness:0.9 })
+    new THREE.CylinderGeometry(0.14*s, 0.22*s, (1.4 + kind*0.3)*s, 7),
+    new THREE.MeshStandardMaterial({ color:trunkColor, roughness:0.95 })
   );
-  trunk.position.y = 0.9*s; trunk.castShadow = true; g.add(trunk);
-  [{ry:2.2*s,rs:1.2*s,c:0x3a7c2e},{ry:3.2*s,rs:0.95*s,c:0x4a9c3e},{ry:4.0*s,rs:0.7*s,c:0x5ab44e}]
-  .forEach(({ry,rs,c}) => {
-    const l = new THREE.Mesh(new THREE.SphereGeometry(rs,8,6),
-      new THREE.MeshStandardMaterial({color:c,roughness:0.85}));
-    l.position.y = ry; l.castShadow = true; g.add(l);
+  trunk.position.y = (0.7 + kind*0.15)*s;
+  trunk.castShadow = true;
+  g.add(trunk);
+
+  if(kind === 0){
+    // Roble — 4 esferas naranjas irregulares (estilo imagen)
+    const colors = [0xdd6611, 0xe07720, 0xcc5500, 0xf08830];
+    [
+      {ry:2.1, rs:1.4, dx:0,    dz:0},
+      {ry:2.6, rs:1.0, dx:0.8,  dz:0.3},
+      {ry:2.4, rs:0.9, dx:-0.7, dz:0.2},
+      {ry:3.1, rs:0.75,dx:0.1,  dz:-0.5},
+    ].forEach(({ry,rs,dx,dz},i) => {
+      const l = new THREE.Mesh(
+        new THREE.SphereGeometry(rs*s, 7, 5),
+        new THREE.MeshStandardMaterial({
+          color: colors[i], roughness:0.8,
+          emissive: colors[i], emissiveIntensity: 0.05
+        })
+      );
+      l.position.set(dx*s, ry*s, dz*s);
+      l.castShadow = true;
+      g.add(l);
+    });
+
+  } else if(kind === 1){
+    // Pino — 3 conos apilados
+    [[0,1.5,1.6],[0,2.8,1.2],[0,3.8,0.85]].forEach(([dx,ry,rs]) => {
+      const cone = new THREE.Mesh(
+        new THREE.ConeGeometry(rs*s, 2.0*s, 7),
+        new THREE.MeshStandardMaterial({
+          color: 0x224422, roughness:0.85,
+          emissive:0x112211, emissiveIntensity:0.08
+        })
+      );
+      cone.position.set(dx*s, ry*s, 0);
+      cone.castShadow = true;
+      g.add(cone);
+    });
+
+  } else if(kind === 2){
+    // Árbol de flor — copa ancha baja, colores rosados-morados
+    const flowerColors = [0xff44aa, 0xcc2288, 0xff66cc, 0xee3399];
+    [
+      {ry:1.8, rs:1.6, dx:0,    dz:0},
+      {ry:2.2, rs:1.1, dx:0.9,  dz:0},
+      {ry:2.2, rs:1.1, dx:-0.9, dz:0},
+      {ry:2.5, rs:0.9, dx:0,    dz:0.8},
+    ].forEach(({ry,rs,dx,dz},i) => {
+      const l = new THREE.Mesh(
+        new THREE.SphereGeometry(rs*s, 6, 5),
+        new THREE.MeshStandardMaterial({
+          color: flowerColors[i], roughness:0.75,
+          emissive: flowerColors[i], emissiveIntensity: 0.08
+        })
+      );
+      l.position.set(dx*s, ry*s, dz*s);
+      l.castShadow = true;
+      g.add(l);
+    });
+
+  } else {
+    // Árbol amarillo — copa cúbica low-poly (como imagen fondo)
+    const yColors = [0xddaa00, 0xffcc22, 0xcc9900, 0xeebb11];
+    [
+      {ry:2.0, rw:2.4, rh:1.8, dx:0,   dz:0},
+      {ry:3.2, rw:1.8, rh:1.4, dx:0.3, dz:0.2},
+      {ry:2.6, rw:1.4, rh:1.2, dx:-0.5,dz:0.3},
+    ].forEach(({ry,rw,rh,dx,dz},i) => {
+      const l = new THREE.Mesh(
+        new THREE.BoxGeometry(rw*s, rh*s, rw*s*0.85),
+        new THREE.MeshStandardMaterial({
+          color: yColors[i], roughness:0.8,
+          emissive: yColors[i], emissiveIntensity: 0.06
+        })
+      );
+      l.position.set(dx*s, ry*s, dz*s);
+      l.rotation.y = Math.random() * Math.PI;
+      l.castShadow = true;
+      g.add(l);
+    });
+  }
+
+  // Partículas de hojas flotando alrededor del árbol
+  const LEAF_N = 18;
+  const leafPos = new Float32Array(LEAF_N * 3);
+  const leafData = [];
+  for(let i = 0; i < LEAF_N; i++){
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 0.5 + Math.random() * 1.8 * s;
+    leafPos[i*3]   = Math.cos(angle) * radius;
+    leafPos[i*3+1] = 1.5*s + Math.random() * 2.5*s;
+    leafPos[i*3+2] = Math.sin(angle) * radius;
+    leafData.push({ angle, radius, speed: 0.3 + Math.random()*0.5, yOff: Math.random()*Math.PI*2 });
+  }
+  const leafGeo = new THREE.BufferGeometry();
+  leafGeo.setAttribute('position', new THREE.BufferAttribute(leafPos, 3));
+  const leafColors = [
+    [0xffaa44,0xff8822,0xffcc66,0xff6633],  // naranja
+    [0x44ff88,0x22dd66,0x55ee99,0x33cc77],  // verde
+    [0xff88cc,0xff44aa,0xffaadd,0xee3399],  // rosa
+    [0xffdd22,0xffbb00,0xffee55,0xddaa00],  // amarillo
+  ][kind];
+  const leafMat = new THREE.PointsMaterial({
+    color: leafColors[Math.floor(Math.random()*leafColors.length)],
+    size: 0.18*s, sizeAttenuation: true,
+    transparent: true, opacity: 0.85, depthWrite: false,
   });
+  const leafPts = new THREE.Points(leafGeo, leafMat);
+  g.add(leafPts);
+  g.userData.leafPts  = leafPts;
+  g.userData.leafData = leafData;
+
   scene.add(g);
-  addCollider(x, z, 0.4*s);
+  window._trees.push(g);
+  addCollider(x, z, (kind===1 ? 0.3 : 0.5)*s);
+  return g;
 }
 
 function makeRock(x, z, s=1) {
   const g = new THREE.Group();
   g.position.set(x, 0, z);
+  // Variedad de colores de roca
+  const rockColors = [0x7a6a55, 0x6a5a8a, 0x8a7060, 0x5a6a7a];
   const r = new THREE.Mesh(
     new THREE.DodecahedronGeometry(0.6*s, 0),
-    new THREE.MeshStandardMaterial({color:0x7a6a55,roughness:1})
+    new THREE.MeshStandardMaterial({
+      color: rockColors[Math.floor(Math.random()*rockColors.length)],
+      roughness:1, metalness:0.05
+    })
   );
   r.scale.y = 0.5; r.rotation.y = Math.random()*Math.PI;
   r.position.y = 0.18*s; r.castShadow = r.receiveShadow = true;
-  g.add(r); scene.add(g);
+  // Segundo fragmento de roca más pequeño al lado
+  const r2 = new THREE.Mesh(
+    new THREE.DodecahedronGeometry(0.3*s, 0),
+    r.material.clone()
+  );
+  r2.scale.y = 0.55; r2.rotation.y = Math.random()*Math.PI;
+  r2.position.set(0.5*s, 0.1*s, 0.3*s);
+  g.add(r); g.add(r2); scene.add(g);
   addCollider(x, z, 0.55*s);
 }
 
-function makeFence(x, z, len=5, ry=0) {
-  const g = new THREE.Group();
-  g.position.set(x, 0, z);
-  g.rotation.y = ry;
-  const pm = new THREE.MeshStandardMaterial({color:0x6b4423,roughness:0.9});
-  const bm = new THREE.MeshStandardMaterial({color:0x8b5c32,roughness:0.85});
-  const posts = Math.floor(len/1.5)+1;
-  for (let i=0; i<posts; i++) {
-    const p = new THREE.Mesh(new THREE.BoxGeometry(0.12,1.2,0.12),pm);
-    p.position.set(i*1.5-len/2, 0.6, 0); p.castShadow=true; g.add(p);
+// ── Poblar el mundo ──────────────────────────────────────────
+// Árboles: distribuidos alrededor de la pista y el río
+// type: 0=naranja, 1=pino, 2=flores, 3=amarillo
+
+/* ─────────────────────────────────────────────────────────
+   DISTRIBUCIÓN INTELIGENTE — árboles y rocas FUERA de la pista
+───────────────────────────────────────────────────────── */
+function isPointOnTrack(x, z, margin = 4.0) {
+  // Busca la distancia mínima a la pista
+  if (!window._trackCurve) return false;
+  
+  const curve = window._trackCurve;
+  let minDist = Infinity;
+  
+  // Muestrear la curva cada cierto intervalo
+  for (let i = 0; i <= 100; i++) {
+    const t = i / 100;
+    const p = curve.getPoint(t);
+    const dx = p.x - x;
+    const dz = p.z - z;
+    const dist = Math.sqrt(dx*dx + dz*dz);
+    if (dist < minDist) minDist = dist;
   }
-  [0.35,0.75].forEach(y => {
-    const b = new THREE.Mesh(new THREE.BoxGeometry(len,0.12,0.07),bm);
-    b.position.set(0,y,0); b.castShadow=true; g.add(b);
-  });
-  scene.add(g);
+  
+  // Si está muy cerca de la pista, rechazar
+  return minDist < margin;
 }
 
-// Árboles
-makeTree(-8,-18,1.2); makeTree(10,-20,1.0); makeTree(-18,-4,1.4);
-makeTree(20,8,1.1);   makeTree(-4,18,0.9);  makeTree(24,-16,1.3);
-makeTree(-22,12,1.0); makeTree(8,22,1.2);   makeTree(-14,20,0.85);
+// Generador de posiciones válidas (fuera de pista)
+function getValidPosition(avoidRadius = 4.0, maxAttempts = 200) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 10 + Math.random() * 40;  // entre 10 y 50 unidades del centro
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    
+    // Verificar que no esté sobre la pista
+    if (!isPointOnTrack(x, z, avoidRadius)) {
+      return { x, z, valid: true };
+    }
+  }
+  return { x: 999, z: 999, valid: false }; // punto de respaldo
+}
 
-// Rocas
-makeRock(6,-8,1.0);  makeRock(-10,12,1.3); makeRock(18,4,0.8);
-makeRock(-4,-6,0.9); makeRock(14,18,1.1);  makeRock(-18,-14,1.2);
 
-// Vallas
-makeFence(-12,-4,8,0);       makeFence(6,-4,6,0);
-makeFence(10,10,6,Math.PI/2); makeFence(-16,10,8,Math.PI/2);
+// Árboles: 30 árboles bien distribuidos
+const treeTypes = [0, 1, 2, 3];  // naranja, pino, flor, amarillo
+for (let i = 0; i < 30; i++) {
+  const pos = getValidPosition(5.0);
+  if (pos.valid) {
+    const type = treeTypes[Math.floor(Math.random() * treeTypes.length)];
+    const scale = 0.8 + Math.random() * 0.8;
+    makeTree(pos.x, pos.z, scale, type);
+  }
+}
+
+// Rocas: 12 rocas
+for (let i = 0; i < 12; i++) {
+  const pos = getValidPosition(5.5);
+  if (pos.valid) {
+    const scale = 0.7 + Math.random() * 0.8;
+    makeRock(pos.x, pos.z, scale);
+  }
+}
+
+// Árboles especiales (cerca de checkpoints, pero no encima)
+const specialSpots = [
+  { x: -14, z: -10, type: 2, scale: 1.2 },  // cerca cofre
+  { x: 16, z: -8, type: 1, scale: 1.4 },    // cerca radio
+  { x: 2, z: -24, type: 0, scale: 1.3 },    // cerca faro
+  { x: -6, z: 14, type: 3, scale: 1.1 },    // cerca rocola
+];
+specialSpots.forEach(spot => {
+  // Desplazar ligeramente para que no tape el checkpoint
+  const angle = Math.random() * Math.PI * 2;
+  const dx = Math.cos(angle) * 3;
+  const dz = Math.sin(angle) * 3;
+  makeTree(spot.x + dx, spot.z + dz, spot.scale, spot.type);
+});
 
 /* ── 6. PASTO GLB ─────────────────────────────────────────── */
 function spawnGrass(model) {
   model.traverse(c => {
     if (!c.isMesh) return;
-    c.castShadow = false; c.receiveShadow = true;
+    c.castShadow = false;
+    c.receiveShadow = true;
     if (c.material) {
       c.material.side = THREE.DoubleSide;
-      c.material.alphaTest = 0.3;
-      c.material.depthWrite = false;
+      c.material.alphaTest = 0.2;
     }
   });
-  for (let i=0; i<GRASS_CFG.COUNT; i++) {
-    const a = Math.random()*Math.PI*2;
-    const r = 3 + Math.pow(Math.random(),0.5)*GRASS_CFG.SPREAD;
-    const x = Math.cos(a)*r, z = Math.sin(a)*r;
-    if (Math.abs(x)<2.5 && Math.abs(z)<2.5) continue;
-    const clone = model.clone();
-    clone.position.set(x,0,z);
-    clone.rotation.y = Math.random()*Math.PI*2;
-    const s = GRASS_CFG.MIN_SCALE + Math.random()*(GRASS_CFG.MAX_SCALE-GRASS_CFG.MIN_SCALE);
-    clone.scale.setScalar(s);
-    scene.add(clone);
+
+  let placed = 0;
+  const maxAttempts = 1000;
+  
+  for (let attempt = 0; attempt < maxAttempts && placed < GRASS_CFG.COUNT; attempt++) {
+    // Posición aleatoria en un radio grande
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 8 + Math.random() * 42;  // desde 8 hasta 50
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    
+    // Verificar que no esté sobre la pista (margen más pequeño para pasto)
+    if (!isPointOnTrack(x, z, 4.5)) {
+      const clone = model.clone();
+      clone.position.set(x, 0, z);
+      clone.rotation.y = Math.random() * Math.PI * 2;
+      
+      // Variación de escala
+      const s = GRASS_CFG.MIN_SCALE + Math.random() * (GRASS_CFG.MAX_SCALE - GRASS_CFG.MIN_SCALE);
+      clone.scale.setScalar(s);
+      
+      scene.add(clone);
+      placed++;
+    }
   }
-  console.log(`%c🌿 ${GRASS_CFG.COUNT} mechones de pasto cargados`, 'color:#4a8c2a');
+  
+  console.log(`%c🌿 ${placed} mechones de pasto colocados`, 'color:#4a8c2a');
+  
+  // Si no alcanzamos la cuenta, ponemos algunos cerca de los bordes
+  if (placed < GRASS_CFG.COUNT) {
+    console.warn('No se alcanzó la cantidad deseada de pasto, usando posiciones de respaldo');
+    // ... lógica de respaldo
+  }
 }
 
 function buildFallbackGrass() {
@@ -531,6 +1036,7 @@ function buildFallbackGrass() {
   s.onerror = () => buildFallbackGrass();
   document.head.appendChild(s);
 })();
+
 
 /* ── 7. CHECKPOINTS + ROCOLA ──────────────────────────────── */
 const cpObjects = [];
@@ -786,233 +1292,436 @@ const _car2D  = new THREE.Vector2();
 const _cp2D   = new THREE.Vector2();
 let gameOn=false, lastOpen=false, closestCp=null;
 
+// Estado físico del carro — un solo objeto, nunca pierde scope
+const state = {
+  vel:      new THREE.Vector3(),  // velocidad XZ
+  velY:     0,                    // velocidad vertical
+  yaw:      0,                    // rotación Y (hacia dónde mira)
+  roll:     0,                    // inclinación Z (volteo)
+  rollVel:  0,                    // velocidad angular de volteo (rad/s)
+  onGround: true,
+  flipped:  false,
+};
+
 function tick(){
   requestAnimationFrame(tick);
-  renderer.render(scene,camera);
-  if(!gameOn)return;
+  renderer.render(scene, camera);
+  if(!gameOn) return;
 
-  const dt = Math.min(clock.getDelta(),0.05);
-  const t  = Date.now()*0.001;
+  const dt  = Math.min(clock.getDelta(), 0.05);
+  const t   = Date.now() * 0.001;
 
-  /* ── MOVIMIENTO ──────────────────────────────────────────── */
-  const spd = carVel.length();
-  // Giro proporcional a velocidad (sin velocidad no gira mucho)
-  const tf = Math.min(spd/6, 1.0);
-  if(left())  carYaw += THREE.MathUtils.degToRad(CFG.turn)*dt*tf;
-  if(right()) carYaw -= THREE.MathUtils.degToRad(CFG.turn)*dt*tf;
-  car.rotation.y = carYaw;
+  /* ════════════════════════════════════════════════════════════
+     FÍSICA PROPIA — sin motores externos
+     Variables de estado (todas en scope de tick para claridad):
+       carVel   → velocidad XZ (Three.Vector3, módulo)
+       carVelY  → velocidad vertical
+       carYaw   → ángulo de giro Y
+       carRoll  → ángulo de volteo Z (rad) — calculado por física
+       rollVel  → velocidad angular de volteo
+       isOnGround
+  ════════════════════════════════════════════════════════════ */
 
-  _fwdDir.set(-Math.sin(carYaw),0,-Math.cos(carYaw));
+  // ── 1. GIRO (yaw) ─────────────────────────────────────────
+  // Solo gira si hay algo de velocidad
+  const spd = state.vel.length();
+  const tf  = Math.min(spd / 10, 1.0);
 
-  if(fwd()) carVel.addScaledVector(_fwdDir,  CFG.accel*dt);
-  if(bwd()) carVel.addScaledVector(_fwdDir, -(spd>2?CFG.accel*1.4:CFG.accel*0.6)*dt);
+  if(left())  state.yaw += THREE.MathUtils.degToRad(CFG.turn) * dt * tf;
+  if(right()) state.yaw -= THREE.MathUtils.degToRad(CFG.turn) * dt * tf;
 
-  carVel.multiplyScalar(isOnGround?CFG.friction:0.995);
-  if(carVel.length()>CFG.speed) carVel.normalize().multiplyScalar(CFG.speed);
+  // ── 2. TRACCIÓN ────────────────────────────────────────────
+  _fwdDir.set(-Math.sin(state.yaw), 0, -Math.cos(state.yaw));
 
-  car.position.addScaledVector(carVel,dt);
-
-  /* ══════════════════════════════════════════════════════════
-     FÍSICA VERTICAL: Salto + Gravedad + Volteo + Recuperación
-     ══════════════════════════════════════════════════════════
-
-     SISTEMA DE VOLTEO:
-     • carRoll es el ángulo Z real del carro (rad)
-     • Si |carRoll| > π/2 (90°) → está boca arriba = isFlipped
-     • Estando volteado, A/D giran las ruedas para recuperarse
-     • Cuando carRoll vuelve a 0 → isFlipped = false, sigue normal
-     ────────────────────────────────────────────────────────── */
-
-  // ── SALTO ────────────────────────────────────────────────
-  if(jumpK() && isOnGround && !isFlipped){
-    carVelY = CFG.jumpForce; isOnGround = false;
+  if(!state.flipped){
+    if(fwd()) state.vel.addScaledVector(_fwdDir,  CFG.accel * dt);
+    if(bwd()) state.vel.addScaledVector(_fwdDir, -(spd > 2 ? CFG.accel * 1.3 : CFG.accel * 0.5) * dt);
   }
 
-  if(!isOnGround){
-    carVelY        -= CFG.gravity * dt;
-    car.position.y += carVelY * dt;
+  // Fricción y límite
+  state.vel.multiplyScalar(state.onGround ? CFG.friction : 0.997);
+  if(state.vel.length() > CFG.speed) state.vel.normalize().multiplyScalar(CFG.speed);
 
-    if(car.position.y <= 0){
-      car.position.y = 0;
-      isOnGround     = true;
-      const impact   = Math.min(Math.abs(carVelY) / CFG.jumpForce, 1);
-      carVelY        = 0;
+  // Mover en XZ
+  car.position.x += state.vel.x * dt;
+  car.position.z += state.vel.z * dt;
 
-      // Squash de aterrizaje
-      car.scale.set(1 + impact*0.16, 1 - impact*0.22, 1 + impact*0.16);
-      gsap.to(car.scale, {x:1,y:1,z:1,duration:0.22,ease:'elastic.out(1,0.5)'});
+  // ── 3. GRAVEDAD Y SALTO ────────────────────────────────────
+  if(jumpK() && state.onGround && !state.flipped){
+    state.velY     = CFG.jumpForce;
+    state.onGround = false;
+  }
 
-      // Volteo al aterrizar con roll extremo (>55°)
-      if(Math.abs(carRoll) > 0.96){
-        isFlipped = true;
-        carVel.multiplyScalar(0.15); // pierde velocidad al voltearse
+ state.velY -= CFG.gravity * dt;
+ car.position.y += state.velY * dt;
+  
+
+  if(car.position.y <= 0){
+    car.position.y = 0;
+    // Efecto squash solo en aterrizajes duros
+    const impact = Math.min(Math.abs(state.velY) / CFG.jumpForce, 1);
+    if(impact > 0.3){
+      car.scale.set(1 + impact*0.12, 1 - impact*0.18, 1 + impact*0.12);
+      gsap.to(car.scale, {x:1,y:1,z:1, duration:0.2, ease:'elastic.out(1,0.5)'});
+    }
+    state.velY     = 0;
+    state.onGround = true;
+  }
+
+// DETECCIÓN DE SUELO mejorada
+let hitGround = false;
+let groundY = -Infinity;
+
+// Usar el mesh de colisión invisible
+if (window._trackCollision) {
+  // Posición del carro (usamos 4 puntos para mejor detección)
+  const checkPoints = [
+    car.position.clone(),
+    car.position.clone().add(new THREE.Vector3( 0.8, 0,  0.8)),
+    car.position.clone().add(new THREE.Vector3(-0.8, 0,  0.8)),
+    car.position.clone().add(new THREE.Vector3( 0.8, 0, -0.8)),
+    car.position.clone().add(new THREE.Vector3(-0.8, 0, -0.8)),
+  ];
+  
+  // Raycaster para detectar el suelo
+  const raycaster = new THREE.Raycaster();
+  
+  for (const point of checkPoints) {
+    // Rayo hacia abajo desde un poco arriba
+    raycaster.set(point.clone().add(new THREE.Vector3(0, 0.5, 0)), new THREE.Vector3(0, -1, 0));
+    
+    const intersects = raycaster.intersectObject(window._trackCollision);
+    
+    if (intersects.length > 0) {
+      const hit = intersects[0];
+      const hitY = hit.point.y;
+      
+      if (hitY > groundY) {
+        groundY = hitY;
+        hitGround = true;
       }
     }
-  } else {
-    car.position.y = 0;
   }
+}
 
-  /* ── ROLL VISUAL + VOLTEO ───────────────────────────────────
-     
-     MODO NORMAL (isFlipped=false):
-       • Inclinación suave en curvas (visual, no vuelca)
-       • Volteo REAL: chocas fuerte contra un obstáculo con velocidad
-         → la colisión detecta impacto fuerte → activa isFlipped
-     
-     MODO VOLTEADO (isFlipped=true):
-       • A/D giran las ruedas → empujan el carro de vuelta
-       • Gravedad ayuda a centrarlo
-       • Al pasar de 0 ± 25° → se levanta solo
-  ─────────────────────────────────────────────────────────── */
-
-  const rollForce = (left()?1:right()?-1:0) * tf * (spd / CFG.speed);
-
-  if(!isFlipped){
-    // Roll visual suave en curvas (solo cosmético)
-    const targetRoll = rollForce * 0.11;
-    carRoll += (targetRoll - carRoll) * 8 * dt;
-    // Clampar — nunca supera 15° en modo normal
-    carRoll = Math.max(-0.26, Math.min(0.26, carRoll));
-
+// Aplicar colisión
+if (hitGround) {
+  const carBottom = car.position.y - 0.2;  // Altura de las ruedas
+  
+  if (carBottom < groundY + 0.1) {
+    // Estamos tocando el suelo
+    
+    // Si estamos DEBAJO del suelo (por error), subir
+    if (car.position.y < groundY + 0.2) {
+      car.position.y = groundY + 0.2;
+      
+      // Rebote suave si caía rápido
+      if (state.velY < -0.3) {
+        state.velY = -state.velY * 0.25;
+        // Sonido de aterrizaje
+        tone(120 + Math.random()*30, 0.15, 'sawtooth', 0.08);
+      } else {
+        state.velY = 0;
+      }
+    }
+    
+    state.onGround = true;
   } else {
-    /* ── RECUPERACIÓN CON A/D ─────────────────────────────── */
-    // A/D hacen que el carro ruede: presiona el lado que está abajo
-    const recoverDir = carRoll > 0 ? 1 : -1;
-    if(left())  carRoll -= recoverDir * 2.8 * dt;
-    if(right()) carRoll += recoverDir * 2.8 * dt;
+    // Estamos en el aire
+    state.onGround = false;
+  }
+} else {
+  // No hay suelo detectado (caída libre)
+  state.onGround = false;
+  
+  // Suelo plano de respaldo (muy abajo)
+  if (car.position.y < -5) {
+    car.position.y = -5;
+    state.velY = 0;
+    state.onGround = true;
+  }
+}
 
-    // Gravedad: si no haces nada, lentamente el carro vuelve al centro
-    carRoll -= carRoll * 0.5 * dt;
+// Visualizar si estamos en el aire o suelo (debug)
+if (state.onGround) {
+  document.body.style.borderBottom = '2px solid green';
+} else {
+  document.body.style.borderBottom = '2px solid red';
+}
 
-    // Bloquear movimiento XZ mientras está volteado (no puede manejar)
-    carVel.multiplyScalar(0.92);
+  // ── 4. FÍSICA DE VOLTEO ────────────────────────────────────
+  // rollVel: velocidad angular Z en rad/s (persiste entre frames)
+  // La gravedad crea torque si el carro no está vertical
+  // Colisiones laterales añaden rollVel
 
-    // Mostrar hint en HUD
-    if(!document.getElementById('flip-hint')?.classList.contains('visible')){
-      const fh = document.getElementById('flip-hint');
-      if(fh){ fh.classList.add('visible'); }
+  if(!state.flipped){
+    // Inclinación visual suave en curvas
+    const curveRoll = -(left() ? 1 : right() ? -1 : 0) * tf * (spd / CFG.speed) * 0.10;
+    state.roll += (curveRoll - state.roll) * 9 * dt;
+    state.roll  = Math.max(-0.18, Math.min(0.18, state.roll));
+
+    // Si el rollVel externo (de una colisión) supera umbral → voltear
+    if(Math.abs(state.rollVel) > 2.8 && state.onGround){
+      state.flipped = true;
+      state.roll    = state.rollVel > 0 ? 0.2 : -0.2; // inicio del volteo
+      state.vel.multiplyScalar(0.2);
     }
 
-    // ¿Recuperado? (dentro de ±20°)
-    if(Math.abs(carRoll) < 0.35 && isOnGround){
-      isFlipped = false;
-      carRoll   = 0;
-      const fh  = document.getElementById('flip-hint');
-      if(fh){ fh.classList.remove('visible'); }
-      // Bounce al levantarse
-      gsap.to(car.scale,{x:1.1,y:0.85,z:1.1,duration:0.1,
+  } else {
+    // MODO VOLTEADO — física real de balanceo
+    // Gravedad aplica torque proporcional al seno del ángulo
+    // (como un péndulo invertido)
+    const gravTorque = -Math.sin(state.roll) * 6.0;  // tira hacia 0 o hacia ±π
+    state.rollVel   += gravTorque * dt;
+    state.rollVel   *= 0.92; // amortiguación del suelo
+
+    // // A/D aplican torque para ayudar a levantarse
+    // if(left())  state.rollVel -= 4.5 * dt;
+    // if(right()) state.rollVel += 4.5 * dt;
+
+    state.roll    += state.rollVel * dt;
+
+    // Limitar a ±π (no da vueltas infinitas)
+    state.roll = Math.max(-Math.PI, Math.min(Math.PI, state.roll));
+
+    // Bloquear movimiento mientras está volteado
+    state.vel.multiplyScalar(0.88);
+
+    // ¿Recuperado? — dentro de ±18° de vertical
+    if(Math.abs(state.roll) < 0.32 && state.onGround){
+      state.flipped  = false;
+      state.roll     = 0;
+      state.rollVel  = 0;
+      gsap.to(car.scale, {x:1.1,y:0.85,z:1.1, duration:0.1,
         onComplete:()=>gsap.to(car.scale,{x:1,y:1,z:1,duration:0.3,ease:'bounce.out'})});
     }
 
-    // Ruedas delanteras giran al recuperar
-    wheelMeshes.forEach(w=>{ w.rotation.x += (left()?-1.5:right()?1.5:0)*dt; });
+    // Hint HUD
+    const fh = document.getElementById('flip-hint');
+    if(fh) fh.classList.add('visible');
   }
 
-  car.rotation.z = carRoll;
+  // Quitar hint cuando no está volteado
+  if(!state.flipped){
+    const fh = document.getElementById('flip-hint');
+    if(fh) fh.classList.remove('visible');
+  }
 
-  // ── SUSPENSIÓN visual (solo en modo normal) ───────────────
-  if(isOnGround && !isFlipped)
-    car.position.y += Math.sin(t * spd * 0.8) * 0.005 * Math.min(spd / CFG.speed, 1);
+  // Aplicar rotaciones al mesh
+  car.rotation.y = state.yaw;
+  car.rotation.z = state.roll;
 
-  /* ── COLISIONES ──────────────────────────────────────────── */
-  resolveCollisions();
+  // ── 5. COLISIONES CON OBSTÁCULOS ──────────────────────────
+  // Los objetos del mundo registran colliders circulares (XZ)
+  // Al chocar, además de separar el carro, añadimos rollVel
+  const CAR_R = 0.9;
+  for(const col of _pendingColliders){
+    const dx = car.position.x - col.x;
+    const dz = car.position.z - col.z;
+    const d  = Math.sqrt(dx*dx + dz*dz);
+    const md = CAR_R + col.r;
+    if(d < md && d > 0.001){
+      // Separar
+      const nx = dx/d, nz = dz/d;
+      car.position.x += nx * (md - d);
+      car.position.z += nz * (md - d);
 
-  /* ── RUEDAS ──────────────────────────────────────────────── */
-  wheelMeshes.forEach(w=>{ w.rotation.x -= spd*dt*1.7; });
+      // Impacto en dirección normal
+      const dot = state.vel.x*nx + state.vel.z*nz;
+      if(dot < 0){
+        state.vel.x -= dot * nx * 1.3;
+        state.vel.z -= dot * nz * 1.3;
 
-  /* ── UNDERGLOW: pulsa con velocidad ─────────────────────── */
-  carGlow.intensity = 0.5 + (spd/CFG.speed)*3.0;
-  carGlow.color.setHSL(0.54+Math.sin(t*1.5)*0.06, 1, 0.55);
+        // Componente lateral del impacto → genera rollVel (volteo real)
+        // cross2D = componente lateral del impacto respecto del eje del carro
+        const cross = nx * Math.cos(state.yaw) - nz * Math.sin(state.yaw);
+        const impactStrength = Math.abs(dot);  // velocidad de impacto
 
-  /* ── CHIRRIIDO al derrapar ───────────────────────────────── */
-  if(spd>CFG.speed*0.8&&isOnGround&&(left()||right())&&Math.random()<0.015)
-    tone(180+Math.random()*40,0.08,'sawtooth',0.04);
+        // Solo voltea si el impacto es lateral y fuerte
+        if(impactStrength > CFG.speed * 0.25 && Math.abs(cross) > 0.3){
+          state.rollVel += cross * impactStrength * 0.12;
+          tone(100 + Math.random()*40, 0.35, 'sawtooth', 0.10); // SFX choque
+        }
+      }
+    }
+  }
 
-  /* ── RUEDAS DELANTERAS — dirección (giro en Y) ─────────────── */
-  // Las ruedas delanteras giran hacia donde apuntan A/D
-  // MAX_STEER: ángulo máximo de dirección (rad)
-  const MAX_STEER    = 0.45;
-  const targetSteer  = left() ? MAX_STEER : right() ? -MAX_STEER : 0;
-  // Interpolar suavemente hacia el ángulo objetivo
+  // ── 6. SUSPENSIÓN visual ───────────────────────────────────
+  if(state.onGround && !state.flipped && spd > 2)
+    car.position.y += Math.sin(t * spd * 0.9) * 0.004 * Math.min(spd / CFG.speed, 1);
+
+  // ── 7. RUEDAS ─────────────────────────────────────────────
+  wheelMeshes.forEach(w => { w.rotation.x -= spd * dt * 1.6; });
+
+  // Ruedas delanteras: giro de dirección en Y
+  const targetSteer = left() ? 0.42 : right() ? -0.42 : 0;
   frontPivots.forEach(p => {
     p.rotation.y += (targetSteer - p.rotation.y) * 10 * dt;
   });
 
-  /* ── CÁMARA ADAPTATIVA ───────────────────────────────────────
-     Problema anterior: lerp fijo = cámara se queda atrás a alta vel.
-     Solución: lerp que crece con la velocidad — rígida al acelerar,
-     suave al frenar/parar. También un "lookahead" que desplaza el
-     punto de mira ligeramente hacia adelante del carro.
-  ─────────────────────────────────────────────────────────────── */
+  // ── 8. EFECTOS ────────────────────────────────────────────
+  carGlow.intensity = 0.4 + (spd / CFG.speed) * 2.8;
+  carGlow.color.setHSL(0.54 + Math.sin(t * 1.5) * 0.06, 1, 0.55);
+
+  if(spd > CFG.speed * 0.75 && state.onGround && (left()||right()) && Math.random() < 0.012)
+    tone(160 + Math.random()*40, 0.08, 'sawtooth', 0.04);
+
+  // ── 9. CÁMARA ─────────────────────────────────────────────
+  // Siempre usa car.position (actualizado arriba) y state.yaw
+  // Lerp adaptativo: más rígido a más velocidad
   const zZ = CAM_OFFSET.z * camZoom;
   const zY = CAM_OFFSET.y * camZoom;
 
-  // Offset detrás del carro según su yaw
-  const camBehindX = Math.sin(carYaw) * zZ;
-  const camBehindZ = Math.cos(carYaw) * zZ;
-
   _camPos.set(
-    car.position.x + camBehindX,
+    car.position.x + Math.sin(state.yaw) * zZ,
     car.position.y + zY,
-    car.position.z + camBehindZ
+    car.position.z + Math.cos(state.yaw) * zZ
   );
 
-  // Lerp adaptativo: más rígido a más velocidad
-  // - parado (spd≈0): lerp 0.04 — suave y cinematográfico
-  // - máxima velocidad: lerp 0.22 — casi pega al carro
-  const adaptiveLerp = 0.04 + (spd / CFG.speed) * 0.18;
+  const adaptiveLerp = 0.05 + (spd / CFG.speed) * 0.20;
   camera.position.lerp(_camPos, adaptiveLerp);
 
-  // LookAt con lookahead: mira ligeramente ADELANTE del carro
-  // Así la cámara "anticipa" la dirección de movimiento
-  const lookAheadDist = 2.5 * (spd / CFG.speed);  // 0 parado, 2.5 a max
-  const lookAheadX    = car.position.x - Math.sin(carYaw) * lookAheadDist;
-  const lookAheadZ    = car.position.z - Math.cos(carYaw) * lookAheadDist;
-  _camLook.set(lookAheadX, car.position.y + 0.8, lookAheadZ);
-
-  // lookAt también se interpola (evita saltos bruscos)
-  const _currentLook = new THREE.Vector3();
-  camera.getWorldDirection(_currentLook);
+  // Lookahead suave — mira un poco adelante del carro
+  const laDist = 1.8 * (spd / CFG.speed);
+  _camLook.set(
+    car.position.x - Math.sin(state.yaw) * laDist,
+    car.position.y + 0.8,
+    car.position.z - Math.cos(state.yaw) * laDist
+  );
   camera.lookAt(_camLook);
 
-  /* ── VIENTO ──────────────────────────────────────────────── */
+  // ── 10. VIENTO + MUNDO ANIMADO ───────────────────────────
   updateWind(dt);
-  if(window._dustPts) window._dustPts.rotation.y+=dt*0.018;
-  if(window._grassMeshes) window._grassMeshes.forEach((m,i)=>{
-    m.rotation.x=Math.sin(t*0.9+i*0.3)*0.035;
-    m.rotation.z=Math.sin(t*0.7+i*0.2)*0.025;
-  });
-  if(window._jukeboxLight) window._jukeboxLight.intensity=2.5+Math.sin(t*4)*1.5;
 
-  /* ── CHECKPOINTS ─────────────────────────────────────────── */
-  _car2D.set(car.position.x,car.position.z);
-  closestCp=null; let minD=Infinity;
+  // Polvo de fondo
+  if(window._dustPts) window._dustPts.rotation.y += dt * 0.015;
 
-  cpObjects.forEach(cp=>{
-    if(cp.cube){ cp.cube.position.y=3.6+Math.sin(t*1.8+cp.cfg.x)*0.3;
-      cp.cube.rotation.y+=dt*0.9; cp.mat.emissiveIntensity=0.5+Math.sin(t*2+cp.cfg.z)*0.45; }
-    if(cp.triggered&&!cp.isJukebox)return;
-    _cp2D.set(cp.cfg.x,cp.cfg.z);
-    const d=_car2D.distanceTo(_cp2D);
-    if(d<TRIGGER_DIST){
-      if(!cp.wasInRange){cp.wasInRange=true;sfxProx();}
-      if(d<minD){minD=d;closestCp=cp;}
-    } else { cp.wasInRange=false; }
+  // Pasto GLB — ondea con el viento
+  if(window._grassMeshes) window._grassMeshes.forEach((m,i) => {
+    m.rotation.x = Math.sin(t*0.9+i*0.3)*0.038;
+    m.rotation.z = Math.sin(t*0.7+i*0.2)*0.028;
   });
 
-  if(closestCp&&!currentModal) hintEl.classList.remove('hidden');
-  else                          hintEl.classList.add('hidden');
+  // Jukebox light
+  if(window._jukeboxLight) window._jukeboxLight.intensity = 2.5 + Math.sin(t*4)*1.5;
 
-  const openNow=openK();
-  if(openNow&&!lastOpen&&closestCp&&!currentModal){
+  // ── ÁRBOLES: viento suave + hojas orbitando ──────────────
+  if(window._trees) window._trees.forEach((tree, ti) => {
+    const ph   = tree.userData.windPhase  || 0;
+    const spd2 = tree.userData.windSpeed  || 1;
+    const sc   = tree.userData.treeScale  || 1;
+
+    // Bamboleo del tronco entero (eje X y Z levemente)
+    const sway = Math.sin(t * spd2 + ph) * 0.018 * sc;
+    tree.rotation.x = sway;
+    tree.rotation.z = Math.cos(t * spd2 * 0.7 + ph) * 0.012 * sc;
+
+    // Animar partículas de hojas — cada hoja orbita y flota
+    const lp = tree.userData.leafPts;
+    const ld = tree.userData.leafData;
+    if(lp && ld){
+      const pos = lp.geometry.attributes.position;
+      ld.forEach((leaf, i) => {
+        leaf.angle += leaf.speed * dt;
+        const px = Math.cos(leaf.angle) * leaf.radius;
+        const pz = Math.sin(leaf.angle) * leaf.radius;
+        const py = 1.5*sc + Math.sin(t*0.8 + leaf.yOff) * 0.35*sc
+                   + Math.cos(leaf.angle * 0.5) * 0.2*sc;
+        pos.setXYZ(i, px, py, pz);
+      });
+      pos.needsUpdate = true;
+
+      // Pulso de opacidad — parpadeo suave de las hojas
+      lp.material.opacity = 0.65 + Math.sin(t * 1.2 + ph) * 0.2;
+    }
+  });
+
+  // ── RÍO: olas de color + partículas de agua ──────────────
+  // Color del agua oscila entre azul eléctrico y cian-turquesa
+  if(window._riverMesh){
+    const hue = 0.58 + Math.sin(t * 0.4) * 0.06;    // azul ↔ cian
+    const sat = 0.85 + Math.sin(t * 0.9) * 0.1;
+    const lit = 0.38 + Math.sin(t * 0.6) * 0.08;
+    window._riverMesh.material.color.setHSL(hue, sat, lit);
+    window._riverMesh.material.emissive.setHSL(hue, 1, 0.12 + Math.sin(t*1.1)*0.06);
+    window._riverMesh.material.emissiveIntensity = 0.35 + Math.sin(t*0.7)*0.15;
+
+    // Desplazar UVs para simular flujo del agua
+    // (Three.js no tiene offsetU nativo fácil, usamos rotation del mesh como proxy visual)
+    window._riverMesh.position.y = -0.05 + Math.sin(t * 1.8) * 0.015; // microondas
+  }
+
+  // Partículas de agua flotantes — se mueven a lo largo del río
+  if(window._riverParticles){
+    const { mesh, data, curve, W } = window._riverParticles;
+    const pos = mesh.geometry.attributes.position;
+    data.forEach((p, i) => {
+      p.t = (p.t + p.speed * dt) % 1;
+      const pt  = curve.getPoint(p.t);
+      // Calcular normal para el offset lateral
+      const pt2 = curve.getPoint((p.t + 0.01) % 1);
+      const tan = new THREE.Vector3().subVectors(pt2, pt).normalize();
+      if(tan.length() < 0.001) tan.set(1,0,0);
+      const nor = new THREE.Vector3(-tan.z, 0, tan.x);
+      pos.setXYZ(i,
+        pt.x + nor.x * p.off,
+        0.12 + Math.sin(t * 2.2 + i * 0.4) * 0.08,
+        pt.z + nor.z * p.off
+      );
+    });
+    pos.needsUpdate = true;
+    // Pulseo de color de las partículas de agua
+    const wHue = 0.55 + Math.sin(t*0.5)*0.08;
+    mesh.material.color.setHSL(wHue, 1, 0.7);
+    mesh.material.opacity = 0.5 + Math.sin(t*1.4)*0.2;
+  }
+
+  // Luz del río pulsa y cambia de color
+  if(window._riverLight){
+    const rl = window._riverLight;
+    rl.intensity = 1.8 + Math.sin(t * 1.1) * 0.8;
+    rl.color.setHSL(0.58 + Math.sin(t*0.3)*0.08, 1, 0.5);
+  }
+
+  // Cielo: cambio sutil del fondo (amanecer ↔ atardecer)
+  const skyH = 0.72 + Math.sin(t * 0.05) * 0.04;
+  scene.background.setHSL(skyH, 0.7, 0.08 + Math.sin(t*0.04)*0.02);
+
+  // ── 11. CHECKPOINTS ───────────────────────────────────────
+  _car2D.set(car.position.x, car.position.z);
+  closestCp = null;
+  let minD  = Infinity;
+
+  cpObjects.forEach(cp => {
+    if(cp.cube){
+      cp.cube.position.y = 3.6 + Math.sin(t*1.8 + cp.cfg.x)*0.3;
+      cp.cube.rotation.y += dt * 0.9;
+      cp.mat.emissiveIntensity = 0.5 + Math.sin(t*2 + cp.cfg.z)*0.45;
+    }
+    if(cp.triggered && !cp.isJukebox) return;
+    _cp2D.set(cp.cfg.x, cp.cfg.z);
+    const d = _car2D.distanceTo(_cp2D);
+    if(d < TRIGGER_DIST){
+      if(!cp.wasInRange){ cp.wasInRange = true; sfxProx(); }
+      if(d < minD){ minD = d; closestCp = cp; }
+    } else { cp.wasInRange = false; }
+  });
+
+  if(closestCp && !currentModal) hintEl.classList.remove('hidden');
+  else                            hintEl.classList.add('hidden');
+
+  const openNow = openK();
+  if(openNow && !lastOpen && closestCp && !currentModal){
     openModal(closestCp.cfg.id);
-    if(!closestCp.triggered&&!closestCp.isJukebox){
-      closestCp.triggered=true; discovered++; discEl.textContent=discovered;
+    if(!closestCp.triggered && !closestCp.isJukebox){
+      closestCp.triggered = true;
+      discovered++;
+      discEl.textContent = discovered;
       if(closestCp.mat) gsap.to(closestCp.mat,{emissiveIntensity:3,duration:0.25,yoyo:true,repeat:4});
-      if(discovered===3)finalScreen();
+      if(discovered === 3) finalScreen();
     }
   }
-  lastOpen=openNow;
+  lastOpen = openNow;
 }
 
 /* ── 13. RESIZE ───────────────────────────────────────────── */
