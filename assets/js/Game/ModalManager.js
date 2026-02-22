@@ -21,8 +21,17 @@ class ModalManager {
     window.openModal         = (id) => this.openModal(id);
     window.onIslandDiscovered = (id) => this._onDiscovered(id);
 
+     this.jukebox = null;
+     this.audio = null; // Referencia a GameAudio
+
+
     console.log('%c📋 ModalManager listo', 'color:#ffd60a');
   }
+
+    // Método para conectar con GameAudio
+  setAudio(audioInstance) {
+        this.audio = audioInstance;
+    }
 
   /* ─── LISTENERS ─────────────────────────────────────────── */
   _setupListeners() {
@@ -57,19 +66,42 @@ class ModalManager {
 
   /* ─── ABRIR / CERRAR MODAL ──────────────────────────────── */
   openModal(id) {
-    if(this.currentModal === id) return;
-    if(this.currentModal) this.closeModal(this.currentModal);
-    this.currentModal = id;
+    if (this.currentModal === id) return;
+        if (this.currentModal) this.closeModal(this.currentModal);
+        
+        this.currentModal = id;
+        const el = document.getElementById(id);
+        if (!el) return;
+        
+        el.classList.add('open');
+        el.setAttribute('aria-hidden', 'false');
+        
+        // Usar GameAudio para el sonido de abrir
+        if (this.audio) this.audio.open();
+        
+        if (id === 'modal-3') this._typewrite();
+        
+        if (id === 'jukebox') {
+            this._openJukebox();
+        }
 
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.classList.add('open');
-    el.setAttribute('aria-hidden', 'false');
-
-    if(typeof gameAudio !== 'undefined') gameAudio.open();
-    if(id === 'modal-3') this._typewrite();
-    if(id === 'jukebox') this._openJukebox();
   }
+
+  _openJukebox() {
+        this.jukeboxOpen = true;
+        
+        // Inicializar jukebox a través de GameAudio si no existe
+        if (this.audio && !this.jukebox) {
+            this.jukebox = this.audio.initJukebox();
+        }
+        
+        this._updateJukeboxUI();
+        
+        // Iniciar primera canción si no está sonando
+        if (this.jukebox && !this.jukebox.isPlaying) {
+            this.jukebox.playSong(0, SONGS[0].startTime);
+        }
+    }
 
   closeModal(id) {
     const el = document.getElementById(id);
@@ -80,6 +112,9 @@ class ModalManager {
         el.classList.remove('open');
         el.setAttribute('aria-hidden', 'true');
         gsap.set(el, { clearProps:'opacity' });
+        if (id === 'jukebox' && this.jukebox) {
+                    this.jukebox.stopCurrentSong(true); // true = return to base
+                }
       }});
     } else {
       el.classList.remove('open');
@@ -114,12 +149,27 @@ class ModalManager {
     this.jukeboxOpen = true;
     this._updateJukeboxUI();
     if(typeof gameAudio !== 'undefined') gameAudio.startSong(this.currentSong);
+    this._showJukeboxInterface();
   }
+
+  _showJukeboxInterface() {
+        // Mostrar carátula de la canción base por defecto
+        const coverImg = document.getElementById('jukebox-cover');
+        const titleEl = document.getElementById('jukebox-song-title');
+        const artistEl = document.getElementById('jukebox-artist');
+        
+        if (coverImg) coverImg.src = `media/Audio/Album/${BASE_SONG.cover}`;
+        if (titleEl) titleEl.textContent = BASE_SONG.title;
+        if (artistEl) artistEl.textContent = BASE_SONG.artist;
+    }
 
   _changeSong(dir) {
     const total = typeof SONGS !== 'undefined' ? SONGS.length : 4;
     this.currentSong = (this.currentSong + dir + total) % total;
     this._updateJukeboxUI();
+    if (this.jukebox) {
+            this.jukebox.playSong(this.currentSong, SONGS[this.currentSong].startTime);
+        }
     if(typeof gameAudio !== 'undefined') {
       gameAudio.startSong(this.currentSong);
       gameAudio.tone(440 + this.currentSong * 110, 0.15, 'sine', 0.1);

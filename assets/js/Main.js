@@ -36,10 +36,12 @@ const input      = new Input();
 const gameAudio  = new GameAudio();
 const world      = new World(scene);
 const vehicle    = new Vehicle(scene, world.colliders);
-const gameCamera = new GameCamera(threeCamera, canvas);
 
-// ModalManager — expone window._modalManager para IslandBase
+
+// 2. Crear ModalManager y conectar GameAudio
 window._modalManager = new ModalManager();
+window._modalManager.setAudio(gameAudio);  // ¡Importante!
+const gameCamera = new GameCamera(threeCamera, canvas);
 
 /* ══ 4. INTRO PARTÍCULAS ═══════════════════════════════════ */
 (function buildIntroParticles() {
@@ -82,17 +84,22 @@ function tick() {
 }
 
 /* ══ 6. BOTÓN INICIO ═══════════════════════════════════════ */
-document.getElementById('start-btn').addEventListener('click', () => {
-  const intro = document.getElementById('intro-screen');
-  gsap.to(intro, {
-    opacity: 0, duration: 0.7, ease: 'power2.inOut',
-    onComplete: () => {
-      intro.style.display = 'none';
-      document.getElementById('hud').classList.remove('hidden');
-      gameOn = true;
-      clock.start();
-    }
-  });
+document.getElementById('start-btn').addEventListener('click', async () => {
+    const intro = document.getElementById('intro-screen');
+    
+    // Iniciar música base a través de GameAudio
+    const jukebox = gameAudio.initJukebox();
+    await jukebox.startBaseMusic();
+    
+    gsap.to(intro, {
+        opacity: 0, duration: 0.7, ease: 'power2.inOut',
+        onComplete: () => {
+            intro.style.display = 'none';
+            document.getElementById('hud').classList.remove('hidden');
+            gameOn = true;
+            clock.start();
+        }
+    });
 });
 
 document.getElementById('replay-btn')?.addEventListener('click', () => location.reload());
