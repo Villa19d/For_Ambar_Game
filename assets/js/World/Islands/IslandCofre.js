@@ -82,60 +82,84 @@ class IslandCofre extends IslandBase {
 
   /* ── PARED DE LADRILLOS ESTILO VENGADORES (detrás de Hulkbuster) ── */
 /* ── PARED DE LADRILLOS ESTILO VENGADORES (CORREGIDA) ── */
+/* ── PARED DE LADRILLOS - VERSIÓN ÉPICA CON FÍSICA ── */
 _buildAvengersWall() {
   const g = this.group;
   const centerX = 0;
   const centerZ = 0;
-  const radius = 15.2;
+  const radius = 15.5;  // Un poco más cerca del borde
   
-  // IMPORTANTE: Detectar hacia dónde mira Hulkbuster
-  // Por defecto asumimos que Hulkbuster mira en dirección -0.4 rad (como está ahora)
-  // PERO puedes cambiar este valor para que coincida con lo que elijas
-  const hulkDirection = .6; // Ángulo de rotación de Hulkbuster en Y
+  // Dirección de Hulkbuster (detrás de él)
+  const hulkDirection = 0.6; // Mantenemos el valor que elegiste
+  const wallDirection = hulkDirection + Math.PI; // Opuesta
   
-  // La pared debe estar DETRÁS de Hulkbuster, es decir:
-  // En la dirección opuesta a donde mira + 180 grados (PI radianes)
-  const wallDirection = hulkDirection + Math.PI; // Opuesta a su mirada
-  
-  // ÁNGULOS: Arco de 120° centrado en wallDirection
-  const arcWidth = Math.PI * 0.65; // 117° (un poco más de 1/3 del círculo)
+  // ÁNGULOS: Arco más ancho (150°) para una pared más imponente
+  const arcWidth = Math.PI * 0.85; // ~153°
   const startAngle = wallDirection - arcWidth/2;
   const endAngle = wallDirection + arcWidth/2;
   
-  const segments = 14;
+  const segments = 18; // Más segmentos = más detalle
   
-  // Materiales
-  const brickMat = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.85 });
-  const darkBrickMat = new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 0.9 });
-  const debrisMat = new THREE.MeshStandardMaterial({ color: 0x6a5a4a, roughness: 0.95 });
+  // ── TEXTURAS MEJORADAS ──
+  // Ladrillo principal con variación de color
+  const brickMat = new THREE.MeshStandardMaterial({
+    color: 0x9a8a7a,
+    roughness: 0.8,
+    metalness: 0.1,
+    emissive: 0x221100,
+    emissiveIntensity: 0.03
+  });
+  
+  const darkBrickMat = new THREE.MeshStandardMaterial({
+    color: 0x6a5a4a,
+    roughness: 0.9,
+    metalness: 0.05
+  });
+  
+  const burntBrickMat = new THREE.MeshStandardMaterial({
+    color: 0x3a2a1a,
+    roughness: 1.0,
+    emissive: 0x441100,
+    emissiveIntensity: 0.15
+  });
+  
+  const debrisMat = new THREE.MeshStandardMaterial({
+    color: 0x7a6a5a,
+    roughness: 0.95
+  });
+  
+  const metalMat = new THREE.MeshStandardMaterial({
+    color: 0x888888,
+    roughness: 0.3,
+    metalness: 0.8
+  });
 
   // Calcular puntos del arco
   const points = [];
   for (let i = 0; i <= segments; i++) {
     const t = i / segments;
     const angle = startAngle + (endAngle - startAngle) * t;
-    // Usamos seno/coseno estándar (ángulo 0 = +X, pero eso no importa)
     const x = centerX + Math.cos(angle) * radius;
     const z = centerZ + Math.sin(angle) * radius;
     points.push({ x, z, angle });
   }
 
-  // Alturas variables para efecto destruido
+  // ALTURAS MÁS ALTAS (6.5 base en lugar de 4.2)
   const heights = [];
   for (let i = 0; i < segments; i++) {
     let heightFactor = 1.0;
-    // Impacto en el centro del arco
-    if (i >= 6 && i <= 8) {
-      heightFactor = 0.3 + Math.random() * 0.3;
-    } else if (i === 5 || i === 9) {
-      heightFactor = 0.6 + Math.random() * 0.2;
+    // Impacto más dramático en el centro
+    if (i >= 8 && i <= 10) {
+      heightFactor = 0.4 + Math.random() * 0.3; // Zona muy destruida
+    } else if (i === 7 || i === 11) {
+      heightFactor = 0.7 + Math.random() * 0.2; // Bordes
     } else {
-      heightFactor = 1.1 + Math.random() * 0.3;
+      heightFactor = 1.4 + Math.random() * 0.4; // ¡MÁS ALTO! (hasta 1.8)
     }
     heights.push(heightFactor);
   }
 
-  // ── CONSTRUIR SEGMENTOS ──
+  // ── 1. SEGMENTOS PRINCIPALES (MÁS ALTOS) ──
   for (let i = 0; i < segments; i++) {
     const p1 = points[i];
     const p2 = points[i + 1];
@@ -147,16 +171,24 @@ _buildAvengersWall() {
     const midX = (p1.x + p2.x) / 2;
     const midZ = (p1.z + p2.z) / 2;
     
-    // La pared debe mirar hacia el centro de la isla
+    // Ángulo para que mire al centro
     const angleToCenter = Math.atan2(centerX - midX, centerZ - midZ);
     
-    const heightBase = 4.2;
+    // ¡ALTURA AUMENTADA! base 6.5 en lugar de 4.2
+    const heightBase = 6.5;
     const height = heightBase * heights[i];
     const width = length;
-    const depth = 0.9;
+    const depth = 1.0; // Un poco más gruesa
     
-    const useDark = Math.random() > 0.7;
-    const segmentMat = useDark ? darkBrickMat : brickMat;
+    // Seleccionar material según zona
+    let segmentMat;
+    if (i >= 8 && i <= 10) {
+      segmentMat = burntBrickMat; // Zona quemada
+    } else if (Math.random() > 0.7) {
+      segmentMat = darkBrickMat;
+    } else {
+      segmentMat = brickMat;
+    }
     
     const wallSegment = new THREE.Mesh(
       new THREE.BoxGeometry(width, height, depth),
@@ -165,115 +197,246 @@ _buildAvengersWall() {
     
     wallSegment.position.set(midX, height / 2, midZ);
     wallSegment.rotation.y = angleToCenter;
-    wallSegment.rotation.z = (Math.random() - 0.5) * 0.02;
+    // Pequeña inclinación para efecto realista
+    wallSegment.rotation.z = (Math.random() - 0.5) * 0.03;
+    wallSegment.rotation.x = (Math.random() - 0.5) * 0.02;
     
     wallSegment.castShadow = true;
     wallSegment.receiveShadow = true;
     
+    // Guardar datos para colisiones
+    wallSegment.userData = {
+      isWall: true,
+      segmentIndex: i
+    };
+    
     g.add(wallSegment);
     
-    // ── ZONA DEL IMPACTO ──
-    if (i >= 6 && i <= 8) {
-      // Crear el impacto en el SEGMENTO, no fuera de él
-      // Esto evita que las partículas aparezcan encima de Hulkbuster
+  
+    
+    // ── 3. DETALLES DE LADRILLOS 3D ──
+    const brickRows = Math.floor(height / 0.4);
+    for (let row = 0; row < brickRows; row++) {
+      if (i >= 8 && i <= 10 && row > brickRows * 0.4) continue;
       
-      // Agujero
+      const bricksPerRow = Math.floor(width / 0.5);
+      for (let b = 0; b < bricksPerRow; b++) {
+        if (Math.random() > 0.3) continue;
+        
+        const brickX = -width/2 + (b + 0.5) * (width / bricksPerRow);
+        const brickY = -height/2 + (row + 0.5) * (height / brickRows);
+        
+        // Ladrillos sobresalientes
+        const brick = new THREE.Mesh(
+          new THREE.BoxGeometry(0.35, 0.15, 0.3),
+          new THREE.MeshStandardMaterial({ 
+            color: segmentMat.color ? segmentMat.color.getHex() : 0x9a8a7a,
+            roughness: 0.9
+          })
+        );
+        
+        brick.position.set(brickX, brickY, depth/2 + 0.15);
+        brick.castShadow = true;
+        wallSegment.add(brick);
+      }
+    }
+    
+    // ── 4. VIGAS METÁLICAS DE REFUERZO ──
+    if (i % 2 === 0 && !(i >= 8 && i <= 10)) {
+      // Viga vertical
+      const beam = new THREE.Mesh(
+        new THREE.BoxGeometry(0.25, height * 0.9, 0.3),
+        metalMat
+      );
+      beam.position.set(0, 0, depth/2 + 0.2);
+      beam.castShadow = true;
+      wallSegment.add(beam);
+      
+      // Viga horizontal superior
+      const topBeam = new THREE.Mesh(
+        new THREE.BoxGeometry(width * 0.8, 0.2, 0.3),
+        metalMat
+      );
+      topBeam.position.set(0, height/2 - 0.3, depth/2 + 0.2);
+      wallSegment.add(topBeam);
+    }
+    
+    // ── 5. ZONA DEL IMPACTO (más dramática) ──
+    if (i >= 8 && i <= 10) {
+      // Agujero principal
+      const holeGroup = new THREE.Group();
+      
+      // Anillo del agujero
       const holeRing = new THREE.Mesh(
-        new THREE.TorusGeometry(0.8, 0.15, 8, 12, Math.PI * 1.5),
-        new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0x331100 })
+        new THREE.TorusGeometry(1.2, 0.2, 10, 16, Math.PI * 1.8),
+        new THREE.MeshStandardMaterial({ 
+          color: 0x332211, 
+          emissive: 0x441100,
+          roughness: 1.0
+        })
       );
       holeRing.rotation.x = Math.PI / 2;
       holeRing.rotation.z = Math.PI / 2;
-      holeRing.scale.set(1.3, 0.7, 0.5);
-      holeRing.position.set(0, height * 0.2, depth/2 + 0.1);
+      holeRing.scale.set(1.4, 0.8, 0.6);
+      holeRing.position.set(0, height * 0.3, depth/2 + 0.2);
       wallSegment.add(holeRing);
       
-      // Humo (solo unos pocos, y dentro del segmento)
-      for (let s = 0; s < 3; s++) {
+      // Ladrillos rotos dentro del agujero
+      for (let r = 0; r < 6; r++) {
+        const brokenBrick = new THREE.Mesh(
+          new THREE.BoxGeometry(0.4, 0.15, 0.2),
+          burntBrickMat
+        );
+        brokenBrick.position.set(
+          (Math.random() - 0.5) * 1.5,
+          height * 0.3 + (Math.random() - 0.5) * 1.2,
+          depth/2 + 0.5
+        );
+        brokenBrick.rotation.set(
+          Math.random() * 0.5,
+          Math.random() * 0.5,
+          Math.random() * 0.5
+        );
+        wallSegment.add(brokenBrick);
+      }
+      
+      // Humo/partículas (pero dentro de la pared, no flotando)
+      const smokeMat = new THREE.MeshStandardMaterial({
+        color: 0x555555,
+        emissive: 0x222222,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.DoubleSide
+      });
+      
+      for (let s = 0; s < 4; s++) {
         const smoke = new THREE.Mesh(
-          new THREE.CircleGeometry(0.3 + Math.random()*0.3, 5),
-          new THREE.MeshStandardMaterial({ 
-            color: 0x444444, 
-            transparent: true, 
-            opacity: 0.3,
-            side: THREE.DoubleSide
-          })
+          new THREE.CircleGeometry(0.4 + Math.random()*0.4, 5),
+          smokeMat
         );
         smoke.position.set(
-          (Math.random() - 0.5) * 1.2,
-          height * 0.2 + (Math.random() - 0.5) * 1.0,
-          depth/2 + 0.3
+          (Math.random() - 0.5) * 1.8,
+          height * 0.3 + 0.5 + Math.random() * 1.2,
+          depth/2 + 0.4
         );
+        smoke.rotation.y = Math.random() * Math.PI;
         wallSegment.add(smoke);
       }
     }
   }
 
-  // ── ESCOMBROS EN EL SUELO (SOLO DETRÁS DE LA PARED) ──
-  for (let d = 0; d < 40; d++) {
-    // Posición SOLO en el área detrás de la pared
+  // ── 6. ESCOMBROS EN EL SUELO (CON COLISIÓN) ──
+  for (let d = 0; d < 60; d++) {
     const angle = startAngle + Math.random() * (endAngle - startAngle);
-    // Radio más pequeño para que estén cerca de la pared, no en el centro
-    const dist = radius - 3 + Math.random() * 2.5;
+    const dist = radius - 2.5 + Math.random() * 4;
     const x = centerX + Math.cos(angle) * dist;
     const z = centerZ + Math.sin(angle) * dist;
     
-    // Verificar que NO esté cerca del centro (donde está Hulkbuster)
+    // Lejos del centro (donde está Hulkbuster)
     const distanceFromCenter = Math.sqrt(x*x + z*z);
-    if (distanceFromCenter < 8) continue; // Saltar si está cerca del centro
+    if (distanceFromCenter < 8) continue;
     
+    // Escombro (ladrillo roto)
     const debris = new THREE.Mesh(
       new THREE.BoxGeometry(
-        0.2 + Math.random() * 0.6,
-        0.1 + Math.random() * 0.2,
-        0.2 + Math.random() * 0.5
+        0.25 + Math.random() * 0.7,
+        0.1 + Math.random() * 0.25,
+        0.25 + Math.random() * 0.6
       ),
       debrisMat.clone()
     );
     
-    debris.position.set(x, 0.1 + Math.random() * 0.2, z);
+    debris.position.set(x, 0.1 + Math.random() * 0.3, z);
     debris.rotation.set(
       Math.random() * Math.PI,
       Math.random() * Math.PI,
       Math.random() * Math.PI
     );
     debris.castShadow = true;
+    debris.receiveShadow = true;
+    
+    // Añadir colisión para escombros grandes
+    if (d % 3 === 0) {
+      if (!window._islandColliders) window._islandColliders = [];
+      window._islandColliders.push({
+        x: x,
+        z: z,
+        r: 0.6
+      });
+    }
     
     g.add(debris);
   }
 
-  // ── POLVO (SOLO CERCA DE LA PARED) ──
+  
+  // ── 8. POLVO AMBIENTAL (solo decorativo, sin colisión) ──
   const dustGeo = new THREE.BufferGeometry();
-  const dustCount = 30;
+  const dustCount = 40;
   const dustPositions = new Float32Array(dustCount * 3);
   
   for (let i = 0; i < dustCount; i++) {
     const angle = startAngle + Math.random() * (endAngle - startAngle);
-    const dist = radius - 2 + Math.random() * 3;
+    const dist = radius - 1.5 + Math.random() * 4;
     const x = centerX + Math.cos(angle) * dist;
     const z = centerZ + Math.sin(angle) * dist;
     
-    // Verificar que esté lejos del centro
     if (Math.sqrt(x*x + z*z) < 7) continue;
     
     dustPositions[i*3] = x;
-    dustPositions[i*3+1] = 1.0 + Math.random() * 2.5;
+    dustPositions[i*3+1] = 2.0 + Math.random() * 4.0; // Polvo más alto
     dustPositions[i*3+2] = z;
   }
   
   dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
   
   const dustMat = new THREE.PointsMaterial({
-    color: 0xaaaaaa,
-    size: 0.12,
+    color: 0xbbbbbb,
+    size: 0.15,
     transparent: true,
-    opacity: 0.3
+    opacity: 0.25,
+    blending: THREE.AdditiveBlending
   });
   
   const dustParticles = new THREE.Points(dustGeo, dustMat);
   g.add(dustParticles);
 
-  console.log(`%c🧱 Pared detrás de Hulkbuster (dir: ${hulkDirection.toFixed(2)} rad)`, 'color:#ffaa00');
+  // ── COLISIÓN REAL PARA LA PARED (VERSIÓN MEJORADA) ──
+// Asegurar que el array de colliders existe
+// ── COLLIDERS SUPER DENSOS (opcional) ──
+// Esto crea una "muralla" continua de colisiones
+// ── COLLIDERS PARA LA PARED (versión simplificada) ──
+// Guardar el número actual de colliders
+const currentColliderCount = window._islandColliders ? window._islandColliders.length : 0;
+
+// // Crear colliders a lo largo de la pared
+// for (let i = 0; i < points.length - 1; i++) {
+//     const p1 = points[i];
+//     const p2 = points[i + 1];
+    
+//     // Crear colliders cada 1.2 metros
+//     const segmentLength = Math.sqrt((p2.x-p1.x)**2 + (p2.z-p1.z)**2);
+//     const numColliders = Math.max(2, Math.floor(segmentLength / 1.2));
+    
+//     for (let j = 0; j < numColliders; j++) {
+//         const t = (j + 0.5) / numColliders;
+//         const x = p1.x + (p2.x - p1.x) * t;
+//         const z = p1.z + (p2.z - p1.z) * t;
+        
+//         const distFromCenter = Math.sqrt(x*x + z*z);
+//         if (distFromCenter > 12 && distFromCenter < 17) {
+//             // IMPORTANTE: Solo x, z, r - sin isMesh
+//             window._islandColliders.push({
+//                 x: x,
+//                 z: z,
+//                 r: 1.2,  // Radio más grande para mejor detección
+//                 isWall: true  // Opcional, para el rebote
+//             });
+//         }
+//     }
+// }
+
+
+  console.log(`%c🧱 PARED ÉPICA CON FÍSICA - Altura: 6.5-9m, Dirección: ${hulkDirection.toFixed(2)} rad`, 'color:#ffaa00;font-weight:bold');
 }
 
   /* ── CÁMARA FOTOGRÁFICA — ¡CORREGIDA! Ahora mira al centro ── */
@@ -468,7 +631,7 @@ _buildAvengersWall() {
     );
 
     // ── Logo Avengers Endgame — más atrás ─────────────────────
-    loadNormalized(base + 'avengers_logo_de_end_game.glb', 3.5, [0, -5, -9], null,
+    loadNormalized(base + 'avengers_logo_de_end_game.glb', 3.5, [0, -6, -14], null,
       model => { this._avengersLogo = model; }
     );
 

@@ -58,30 +58,30 @@ class IslandMirador extends IslandBase {
     this._rimLight.position.y = 0.5;
     g.add(this._rimLight);
 
-    // Camino de acceso
-    const path = new THREE.Mesh(
-      new THREE.PlaneGeometry(3.5, 18),
-      new THREE.MeshStandardMaterial({ color: 0x06102e, roughness: 0.9 })
-    );
-    path.rotation.x = -Math.PI / 2;
-    path.position.set(0, 0.02, 15);
-    path.receiveShadow = true;
-    g.add(path);
+    // // Camino de acceso
+    // const path = new THREE.Mesh(
+    //   new THREE.PlaneGeometry(3.5, 18),
+    //   new THREE.MeshStandardMaterial({ color: 0x06102e, roughness: 0.9 })
+    // );
+    // path.rotation.x = -Math.PI / 2;
+    // path.position.set(0, 0.02, 15);
+    // path.receiveShadow = true;
+    // g.add(path);
 
-    // Lucecitas en el camino
-    [-1.5, 1.5].forEach(x => {
-      for(let zi = 0; zi < 4; zi++) {
-        const glow = new THREE.Mesh(
-          new THREE.SphereGeometry(0.11, 6, 4),
-          new THREE.MeshStandardMaterial({ color: c.color, emissive: c.color, emissiveIntensity: 2.2 })
-        );
-        glow.position.set(x, 0.55, 7 + zi * 3.2);
-        g.add(glow);
-        const gl = new THREE.PointLight(c.color, 0.55, 4);
-        gl.position.set(x, 0.75, 7 + zi * 3.2);
-        g.add(gl);
-      }
-    });
+    // // Lucecitas en el camino
+    // [-1.5, 1.5].forEach(x => {
+    //   for(let zi = 0; zi < 4; zi++) {
+    //     const glow = new THREE.Mesh(
+    //       new THREE.SphereGeometry(0.11, 6, 4),
+    //       new THREE.MeshStandardMaterial({ color: c.color, emissive: c.color, emissiveIntensity: 2.2 })
+    //     );
+    //     glow.position.set(x, 0.55, 7 + zi * 3.2);
+    //     g.add(glow);
+    //     const gl = new THREE.PointLight(c.color, 0.55, 4);
+    //     gl.position.set(x, 0.75, 7 + zi * 3.2);
+    //     g.add(gl);
+    //   }
+    // });
 
     // ── Fix altura del carro: disco invisible en coords mundiales ──
     // El Vehicle._getGroundY hace raycast — este disco lo recibe
@@ -289,14 +289,14 @@ class IslandMirador extends IslandBase {
     const g = this.group;
     const cv = document.createElement('canvas');
     cv.width=640; cv.height=72;
-    const ctx = cv.getContext('2d');
-    ctx.fillStyle='rgba(3,7,30,0.88)';
-    ctx.beginPath(); ctx.roundRect(4,4,632,64,14); ctx.fill();
-    ctx.strokeStyle='rgba(100,160,255,0.45)'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.roundRect(4,4,632,64,14); ctx.stroke();
-    ctx.fillStyle='#c8dcff'; ctx.font='italic 26px serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('✨ Te quiero 1000 vidas conmigo ✨', 320, 36);
+    // const ctx = cv.getContext('2d');
+    // ctx.fillStyle='rgba(3,7,30,0.88)';
+    // ctx.beginPath(); ctx.roundRect(4,4,632,64,14); ctx.fill();
+    // ctx.strokeStyle='rgba(100,160,255,0.45)'; ctx.lineWidth=1.5;
+    // ctx.beginPath(); ctx.roundRect(4,4,632,64,14); ctx.stroke();
+    // ctx.fillStyle='#c8dcff'; ctx.font='italic 26px serif';
+    // ctx.textAlign='center'; ctx.textBaseline='middle';
+    // // ctx.fillText('✨ Te quiero 1000 vidas conmigo ✨', 320, 36);
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({
       map: new THREE.CanvasTexture(cv), transparent: true, depthTest: false }));
     sp.scale.set(7, 0.9, 1); sp.position.set(0, 6.8, 0); g.add(sp);
