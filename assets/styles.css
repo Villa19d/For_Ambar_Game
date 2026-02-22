@@ -238,18 +238,30 @@ kbd {
 }
 
 #proximity-hint {
-  background:rgba(232,113,74,.15);
-  backdrop-filter:blur(12px);
-  border:1px solid rgba(232,113,74,.35);
-  border-radius:999px;
-  padding:.5rem 1.2rem;
-  color:var(--c-cream);
-  font-family:var(--font-mono);
-  font-size:.76rem;
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-  pointer-events:none;
+  position: fixed;
+  bottom: 6.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: rgba(10, 6, 2, 0.72);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(232, 113, 74, 0.45);
+  border-radius: 999px;
+  padding: .55rem 1.5rem .55rem 1.1rem;
+  color: var(--c-cream);
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: hint-pop .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+@keyframes hint-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px) scale(.92); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)   scale(1); }
 }
 
 .ping-dot {
@@ -757,23 +769,27 @@ kbd {
 }
 
 
-/* ── Flip hint ─────────────────────────────────────────────── */
+/* ── Flip hint — pequeño, esquina inferior derecha ─────────── */
 #flip-hint {
   position: fixed;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(120%);
-  background: rgba(255,50,0,0.85);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  padding: .6rem 1.4rem;
-  border-radius: 999px;
-  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  bottom: 1.2rem;
+  right: 1.4rem;
+  background: rgba(20,8,2,0.72);
+  color: rgba(255,220,180,0.75);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  padding: .3rem .75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255,100,0,0.3);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .3s, transform .3s;
   pointer-events: none;
   white-space: nowrap;
   z-index: 90;
 }
 #flip-hint.visible {
-  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
