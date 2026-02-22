@@ -359,18 +359,19 @@ class IslandMirador extends IslandBase {
       m.position.set(6, 5.5, -5); g.add(m); this._luna = m;
     });
 
-    // ─ Galaxia (galaxy.glb) — en el cielo, lejos y arriba ───
+    // ─ Galaxia (galaxy.glb) — vertical, de frente al observatorio ─
     loader.load('models/Galaxy/galaxy.glb', gltf => {
       const gal = gltf.scene;
-      // Normalizar escala
       const box = new THREE.Box3().setFromObject(gal);
       const size = new THREE.Vector3(); box.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z);
-      const targetSize = 6; // tamaño deseado
+      const targetSize = 10; // más grande
       gal.scale.setScalar(targetSize / maxDim);
-      gal.position.set(-12, 10, -10); // lejos, arriba, lado izq
-      gal.rotation.x = 0.3;
-      gal.traverse(c => { if(c.isMesh) { c.castShadow = false; } });
+      // Posición: cielo izquierdo, detrás de las constelaciones
+      gal.position.set(-14, 11, -9);
+      // Rotación: vertical y de frente (mirando hacia +Z, hacia el observatorio)
+      gal.rotation.set(0, Math.PI * 0.15, 0); // casi de frente
+      gal.traverse(c => { if(c.isMesh) c.castShadow = false; });
       g.add(gal); this._galaxy = gal;
       if(gltf.animations?.length) {
         this._galaxyMixer = new THREE.AnimationMixer(gal);
@@ -378,21 +379,26 @@ class IslandMirador extends IslandBase {
       }
       console.log('%c🌌 Galaxia cargada', 'color:#aa88ff');
     }, undefined, () => {
-      const m = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.9, 8, 36),
+      // Fallback: espiral vertical
+      const m = new THREE.Mesh(new THREE.TorusGeometry(3.5, 1.0, 8, 36),
         new THREE.MeshStandardMaterial({ color:0x7755cc, emissive:0x330077, emissiveIntensity:0.8, roughness:0.3, transparent:true, opacity:0.75 }));
-      m.position.set(-12, 10, -10); m.rotation.x = 0.3; g.add(m); this._galaxy = m;
+      // Torus por defecto ya es vertical (en plano XY), así que no necesita rotación extra
+      m.position.set(-14, 11, -9);
+      g.add(m); this._galaxy = m;
     });
 
-    // ─ Partículas de galaxia — más lejos y alta, del lado derecho ─
+    // ─ Partículas de galaxia — grande, vertical, lado derecho ──
     loader.load('models/Otra galaxia pero si esta grande aguas/Particulas de galaxia.glb', gltf => {
       const part = gltf.scene;
       const box = new THREE.Box3().setFromObject(part);
       const size = new THREE.Vector3(); box.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z);
-      const targetSize = 8;
+      const targetSize = 14; // grande y llamativa
       part.scale.setScalar(targetSize / maxDim);
-      part.position.set(14, 13, -12); // lejos derecha, bien arriba
-      part.rotation.y = -0.5;
+      // Posición: cielo derecho, bien alejada del observatorio
+      part.position.set(16, 13, -11);
+      // Rotar para que quede vertical y de frente (plano YZ mirando hacia -Z/observatorio)
+      part.rotation.set(Math.PI * 0.5, 0, 0); // levantarla de horizontal a vertical
       g.add(part); this._particles = part;
       if(gltf.animations?.length) {
         this._particlesMixer = new THREE.AnimationMixer(part);
@@ -400,18 +406,18 @@ class IslandMirador extends IslandBase {
       }
       console.log('%c✨ Partículas galaxia cargadas', 'color:#88ccff');
     }, undefined, () => {
-      // Fallback: nube de puntitos
-      const count = 300;
+      const count = 400;
       const pos = new Float32Array(count * 3);
       for(let i = 0; i < count; i++) {
-        pos[i*3]   = (Math.random()-0.5)*8;
-        pos[i*3+1] = (Math.random()-0.5)*5;
-        pos[i*3+2] = (Math.random()-0.5)*8;
+        const a = Math.random()*Math.PI*2, r = Math.random()*5;
+        pos[i*3]   = Math.cos(a)*r;
+        pos[i*3+1] = (Math.random()-0.5)*6; // extendido en Y (vertical)
+        pos[i*3+2] = Math.sin(a)*r * 0.3;   // aplanado en Z (disco visto de frente)
       }
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color:0x88aaff, size:0.12, transparent:true, opacity:0.7 }));
-      pts.position.set(14, 13, -12);
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color:0x88aaff, size:0.15, transparent:true, opacity:0.7, depthWrite:false }));
+      pts.position.set(16, 13, -11);
       g.add(pts); this._particles = pts;
     });
 
