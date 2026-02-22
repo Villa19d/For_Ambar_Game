@@ -113,34 +113,8 @@
     <div class="modal-panel jukebox-panel">
       <button class="modal-close" data-modal="jukebox">✕</button>
       <div class="modal-num">🎵</div>
-      <div class="modal-icon">🎸</div>
       <h2 class="modal-title">La Rocola</h2>
-      <p class="modal-sub">Cambia de canción con las flechas del teclado o los botones.</p>
-
-      <!-- Visualizador de canción actual -->
-      <div class="jukebox-display">
-        <div class="jukebox-bars">
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-        </div>
-        <p id="jukebox-song-name" class="jukebox-song">Canción #1 — Artista</p>
-      </div>
-
-      <!-- Controles -->
-      <div class="jukebox-controls">
-        <button class="jukebox-btn" id="jukebox-prev">◀ Anterior</button>
-        <button class="jukebox-btn jukebox-btn--main" id="jukebox-next">Siguiente ▶</button>
-      </div>
-
-      <!-- Indicadores de canción -->
-      <div class="jukebox-dots">
-        <span class="jukebox-dot active"></span>
-        <span class="jukebox-dot"></span>
-        <span class="jukebox-dot"></span>
-        <span class="jukebox-dot"></span>
-      </div>
-
-      <p class="jukebox-hint">← → cambia canción · ESC cierra</p>
+      <!-- El resto de la UI la construye Jukebox.js dinámicamente -->
     </div>
   </div>
 
@@ -155,7 +129,8 @@
     </div>
   </div>
 
-
+  <!-- Flip hint — fuera del HUD para no solaparse
+  <div id="flip-hint">A / D para levantarte</div> -->
 
   <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -164,10 +139,6 @@
   <!-- ══ CONFIGURACIÓN ══════════════════════════════════════════ -->
   <script src="assets/js/Config.js"></script>
 
-  <!-- ══ JUEGO ════════════════════════════════════════════════ -->
-  <script src="assets/js/Game/Audio.js"></script>
-  <script src="assets/js/Game/Jukebox.js"></script>  <!-- NUEVO -->
-
   <!-- ══ FÍSICA ════════════════════════════════════════════════ -->
   <script src="assets/js/Physics/Vehicle.js"></script>
 
@@ -175,7 +146,6 @@
   <script src="assets/js/World/Ground.js"></script>
   <script src="assets/js/World/Track.js"></script>
   <script src="assets/js/World/Foliage.js"></script>
-
 
   <!-- Islas — clase base antes que las subclases -->
   <script src="assets/js/World/Islands/IslandBase.js"></script>
@@ -191,11 +161,11 @@
   <!-- ══ ENTRADA / CÁMARA / AUDIO ═══════════════════════════════ -->
   <script src="assets/js/Game/Input.js"></script>
   <script src="assets/js/Game/Camera.js"></script>
+  <script src="assets/js/Game/Jukebox.js"></script>
+  <script src="assets/js/Game/Audio.js"></script>
   <script src="assets/js/Game/ModalManager.js"></script>
 
   <!-- ══ MAIN — entrada del juego ═══════════════════════════════ -->
   <script src="assets/js/Main.js"></script>
-
-  
 </body>
 </html>
