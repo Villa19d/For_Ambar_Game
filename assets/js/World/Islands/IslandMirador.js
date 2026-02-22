@@ -359,33 +359,57 @@ class IslandMirador extends IslandBase {
       m.position.set(6, 5.5, -5); g.add(m); this._luna = m;
     });
 
-    // ─ Galaxia (galaxy.glb) — vertical, de frente al observatorio ─
-    loader.load('models/Galaxy/galaxy.glb', gltf => {
-      const gal = gltf.scene;
-      const box = new THREE.Box3().setFromObject(gal);
-      const size = new THREE.Vector3(); box.getSize(size);
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const targetSize = 10; // más grande
-      gal.scale.setScalar(targetSize / maxDim);
-      // Posición: cielo izquierdo, detrás de las constelaciones
-      gal.position.set(-14, 11, -9);
-      // Rotación: vertical y de frente (mirando hacia +Z, hacia el observatorio)
-      gal.rotation.set(0, Math.PI * 0.15, 0); // casi de frente
-      gal.traverse(c => { if(c.isMesh) c.castShadow = false; });
-      g.add(gal); this._galaxy = gal;
-      if(gltf.animations?.length) {
-        this._galaxyMixer = new THREE.AnimationMixer(gal);
-        this._galaxyMixer.clipAction(gltf.animations[0]).play();
-      }
-      console.log('%c🌌 Galaxia cargada', 'color:#aa88ff');
-    }, undefined, () => {
-      // Fallback: espiral vertical
-      const m = new THREE.Mesh(new THREE.TorusGeometry(3.5, 1.0, 8, 36),
-        new THREE.MeshStandardMaterial({ color:0x7755cc, emissive:0x330077, emissiveIntensity:0.8, roughness:0.3, transparent:true, opacity:0.75 }));
-      // Torus por defecto ya es vertical (en plano XY), así que no necesita rotación extra
-      m.position.set(-14, 11, -9);
-      g.add(m); this._galaxy = m;
-    });
+    // ─ Galaxia (galaxy.glb) — gigante, de frente, mirando hacia el observatorio ─
+loader.load('models/Galaxy/galaxy2.glb', gltf => {
+  const gal = gltf.scene;
+  const box = new THREE.Box3().setFromObject(gal);
+  const size = new THREE.Vector3(); box.getSize(size);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const targetSize = 100; // ¡MUCHO MÁS GRANDE! (ajusta este número)
+  gal.scale.setScalar(targetSize / maxDim);
+  
+  // Posición: más lejos para que quepa la galaxia gigante
+  gal.position.set(-1, 25, -200); // más lejos en Z para que se vea completa
+  
+  // Rotación: ¡ESTA ES LA CLAVE!
+  // Para que mire hacia el observatorio (hacia +Z), necesitas rotarla 180° en Y
+  // y ajustar según cómo esté modelada originalmente
+  // gal.rotation.set(0, Math.PI, 0); // 180 grados = mirando hacia +Z
+  
+  // Si aún así no queda bien, prueba estas combinaciones:
+  // gal.rotation.set(0, Math.PI, 0); // Opción 1: rotación completa
+  gal.rotation.set(Math.PI/2, 0, 0); // Opción 2: acostada
+  // gal.rotation.set(Math.PI/2, Math.PI, 0); // Opción 3: combinación
+  
+  gal.traverse(c => { if(c.isMesh) c.castShadow = false; });
+  g.add(gal); this._galaxy = gal;
+  
+  if(gltf.animations?.length) {
+    this._galaxyMixer = new THREE.AnimationMixer(gal);
+    this._galaxyMixer.clipAction(gltf.animations[0]).play();
+  }
+  console.log('%c🌌 Galaxia gigante cargada', 'color:#aa88ff');
+}, undefined, () => {
+  // Fallback: espiral gigante y rotada
+  const m = new THREE.Mesh(
+    new THREE.TorusGeometry(15, 3.0, 16, 64), // mucho más grande
+    new THREE.MeshStandardMaterial({ 
+      color: 0x7755cc, 
+      emissive: 0x330077, 
+      emissiveIntensity: 0.8, 
+      roughness: 0.3, 
+      transparent: true, 
+      opacity: 0.75 
+    })
+  );
+  
+  // Rotar el torus para que mire al frente
+  m.rotation.x = Math.PI / 2; // Acostar el torus (plano horizontal)
+  m.rotation.y = Math.PI; // Rotar para que mire al frente
+  
+  m.position.set(-14, 15, -100); // más lejos y más alto
+  g.add(m); this._galaxy = m;
+});
 
     // ─ Partículas de galaxia — grande, vertical, lado derecho ──
     loader.load('models/Otra galaxia pero si esta grande aguas/Particulas de galaxia.glb', gltf => {
@@ -393,7 +417,7 @@ class IslandMirador extends IslandBase {
       const box = new THREE.Box3().setFromObject(part);
       const size = new THREE.Vector3(); box.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z);
-      const targetSize = 14; // grande y llamativa
+      const targetSize = 20; // grande y llamativa
       part.scale.setScalar(targetSize / maxDim);
       // Posición: cielo derecho, bien alejada del observatorio
       part.position.set(16, 13, -11);

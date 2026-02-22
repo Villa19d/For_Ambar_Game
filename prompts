@@ -4185,3 +4185,145 @@ Jukebox.js
         }
     }
 
+
+
+
+
+
+Va ... ahora vamos a hacer las correcciones....
+
+Primero que nada, te quedo padrisimo, me gusto mucho la constelación, esa esta muy bien, esa ni la toques, igual me gustaron las particulas volando. 
+
+Primero que nada... el carrito como que le esta costando avanzar, no se que modificaciones hiciste que estan afectando a como mi carrito esta respondiendo para avanzar, asi que corrige las fisicas del carrito a la version anterior por que ya funcionaba super bien, no se que le moviste pero ya al carrito no lo toques, ese ya funciona bien. Entonces aja corrigelo. 
+
+Otra cosa  al lado del mirador, literal encima osea ocupando su mismo espacio esta un poste con una caja flotando, eso quitalo.. no lo necesitamos. ... quita ese poste que se ve muy feo ahi haciendo colision con el mirador amontonandose
+
+Otra cosa cuando le doy key E  y se abre el cuadro de dialogo Esta muy bonito y todo, pero el recuadro de constelación de Ambar, El que dice "✦ T E   A M O   Á M B A R ✦" esta perfectisimo, solo que has que centralo.. y has que las como animaciones de estrellitas que estan alrededor, justo esten alrededor o centralas, el caso es que estas cositas, esas como estrillatas volando en ese recuadro estan como salidas, literal estan en una esquina jaja no se que paso ahi.. corrigelo igual porfa. 
+
+Otra cosa ahi mismo en el recuadro que aparece cuando le doy key E hasta abajo dice "❝ Te quiero 1000 vidas conmigo ❞
+Cada estrella de ahí arriba tiene tu nombre." Esta bien pero el color que hace no hace bien contraste y es como un color amarillo clarito el fondo y un casi blanco las letras, entonces no se ve que dice, arregla el color a un mejor contraste... y otra cosa lo de "Cada estrella de ahí arriba tiene tu nombre" Eso quitalo y en su lugar ponle algo como "no olvides click derecho del mouse sin soltar y mover para ver todo el escenario" algo asi o cambialo a como tu lo dirias para darle una mejor instruccion y  no se le olvide  
+
+Otra cosa, cada que entro a la islita el carro como que se me hunde, osea no se hunde pero como la isla tiene otra altura pues el carro se queda en la misma altura y no respeta la fisica y se ve como si se hundiera, este problema igual lo tuve en la isla de la rocola y si lo pude corregir, podrias basarte en el código que hice para esa isla para arreglar este problema.
+
+Otra cosa... un detalle minimo pero si pudieras corregirlo esta bien, no lo vayas a empeorarhe, por que si es un detalle minimo y esta muy bien logrado lo que hiciste, pero buneo en la constelacion la letra E del "TE AMO AMBAR" las lineas que unen la letra estan mal unidas, ojo las lineas no los puntos blancos de la constelacion que forman las letras, esos estan perfectamente, es solo las lineas que unen los puntos para formar la letra E, esto es solo en la letra E. 
+
+Otra cosa .. la isla esta muy vacia quisiera agregarle mas cositas... Para esto te he descargado varios archivos .gbl que podriamos introducir... 
+PS C:\Users\Rodrigo\Dropbox\Escuela\Amb\models> tree /f
+Listado de rutas de carpetas para el volumen Acer
+El número de serie del volumen es 5ED4-26EE
+C:.
+│   Mesa con artefactos para galaxia.glb
+│   
+├───arbol con musgo
+│       arbol__con_musgo.glb
+│       
+├───Bancos
+│       benches-compressed.glb
+│       benches.glb
+│       
+├───Car
+│       Car.glb
+│       
+├───christmas
+│       christmasGiftReferences-compressed.glb
+│       christmasGiftReferences.glb
+│       christmasGiftVisual-compressed.glb
+│       christmasGiftVisual.glb
+│       christmasTreePhysical-compressed.glb
+│       christmasTreePhysical.glb
+│       christmasTreeVisual-compressed.glb
+│       christmasTreeVisual.glb
+│
+├───Esfera Blanca
+│       Esfera blanca.glb
+│
+├───Esfera roja
+│       esfera roja.glb
+│
+├───Farolas sin el poste
+│       lanterns-compressed.glb
+│       lanterns.glb
+│
+├───Frasco Estrellas
+│       frasco_con_estrellas.glb
+│
+├───Galaxy
+│       galaxy.glb
+│
+├───grass
+│   │   grass.glb
+│   │   grass2.glb
+│   │   grass3.glb
+│   │   license.txt
+│   │   scene.bin
+│   │   scene.gltf
+│   │
+│   └───textures
+│           material_0_diffuse.png
+│           material_0_emissive.png
+│           material_0_occlusion.png
+│           material_0_specularGlossiness.png
+│
+├───Luna
+│       luna.glb
+│
+├───oakTrees
+│       ArbolTorcido.glb
+│       oakTreesVisual.glb
+│
+├───Otra galaxia pero si esta grande aguas
+│       Particulas de galaxia.glb
+│
+├───Perro Estatua
+│       sudo.glb
+│
+└───playground
+        playgroundPhysical-compressed.glb
+        playgroundPhysical.glb
+        playgroundVisual-compressed.glb
+        playgroundVisual.glb
+
+PS C:\Users\Rodrigo\Dropbox\Escuela\Amb\models> 
+
+
+
+Bien podrias incluir algo de todo eso en la isla, o puedes no hacerlo .... la verdad te lo dejo a tu criterio de diseño y distribución. Pero si me gustaria que para que queden ahi algunos de los objetos pues hagas un poquito mas grande la isla, de tamaño. 
+Ahora que objetos puedes utilizar y fueron los que descargue especificamente para esta isla.
+
+├───Otra galaxia pero si esta grande aguas
+│       Particulas de galaxia.glb      ---> Mira este modelo de gbl por lo que vi literal son particulas que se mueve, pero la animacion si esta grande, entonces yo te sugeirria que si la pones la pongas un poco mas lejos para que no vaya a colisionar con lo de ambar o los demas objetos.. y obvio lo pongas en el cielo 
+
+
+├───Luna
+│       luna.glb   --> descargue una luna, literal es una luna esferica, la puedes poner si quieres en el cielo... o como una pelota ahi en el suelo, pero ojo si la pones como pelota la quiero con las fisicas y todo de una pelota.. como mejor te parezca.. 
+
+
+├───Galaxy
+│       galaxy.glb  Esta es una galaxia, y sip podrias ponerla en el cielo, l animacion igual se veia medio grande, no tanto como las particulas que te mencionaba pero si algo grande.. 
+
+
+├───Farolas sin el poste
+│       lanterns-compressed.glb
+│       lanterns.glb  ----> Estas estan muy bonitas son faorlas peroliteral no tienen el poste, entonces de que pues la puedes poner abajo a ras del piso y hacer una animación de que iluminan
+
+
+├───Frasco Estrellas
+│       frasco_con_estrellas.glb  ---> este esta muy lindo, literal es un frasco de estrellas, lo podrias poner sobre una mesa... y estaria padre que igual se pudiera caer y vaya que tengas fisicas de un objeto que se puede caer y mover ... pero vaya es un frasco de estrellas bonito
+
+
+├───Esfera Blanca
+│       Esfera blanca.glb  
+│
+├───Esfera roja
+│       esfera roja.glb
+
+Estas literal son esferas... me gustaria que esten por ahi alguna de las dos, la que quieras, pero si que tengan fisicas de una esfera, que a pueda mover con el carrito y todo, que ruede jaja.. 
+
+
+│   Mesa con artefactos para galaxia.glb ---> literalemnte es una mesa con artefactos de galaxia, solo un detalle, no es una mesa como tal, osea no tiene las patas de la mesa, es la pura tabla jaja puedes poner una mesa y encima esta animacion
+
+
+
+A ver te repito estos son animaciones que descargue no tienes que ponerlas todas todas ... las de la galxia con particulas y la galaxia normalita o estaria mal... pero te repito te lo dejo a tu criterio y diseño... igual si quieres diseñar mejor tu los artefactos igual esta bien .....
+Pero si no necesitas meterle todos... va?? 
+
