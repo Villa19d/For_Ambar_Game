@@ -149,26 +149,79 @@ class Vehicle {
   }
 
   /* ── Colisiones ── */
-  _updateCollisions() {
-    const CAR_R = 0.9;
-    for (const col of this.colliders) {
-      const dx = this.group.position.x - col.x;
-      const dz = this.group.position.z - col.z;
-      const d  = Math.sqrt(dx*dx + dz*dz);
-      const md = CAR_R + col.r;
-      if (d < md && d > 0.001) {
-        const nx = dx/d, nz = dz/d;
-        this.group.position.x += nx*(md-d);
-        this.group.position.z += nz*(md-d);
-        const dot = this.vel.x*nx + this.vel.z*nz;
-        if (dot < 0) {
-          this.vel.x -= dot*nx*1.3; this.vel.z -= dot*nz*1.3;
-          this.vel.multiplyScalar(0.6);
-          if (typeof gameAudio !== 'undefined') gameAudio.collision(Math.abs(dot));
+_updateCollisions() {
+  const CAR_R = 0.9;
+  
+  // Colisiones con discos de islas (código original)
+  for (const col of this.colliders) {
+    const dx = this.group.position.x - col.x;
+    const dz = this.group.position.z - col.z;
+    const d  = Math.sqrt(dx*dx + dz*dz);
+    const md = CAR_R + (col.r || 1.0);
+    if (d < md && d > 0.001) {
+      const nx = dx/d, nz = dz/d;
+      this.group.position.x += nx*(md-d);
+      this.group.position.z += nz*(md-d);
+      const dot = this.vel.x*nx + this.vel.z*nz;
+      if (dot < 0) {
+        this.vel.x -= dot*nx*1.3; 
+        this.vel.z -= dot*nz*1.3;
+        this.vel.multiplyScalar(0.6);
+        if (typeof gameAudio !== 'undefined') gameAudio.collision(Math.abs(dot));
+      }
+    }
+  }
+  
+  // ── NUEVO: Colisiones con la pared de ladrillos ──
+  if (window._wallColliders) {
+    for (const wall of window._wallColliders) {
+      // Calcular distancia al centro del segmento de pared
+      const dx = this.group.position.x - wall.x;
+      const dz = this.group.position.z - wall.z;
+      
+      // Transformar a coordenadas locales de la pared
+      const cos = Math.cos(-wall.rotation);
+      const sin = Math.sin(-wall.rotation);
+      const localX = dx * cos - dz * sin;
+      const localZ = dx * sin + dz * cos;
+      
+      // Verificar si está dentro del rectángulo de la pared
+      const halfWidth = wall.width / 2;
+      const halfDepth = wall.depth / 2;
+      
+      if (Math.abs(localX) < halfWidth + CAR_R && 
+          Math.abs(localZ) < halfDepth + CAR_R) {
+        
+        // Resolver colisión
+        const overlapX = halfWidth + CAR_R - Math.abs(localX);
+        const overlapZ = halfDepth + CAR_R - Math.abs(localZ);
+        
+        if (overlapX > 0 && overlapZ > 0) {
+          if (overlapX < overlapZ) {
+            // Colisión en X
+            const signX = localX > 0 ? 1 : -1;
+            this.group.position.x += signX * overlapX * cos;
+            this.group.position.z += signX * overlapX * sin;
+            this.vel.x *= -0.3;
+            this.vel.z *= -0.3;
+          } else {
+            // Colisión en Z
+            const signZ = localZ > 0 ? 1 : -1;
+            this.group.position.x += signZ * overlapZ * -sin;
+            this.group.position.z += signZ * overlapZ * cos;
+            this.vel.x *= -0.3;
+            this.vel.z *= -0.3;
+          }
+          
+          // Sonido de impacto
+          if (typeof gameAudio !== 'undefined') {
+            gameAudio.collision(0.8);
+          }
         }
       }
     }
   }
+}
 
   /* ── Bruno: updatePostPhysics ── */
   _updatePostPhysics(dt, t, input) {
@@ -205,23 +258,42 @@ class Vehicle {
     setTimeout(() => { this.stuck.active = false; this.stuck.savedItems = []; }, 1800);
   }
 
-  _getGroundY(x, z, carY) {
+_getGroundY(x, z, carY) {
     this._rayOrigin.set(x, carY + 2, z);
     this._raycaster.set(this._rayOrigin, this._rayDown);
 
-    // Raycast contra discos de plataformas de islas (ej: Mirador)
-    if (window._islandColliders && window._islandColliders.length) {
-      const hits = this._raycaster.intersectObjects(window._islandColliders);
-      if (hits.length > 0 && hits[0].point.y <= carY + 2) return hits[0].point.y;
+    let groundY = 0; // Valor por defecto
+
+    // 1. Raycast contra discos de plataformas de islas (solo los que son meshes)
+    if (window._islandColliders && Array.isArray(window._islandColliders)) {
+        try {
+            // IMPORTANTE: Solo usar los que SON MESHES para el raycast
+            const meshColliders = window._islandColliders.filter(c => c && c.isMesh === true);
+            if (meshColliders.length > 0) {
+                const hits = this._raycaster.intersectObjects(meshColliders);
+                if (hits.length > 0 && hits[0].point.y <= carY + 2) {
+                    groundY = hits[0].point.y;
+                }
+            }
+        } catch (e) {
+            console.warn('Error en raycast de islas:', e);
+        }
     }
 
-    // Raycast contra la pista
-    if (window._trackCollision) {
-      const hits = this._raycaster.intersectObject(window._trackCollision);
-      if (hits.length > 0 && hits[0].point.y <= carY + 0.8) return hits[0].point.y;
+    // 2. Raycast contra la pista (con protección)
+    if (window._trackCollision && window._trackCollision.isMesh) {
+        try {
+            const hits = this._raycaster.intersectObject(window._trackCollision);
+            if (hits.length > 0 && hits[0].point.y <= carY + 0.8) {
+                groundY = Math.max(groundY, hits[0].point.y);
+            }
+        } catch (e) {
+            console.warn('Error en raycast de pista:', e);
+        }
     }
-    return 0;
-  }
+    
+    return groundY;
+}
 
   _buildMesh() {
     this.group = new THREE.Group();

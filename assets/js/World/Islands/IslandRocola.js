@@ -12,68 +12,93 @@ class IslandRocola extends IslandBase {
     
     /* ── PLATAFORMA (más grande) ─────────────────────────── */
     _buildPlatform() {
-        const g = this.group;
-        const c = this.cfg;
+    const g = this.group;
+    const c = this.cfg;
+    const wx = c.x, wz = c.z;
 
-        // Suelo principal — radio 14 (más grande que las otras islas)
-        const ground = new THREE.Mesh(
-            new THREE.CylinderGeometry(14, 15, 0.5, 32),
-            new THREE.MeshStandardMaterial({ color: 0x0a0520, roughness: 0.6, metalness: 0.2 })
+    // Suelo principal — radio 14 (más grande que las otras islas)
+    const ground = new THREE.Mesh(
+        new THREE.CylinderGeometry(14, 15, 0.5, 32),
+        new THREE.MeshStandardMaterial({ color: 0x0a0520, roughness: 0.6, metalness: 0.2 })
+    );
+    ground.position.y = 0.25;
+    ground.receiveShadow = ground.castShadow = true;
+    g.add(ground);
+
+    // Segundo nivel (escenario elevado) — BIEN CENTRADO
+    const stage = new THREE.Mesh(
+        new THREE.CylinderGeometry(8, 8.2, 0.8, 24),
+        new THREE.MeshStandardMaterial({ color: 0x1a0540, roughness: 0.4, metalness: 0.3 })
+    );
+    stage.position.y = 0.8;
+    stage.receiveShadow = stage.castShadow = true;
+    g.add(stage);
+    this._stage = stage;
+
+    // Borde con luces LED
+    const rimColors = [0xff44aa, 0xaa44ff, 0x44aaff, 0xffaa44];
+    rimColors.forEach((col, i) => {
+        const arc = new THREE.Mesh(
+            new THREE.TorusGeometry(14.2, 0.15, 8, 40, Math.PI * 2 / rimColors.length),
+            new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8 })
         );
-        ground.position.y = 0.25;
-        ground.receiveShadow = ground.castShadow = true;
-        g.add(ground);
+        arc.rotation.x = Math.PI / 2;
+        arc.rotation.z = (i / rimColors.length) * Math.PI * 2;
+        arc.position.y = 0.55;
+        g.add(arc);
+    });
 
-        // Segundo nivel (escenario elevado) — BIEN CENTRADO
-        const stage = new THREE.Mesh(
-            new THREE.CylinderGeometry(8, 8.2, 0.8, 24),
-            new THREE.MeshStandardMaterial({ color: 0x1a0540, roughness: 0.4, metalness: 0.3 })
-        );
-        stage.position.y = 0.8;
-        stage.receiveShadow = stage.castShadow = true;
-        g.add(stage);
-        this._stage = stage;
+    // Camino de acceso (más ancho)
+    const path = new THREE.Mesh(
+        new THREE.PlaneGeometry(6, 20),
+        new THREE.MeshStandardMaterial({ color: 0x150830, roughness: 0.7 })
+    );
+    path.rotation.x = -Math.PI / 2;
+    path.position.set(0, 0.03, -20);
+    path.receiveShadow = true;
+    g.add(path);
 
-        // Borde con luces LED
-        const rimColors = [0xff44aa, 0xaa44ff, 0x44aaff, 0xffaa44];
-        rimColors.forEach((col, i) => {
-            const arc = new THREE.Mesh(
-                new THREE.TorusGeometry(14.2, 0.15, 8, 40, Math.PI * 2 / rimColors.length),
-                new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8 })
+    // Luces en el camino
+    [-2, 2].forEach(x => {
+        for(let zi = 0; zi < 4; zi++) {
+            const lamp = new THREE.Mesh(
+                new THREE.SphereGeometry(0.15, 8, 6),
+                new THREE.MeshStandardMaterial({ color: c.color, emissive: c.color, emissiveIntensity: 1.2 })
             );
-            arc.rotation.x = Math.PI / 2;
-            arc.rotation.z = (i / rimColors.length) * Math.PI * 2;
-            arc.position.y = 0.55;
-            g.add(arc);
-        });
+            lamp.position.set(x, 0.4, -14 -zi * 3);
+            g.add(lamp);
+        }
+    });
 
-        // Camino de acceso (más ancho)
-        const path = new THREE.Mesh(
-            new THREE.PlaneGeometry(6, 20),
-            new THREE.MeshStandardMaterial({ color: 0x150830, roughness: 0.7 })
-        );
-        path.rotation.x = -Math.PI / 2;
-        path.position.set(0, 0.03, -20);
-        path.receiveShadow = true;
-        g.add(path);
+    // Luz central de la isla
+    const mainLight = new THREE.PointLight(c.color, 2.5, 30);
+    mainLight.position.set(0, 4, 0);
+    g.add(mainLight);
+    this._mainLight = mainLight;
 
-        // Luces en el camino
-        [-2, 2].forEach(x => {
-            for(let zi = 0; zi < 4; zi++) {
-                const lamp = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.15, 8, 6),
-                    new THREE.MeshStandardMaterial({ color: c.color, emissive: c.color, emissiveIntensity: 1.2 })
-                );
-                lamp.position.set(x, 0.4, -14 -zi * 3);
-                g.add(lamp);
-            }
-        });
-
-        // Luz central de la isla
-        const mainLight = new THREE.PointLight(c.color, 2.5, 30);
-        mainLight.position.set(0, 4, 0);
-        g.add(mainLight);
-        this._mainLight = mainLight;
+    // ── COLLIDER PARA LA ISLA (¡IMPORTANTE!) ──
+    // Crear un collider invisible a la altura correcta
+    const colDisk = new THREE.Mesh(
+        new THREE.CircleGeometry(14, 32),
+        new THREE.MeshStandardMaterial({ visible: false, side: THREE.DoubleSide })
+    );
+    colDisk.rotation.x = -Math.PI / 2;
+    colDisk.position.set(wx, 0.38, wz); // Misma altura que las otras islas
+    this.scene.add(colDisk);
+    
+    // Añadir al array global de colliders
+    if(!window._islandColliders) window._islandColliders = [];
+    window._islandColliders.push(colDisk);
+    
+    // También añadir collider para el escenario elevado (opcional)
+    const stageCollider = new THREE.Mesh(
+        new THREE.CircleGeometry(8, 24),
+        new THREE.MeshStandardMaterial({ visible: false, side: THREE.DoubleSide })
+    );
+    stageCollider.rotation.x = -Math.PI / 2;
+    stageCollider.position.set(wx, 1.2, wz); // Altura del escenario
+    this.scene.add(stageCollider);
+    window._islandColliders.push(stageCollider);
     }
 
     /* ── DECORACIÓN PRINCIPAL ─────────────────────────────── */
