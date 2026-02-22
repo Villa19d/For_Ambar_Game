@@ -16,6 +16,7 @@ class Foliage {
 
   /* ─── ÁRBOLES + ROCAS ──────────────────────────────────── */
   _buildTrees() {
+    // Función  detectar si un punto está cerca de la pista
     const isOnTrack = (x, z, margin=5) => {
       if(!window._trackCurve) return false;
       for(let i=0;i<=100;i++){
@@ -24,28 +25,61 @@ class Foliage {
       }
       return false;
     };
+    // También verificar cerca de las islas (para que no pongan árboles encima)
+    const islandPositions = [
+        { x: -55, z: -40, radius: 16 },  // Cofre
+        { x: 58, z: -38, radius: 16 },   // Radio
+        { x: 5, z: -70, radius: 16 },    // Faro
+        { x: -8, z: 68, radius: 18,// Añadir el camino (alfombra) como un área rectangular
+        path: { 
+            x1: -10, x2: 10,           // Ancho del camino
+            z1: 48, z2: 68              // Desde la isla hacia afuera (Z negativo)
+        }},    // Rocola (más grande)
+    ];
+
+    const isNearIsland = (x, z) => {
+        for (const island of islandPositions) {
+                  // Detectar círculo de la isla
+            if (Math.hypot(x - island.x, z - island.z) < island.radius) {
+                return true;
+            }
+                    // Detectar camino de la Rocola (si existe)
+            if (island.path) {
+            if (x > island.path.x1 && x < island.path.x2 && 
+                z > island.path.z1 && z < island.path.z2) {
+                return true;
+            }
+        }
+        }
+        return false;
+    };
+
     const getPos = (margin=5, tries=200) => {
       for(let i=0;i<tries;i++){
         const a=Math.random()*Math.PI*2, rad=14+Math.random()*55;
         const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
-        if(!isOnTrack(x,z,margin)) return {x,z,valid:true};
-      }
-      return {x:999,z:999,valid:false};
+        
+        // Verificar que NO esté en la pista Y NO esté cerca de islas
+            if (!isOnTrack(x, z, margin) && !isNearIsland(x, z)) {
+                return { x, z, valid: true };
+            }
+        }
+        return { x: 999, z: 999, valid: false };
     };
 
     for(let i=0;i<40;i++){const p=getPos(5); if(p.valid) this._makeTree(p.x,p.z,0.8+Math.random()*0.8);}
     for(let i=0;i<16;i++){const p=getPos(5.5); if(p.valid) this._makeRock(p.x,p.z,0.7+Math.random()*0.8);}
 
-    // Árboles cerca de cada isla (para decorarlas)
-    const islandPos = [
-      {x:-55,z:-40},{x:55,z:-35},{x:5,z:-65},{x:-5,z:65},{x:70,z:55}
-    ];
-    islandPos.forEach(({x,z}) => {
-      for(let j=0;j<3;j++){
-        const a=Math.random()*Math.PI*2;
-        this._makeTree(x+Math.cos(a)*6, z+Math.sin(a)*6, 1.0+Math.random()*0.5);
-      }
-    });
+    // // Árboles cerca de cada isla (para decorarlas)
+    // const islandPos = [
+    //   {x:-55,z:-40},{x:55,z:-35},{x:5,z:-65},{x:-5,z:65},{x:70,z:55}
+    // ];
+    // islandPos.forEach(({x,z}) => {
+    //   for(let j=0;j<3;j++){
+    //     const a=Math.random()*Math.PI*2;
+    //     this._makeTree(x+Math.cos(a)*6, z+Math.sin(a)*6, 1.0+Math.random()*0.5);
+    //   }
+    // });
   }
 
   _makeTree(x, z, s=1, type=-1) {
@@ -159,6 +193,27 @@ class Foliage {
         if(c.material){c.material.side=THREE.DoubleSide;c.material.alphaTest=0.2;}
       });
       let placed=0;
+
+      // Posiciones de las islas para evitar pasto en ellas
+        const islandPositions = [
+            { x: -55, z: -40, radius: 15 },
+            { x: 58, z: -38, radius: 15 },
+            { x: 5, z: -70, radius: 15 },
+            { x: -8, z: 68, radius: 18, path: { xMin: -12, xMax: 12, zMin: 48, zMax: 68 } // Camino
+            },
+        ];
+
+        const isNearIsland = (x, z) => {
+            for (const island of islandPositions) {
+                if (Math.hypot(x - island.x, z - island.z) < island.radius) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+
+
       for(let att=0;att<1800&&placed<GRASS_CFG.COUNT;att++){
         const a=Math.random()*Math.PI*2, rad=10+Math.random()*60;
         const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
@@ -169,12 +224,13 @@ class Foliage {
             if(Math.hypot(p.x-x,p.z-z)<5){onTrack=true;break;}
           }
         }
-        if(!onTrack){
+        if(!onTrack && !isNearIsland(x, z)){
           const clone=model.clone();
           clone.position.set(x,0,z); clone.rotation.y=Math.random()*Math.PI*2;
           const sc=GRASS_CFG.MIN_SCALE+Math.random()*(GRASS_CFG.MAX_SCALE-GRASS_CFG.MIN_SCALE);
           clone.scale.setScalar(sc); this.scene.add(clone); placed++;
         }
+
       }
       console.log(`%c🌿 ${placed} mechones de pasto (GLB)`, 'color:#4a8c2a');
     };

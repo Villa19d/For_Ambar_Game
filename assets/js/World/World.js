@@ -30,6 +30,9 @@ class World {
     this.track   = new Track(scene);
     this.foliage = new Foliage(scene, this.colliders);
     this._buildIslands();
+
+    // EXPONER ISLAS PARA EL VEHÍCULO
+    window._islands = this.islands;
   }
 
   /* ─── ILUMINACIÓN ──────────────────────────────────────── */

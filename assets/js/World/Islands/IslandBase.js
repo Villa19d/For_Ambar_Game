@@ -1,3 +1,4 @@
+
 /* ═══════════════════════════════════════════════════════════
    World/Islands/IslandBase.js  —  Clase base para todas las islas
 
@@ -142,21 +143,19 @@ class IslandBase {
     // Detectar proximidad
     const d = new THREE.Vector2(carPos.x, carPos.z)
                 .distanceTo(new THREE.Vector2(this.cfg.x, this.cfg.z));
-
     const inRange = d < TRIGGER_DIST;
+
     if(inRange && !this._wasInRange && typeof gameAudio !== 'undefined')
       gameAudio.proximity();
     this._wasInRange = inRange;
 
-    // Trigger con acción
+    // Trigger con acción — usa ModalManager global
     if(inRange && input && !lastAction) {
-      if(typeof window.openModal === 'function') window.openModal(this.cfg.id);
+      if(window._modalManager) window._modalManager.openModal(this.cfg.id);
       if(!this._triggered && !this.cfg.isJukebox) {
         this._triggered = true;
-        if(this.mat && typeof gsap !== 'undefined')
-          gsap.to(this.mat, { emissiveIntensity: 3, duration: 0.25, yoyo: true, repeat: 4 });
-        if(typeof window.onIslandDiscovered === 'function')
-          window.onIslandDiscovered(this.cfg.id);
+        if(this.mat) gsap.to(this.mat, { emissiveIntensity:3, duration:0.25, yoyo:true, repeat:4 });
+        if(window._modalManager) window._modalManager._onDiscovered(this.cfg.id);
       }
     }
 

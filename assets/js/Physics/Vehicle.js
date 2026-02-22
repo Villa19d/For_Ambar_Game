@@ -132,21 +132,71 @@ class Vehicle {
   }
 
   /* ── Gravedad + Salto ── */
-  _updateVertical(dt, input) {
-    const groundY = this._getGroundY(this.group.position.x, this.group.position.z, this.group.position.y);
-    if (input.jump && this.onGround) { this.velY = CFG.jumpForce; this.onGround = false; }
+_updateVertical(dt, input) {
+    // Primero, detectar altura de la pista
+    let groundY = this._getGroundY(this.group.position.x, this.group.position.z, this.group.position.y);
+    
+    // AHORA: detectar si estamos sobre alguna ISLA
+    // Las islas tienen altura 0.25 (base) + altura del escenario
+    if (window._islands) {
+        for (const island of window._islands) {
+            const dx = this.group.position.x - island.cfg.x;
+            const dz = this.group.position.z - island.cfg.z;
+            const dist = Math.sqrt(dx*dx + dz*dz);
+            
+            // Si estamos dentro del radio de la isla
+            if (dist < 15) { // Radio aproximado de las islas
+                // Altura de la isla: base (0.25) + escenario (0.8) = ~1.05
+                // Pero la isla Rocola tiene escenario más alto
+                let islandHeight = 0.25; // altura base
+                
+                if (island.cfg.id === 'jukebox') {
+                    // Rocola: base 0.25 + escenario 0.8 = 1.05
+                    islandHeight = 1.05;
+                } else {
+                    // Otras islas: base 0.25 + marker (pero el carro no debería subir tanto)
+                    islandHeight = 0.25;
+                }
+                
+                // Si estamos cerca del centro, considerar la altura del escenario
+                if (dist < 8 && island.cfg.id === 'jukebox') {
+                    // En la plataforma elevada de la Rocola
+                    islandHeight = 1.25; // altura de la pista de baile
+                }
+                
+                // Si la altura de la isla es mayor que el groundY de la pista
+                if (islandHeight > groundY) {
+                    groundY = islandHeight;
+                }
+                break;
+            }
+        }
+    }
+
+    if (input.jump && this.onGround) {
+        this.velY = CFG.jumpForce;
+        this.onGround = false;
+    }
+    
     this.velY -= CFG.gravity * dt;
     this.group.position.y += this.velY * dt;
+    
+    // Colisión con el suelo (pista o isla)
     if (this.group.position.y <= groundY) {
-      this.group.position.y = groundY;
-      if (this.velY < -4) {
-        const impact = Math.min(Math.abs(this.velY) / CFG.jumpForce, 1);
-        this.group.scale.set(1+impact*0.1, 1-impact*0.15, 1+impact*0.1);
-        gsap.to(this.group.scale, { x:1,y:1,z:1, duration:0.28, ease:'elastic.out(1,0.5)' });
-      }
-      this.velY = 0; this.onGround = true;
-    } else { this.onGround = false; }
-  }
+        this.group.position.y = groundY;
+        
+        if (this.velY < -4) {
+            const impact = Math.min(Math.abs(this.velY) / CFG.jumpForce, 1);
+            this.group.scale.set(1 + impact*0.1, 1 - impact*0.15, 1 + impact*0.1);
+            gsap.to(this.group.scale, { x:1, y:1, z:1, duration:0.28, ease:'elastic.out(1,0.5)' });
+        }
+        
+        this.velY = 0;
+        this.onGround = true;
+    } else {
+        this.onGround = false;
+    }
+}
 
   /* ── Colisiones ── */
   _updateCollisions() {
@@ -205,15 +255,24 @@ class Vehicle {
     setTimeout(() => { this.stuck.active = false; this.stuck.savedItems = []; }, 1800);
   }
 
-  _getGroundY(x, z, carY) {
-    this._rayOrigin.set(x, carY + 2, z);
+_getGroundY(x, z, carY) {
+    this._rayOrigin.set(x, carY + 2.0, z);
     this._raycaster.set(this._rayOrigin, this._rayDown);
+    
     if (window._trackCollision) {
-      const hits = this._raycaster.intersectObject(window._trackCollision);
-      if (hits.length > 0 && hits[0].point.y <= carY + 0.8) return hits[0].point.y;
+        const hits = this._raycaster.intersectObject(window._trackCollision);
+        if (hits.length > 0) {
+            const hitY = hits[0].point.y;
+            // Aumentar el margen para que el carro no se hunda
+            if (hitY <= carY + 1.0) return hitY;
+        }
     }
+    
+    // Si no hay colisión, devolver 0 (suelo plano)
+    // PERO si estamos cerca de una isla, verificar altura de isla
+    // (esto se puede mejorar con un sistema de zonas)
     return 0;
-  }
+}
 
   _buildMesh() {
     this.group = new THREE.Group();
