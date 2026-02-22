@@ -86,13 +86,14 @@
       <p class="modal-sub">Mira hacia arriba. Las estrellas tienen algo que decirte.</p>
 
       <div class="mirador-sky">
-        <div class="mirador-stars" id="mirador-stars"></div>
+        <span class="mirador-star-row mirador-star-row--a">✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧</span>
+        <span class="mirador-star-row mirador-star-row--b">⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦</span>
         <p class="mirador-constellation">✦ T E &nbsp; A M O &nbsp; Á M B A R ✦</p>
       </div>
 
       <div class="mirador-message">
         <p class="mirador-quote">❝ Te quiero 1000 vidas conmigo ❞</p>
-        <p class="mirador-note">Cada estrella de ahí arriba tiene tu nombre.</p>
+        <p class="mirador-note">💡 Mantén clic derecho + arrastra para ver todo el escenario</p>
       </div>
     </div>
   </div>
@@ -101,38 +102,42 @@
     .modal-mirador { text-align: center; }
     .mirador-sky {
       position: relative;
-      background: radial-gradient(ellipse at center, #06102e 0%, #03071a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      background: radial-gradient(ellipse at 50% 40%, #06102e 0%, #03071a 100%);
       border-radius: 14px;
       height: 130px;
       margin: 18px 0 14px;
       overflow: hidden;
-      border: 1px solid rgba(100,160,255,0.2);
+      border: 1px solid rgba(100,160,255,0.22);
+      padding: 10px 0 0;
     }
-    .mirador-stars { position: absolute; inset: 0; }
-    .mirador-stars::before, .mirador-stars::after {
-      content: '✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧';
-      position: absolute;
-      color: rgba(180,210,255,0.6);
-      font-size: 0.7rem;
-      letter-spacing: 4px;
+    .mirador-star-row {
+      display: block;
       width: 100%;
       text-align: center;
+      color: rgba(180,210,255,0.6);
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      line-height: 1;
     }
-    .mirador-stars::before { top: 18px; animation: twinkle 2.8s ease-in-out infinite; }
-    .mirador-stars::after  { top: 52px; animation: twinkle 2.1s ease-in-out infinite reverse; opacity:0.5; }
+    .mirador-star-row--a { animation: twinkle 2.8s ease-in-out infinite; }
+    .mirador-star-row--b { animation: twinkle 2.1s ease-in-out infinite reverse; opacity: 0.5; }
     @keyframes twinkle {
       0%,100% { opacity: 0.4; } 50% { opacity: 1; }
     }
     .mirador-constellation {
-      position: absolute;
-      bottom: 18px; width: 100%;
+      width: 100%;
       text-align: center;
-      color: #aac4ff;
+      color: #cce0ff;
       font-family: 'DM Mono', monospace;
       font-size: 0.82rem;
       letter-spacing: 3px;
       animation: glow-text 3s ease-in-out infinite;
       margin: 0;
+      padding-bottom: 10px;
     }
     @keyframes glow-text {
       0%,100% { text-shadow: 0 0 6px #4488ff88; }
@@ -143,13 +148,19 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.35rem;
       font-style: italic;
-      color: #d0e4ff;
-      margin: 0 0 8px;
+      color: #ffffff;
+      text-shadow: 0 0 12px #6699ff;
+      margin: 0 0 10px;
       line-height: 1.4;
     }
     .mirador-note {
-      font-size: 0.88rem;
-      color: rgba(180,210,255,0.6);
+      font-size: 0.84rem;
+      color: #aac4ff;
+      background: rgba(30,50,120,0.4);
+      border: 1px solid rgba(100,160,255,0.2);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: inline-block;
       margin: 0;
     }
   </style>
@@ -190,12 +201,15 @@
     </div>
   </div>
 
-  <!-- Flip hint — fuera del HUD para no solaparse -->
-  <div id="flip-hint">A / D para levantarte</div>
+  <!-- Flip hint — fuera del HUD para no solaparse
+  <div id="flip-hint">A / D para levantarte</div> -->
 
   <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- GLTFLoader compatible con script clásico (no módulo) -->
+  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/DRACOLoader.js"></script>
 
   <!-- ══ CONFIGURACIÓN ══════════════════════════════════════════ -->
   <script src="assets/js/Config.js"></script>
