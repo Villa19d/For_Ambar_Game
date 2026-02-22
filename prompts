@@ -4190,140 +4190,193 @@ Jukebox.js
 
 
 
-Va ... ahora vamos a hacer las correcciones....
 
-Primero que nada, te quedo padrisimo, me gusto mucho la constelación, esa esta muy bien, esa ni la toques, igual me gustaron las particulas volando. 
 
-Primero que nada... el carrito como que le esta costando avanzar, no se que modificaciones hiciste que estan afectando a como mi carrito esta respondiendo para avanzar, asi que corrige las fisicas del carrito a la version anterior por que ya funcionaba super bien, no se que le moviste pero ya al carrito no lo toques, ese ya funciona bien. Entonces aja corrigelo. 
 
-Otra cosa  al lado del mirador, literal encima osea ocupando su mismo espacio esta un poste con una caja flotando, eso quitalo.. no lo necesitamos. ... quita ese poste que se ve muy feo ahi haciendo colision con el mirador amontonandose
+Bien no lo arreglaste la verdad pero bueno ... nos centraremos en la ultima Isla 
 
-Otra cosa cuando le doy key E  y se abre el cuadro de dialogo Esta muy bonito y todo, pero el recuadro de constelación de Ambar, El que dice "✦ T E   A M O   Á M B A R ✦" esta perfectisimo, solo que has que centralo.. y has que las como animaciones de estrellitas que estan alrededor, justo esten alrededor o centralas, el caso es que estas cositas, esas como estrillatas volando en ese recuadro estan como salidas, literal estan en una esquina jaja no se que paso ahi.. corrigelo igual porfa. 
+Olvidemos eso... ya eso luego lo corrijo...
 
-Otra cosa ahi mismo en el recuadro que aparece cuando le doy key E hasta abajo dice "❝ Te quiero 1000 vidas conmigo ❞
-Cada estrella de ahí arriba tiene tu nombre." Esta bien pero el color que hace no hace bien contraste y es como un color amarillo clarito el fondo y un casi blanco las letras, entonces no se ve que dice, arregla el color a un mejor contraste... y otra cosa lo de "Cada estrella de ahí arriba tiene tu nombre" Eso quitalo y en su lugar ponle algo como "no olvides click derecho del mouse sin soltar y mover para ver todo el escenario" algo asi o cambialo a como tu lo dirias para darle una mejor instruccion y  no se le olvide  
 
-Otra cosa, cada que entro a la islita el carro como que se me hunde, osea no se hunde pero como la isla tiene otra altura pues el carro se queda en la misma altura y no respeta la fisica y se ve como si se hundiera, este problema igual lo tuve en la isla de la rocola y si lo pude corregir, podrias basarte en el código que hice para esa isla para arreglar este problema.
 
-Otra cosa... un detalle minimo pero si pudieras corregirlo esta bien, no lo vayas a empeorarhe, por que si es un detalle minimo y esta muy bien logrado lo que hiciste, pero buneo en la constelacion la letra E del "TE AMO AMBAR" las lineas que unen la letra estan mal unidas, ojo las lineas no los puntos blancos de la constelacion que forman las letras, esos estan perfectamente, es solo las lineas que unen los puntos para formar la letra E, esto es solo en la letra E. 
-
-Otra cosa .. la isla esta muy vacia quisiera agregarle mas cositas... Para esto te he descargado varios archivos .gbl que podriamos introducir... 
-PS C:\Users\Rodrigo\Dropbox\Escuela\Amb\models> tree /f
+Vamos a centrarnos en la ultima Isla ... la ultima isla es la isla del cofre .... Esta Isla va ser con la tematica de Los Vengadores juntado con Camaras (por que esta isla se trata de momentos con ella) pero quiero unirla con la tematica de los vengadores 
+PAra esta isla te he dejado los siguientes modelos glb
+PS C:\Users\Rodrigo\Dropbox\Escuela\Amb> tree /f
 Listado de rutas de carpetas para el volumen Acer
 El número de serie del volumen es 5ED4-26EE
 C:.
-│   Mesa con artefactos para galaxia.glb
-│   
-├───arbol con musgo
-│       arbol__con_musgo.glb
-│       
-├───Bancos
-│       benches-compressed.glb
-│       benches.glb
-│       
-├───Car
-│       Car.glb
-│       
-├───christmas
-│       christmasGiftReferences-compressed.glb
-│       christmasGiftReferences.glb
-│       christmasGiftVisual-compressed.glb
-│       christmasGiftVisual.glb
-│       christmasTreePhysical-compressed.glb
-│       christmasTreePhysical.glb
-│       christmasTreeVisual-compressed.glb
-│       christmasTreeVisual.glb
+│   index.html
+│   prompts
 │
-├───Esfera Blanca
-│       Esfera blanca.glb
-│
-├───Esfera roja
-│       esfera roja.glb
-│
-├───Farolas sin el poste
-│       lanterns-compressed.glb
-│       lanterns.glb
-│
-├───Frasco Estrellas
-│       frasco_con_estrellas.glb
-│
-├───Galaxy
-│       galaxy.glb
-│
-├───grass
-│   │   grass.glb
-│   │   grass2.glb
-│   │   grass3.glb
-│   │   license.txt
-│   │   scene.bin
-│   │   scene.gltf
+├───assets
+│   │   styles.css
 │   │
-│   └───textures
-│           material_0_diffuse.png
-│           material_0_emissive.png
-│           material_0_occlusion.png
-│           material_0_specularGlossiness.png
+│   └───js
+│       │   Config.js
+│       │   DRACOLoader.js
+│       │   GLTFLoader.js
+│       │   Main.js
+│       │
+│       ├───Game
+│       │       Audio.js
+│       │       Camera.js
+│       │       Input.js
+│       │       Jukebox.js
+│       │       ModalManager.js
+│       │
+│       ├───Physics
+│       │       Vehicle.js
+│       │
+│       └───World
+│           │   Checkpoints.js
+│           │   Foliage.js
+│           │   Ground.js
+│           │   Track.js
+│           │   World.js
+│           │
+│           └───Islands
+│                   IslandBase.js
+│                   IslandCofre.js
+│                   IslandFaro.js
+│                   IslandMirador.js
+│                   IslandRocola.js
 │
-├───Luna
-│       luna.glb
+├───media
+│   └───Audio
+│       │   Chachacha.mp3
+│       │   DAISIES.mp3
+│       │   Fallin All In You.mp3
+│       │   Pegao.mp3
+│       │   Serotonina.mp3
+│       │   The World Is Ugly.mp3
+│       │
+│       ├───Album
+│       │       Chachacha.jpg
+│       │       Daises.jpg
+│       │       Fallin All In You.jpg
+│       │       Pegao.jpg
+│       │       Serotonina.jpg
+│       │       The World Is Ugly.png
+│       │
+│       └───Song Base
+│               daises chill.mp3
 │
-├───oakTrees
-│       ArbolTorcido.glb
-│       oakTreesVisual.glb
-│
-├───Otra galaxia pero si esta grande aguas
-│       Particulas de galaxia.glb
-│
-├───Perro Estatua
-│       sudo.glb
-│
-└───playground
-        playgroundPhysical-compressed.glb
-        playgroundPhysical.glb
-        playgroundVisual-compressed.glb
-        playgroundVisual.glb
+└───models
+    ├───arbol con musgo
+    │       arbol__con_musgo.glb
+    │
+    ├───Bancos
+    │       benches-compressed.glb
+    │       benches.glb
+    │
+    ├───Car
+    │       Car.glb
+    │
+    ├───christmas
+    │       christmasGiftReferences-compressed.glb
+    │       christmasGiftReferences.glb
+    │       christmasGiftVisual-compressed.glb
+    │       christmasGiftVisual.glb
+    │       christmasTreePhysical-compressed.glb
+    │       christmasTreePhysical.glb
+    │       christmasTreeVisual-compressed.glb
+    │       christmasTreeVisual.glb
+    │
+    ├───Esfera Blanca
+    │       Esfera blanca.glb
+    │
+    ├───Esfera roja
+    │       esfera roja.glb
+    │
+    ├───Farolas sin el poste
+    │       lanterns-compressed.glb
+    │       lanterns.glb
+    │
+    ├───Frasco Estrellas
+    │       frasco_con_estrellas.glb
+    │
+    ├───Galaxy
+    │       galaxy.glb
+    │       galaxy2.glb
+    │
+    ├───grass
+    │   │   grass.glb
+    │   │   grass2.glb
+    │   │   grass3.glb
+    │   │   license.txt
+    │   │   scene.bin
+    │   │   scene.gltf
+    │   │
+    │   └───textures
+    │           material_0_diffuse.png
+    │           material_0_emissive.png
+    │           material_0_occlusion.png
+    │           material_0_specularGlossiness.png
+    │
+    ├───Luna
+    │       luna.glb
+    │
+    ├───oakTrees
+    │       ArbolTorcido.glb
+    │       oakTreesVisual.glb
+    │
+    ├───Otra galaxia pero si esta grande aguas
+    │       Particulas de galaxia.glb
+    │
+    ├───Para IslaCofre Marvel
+    │       avengers_logo_de_end_game.glb
+    │       Casco de Antman.glb
+    │       Hulk Buster Armor.glb
+    │       iron_man_heart.glb
+    │       iron_man_helmet.glb
+    │       Mesa con artefactos para galaxia.glb  --> son los de guardianes de la galaxia asi que ponlos
+    │       Mjolnir de Thor.glb
+    │       Mojolnir2.glb
+    │       Shield Captain America.glb
+    │       spiderman_logo.glb
+    │
+    ├───Perro Estatua
+    │       sudo.glb
+    │
+    └───playground
+            playgroundPhysical-compressed.glb
+            playgroundPhysical.glb
+            playgroundVisual-compressed.glb
 
-PS C:\Users\Rodrigo\Dropbox\Escuela\Amb\models> 
+
+
+A ver lo que quiero en esta isla es que al centro esté este glb Hulk Buster Armor.glb por que 
+esta grande Entonces aja quiero que la isla la hagas mas grande tambien, para que puedan caber todos lo elementos .glb, aqui si necesito que pongas todos,
+Yo me imagino como si estuvieran tirados ahi en la isla, por que pues es una isla representativa de avengers, el cofre igual adaptalo a la tematica de Avengers infinity war 
+
+
+Otra cosa... en la funcionalidad... presiono key E y se abre "El Cofre
+de Recuerdos
+Cada imagen guarda un momento que me cambió para siempre."  mejor que diga "El Cofre
+de Recuerdos
+Cada Imagen Guarda Un Momento Especial Contigo"
+
+Y que a cada imagen pueda darle click y esa imagen se haga mas amplia en el centro, y que venga con una mini leyenda abajo y tenga igual una opcion de cerrar para que pueda seguir con las demas fotos... si me doy a entender 
+
+Por las fotos namas dejame un espacio para que yo cambie las urls y al rato meto una carpeta con todas las imagenes... por eso ntp... 
+
+
+Aver si por ahi podrias hacer Tu la estatua de una camara... asi como le hiciste con las bocinas y la rocola de que tu hiciste el diseño, asi quiero una camara que por ahi ande, para representar las fotos
+o no se como se te venga la creatividad de juntar esta tematica de los vengadores con camaras y fotos y momentos con ella 
 
 
 
-Bien podrias incluir algo de todo eso en la isla, o puedes no hacerlo .... la verdad te lo dejo a tu criterio de diseño y distribución. Pero si me gustaria que para que queden ahi algunos de los objetos pues hagas un poquito mas grande la isla, de tamaño. 
-Ahora que objetos puedes utilizar y fueron los que descargue especificamente para esta isla.
+Otra cosa yo descargue todos estos elementos de...https://sketchfab.com/.... pero algunos modelos no me dejaba descargarlos, pero me aparecia un iconito de código, entonces mira no se si ese código te sirva para meter esos modelos 3D que encontre... sisi usalos y ponlos, y si no pues no pasa nada y no los metas ....
 
-├───Otra galaxia pero si esta grande aguas
-│       Particulas de galaxia.glb      ---> Mira este modelo de gbl por lo que vi literal son particulas que se mueve, pero la animacion si esta grande, entonces yo te sugeirria que si la pones la pongas un poco mas lejos para que no vaya a colisionar con lo de ambar o los demas objetos.. y obvio lo pongas en el cielo 
-
-
-├───Luna
-│       luna.glb   --> descargue una luna, literal es una luna esferica, la puedes poner si quieres en el cielo... o como una pelota ahi en el suelo, pero ojo si la pones como pelota la quiero con las fisicas y todo de una pelota.. como mejor te parezca.. 
+mini deadpool
+<div class="sketchfab-embed-wrapper"> <iframe title="Art Toy DeadPool" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/e023edda904f421584823ee0b65a2423/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/art-toy-deadpool-e023edda904f421584823ee0b65a2423?utm_medium=embed&utm_campaign=share-popup&utm_content=e023edda904f421584823ee0b65a2423" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Art Toy DeadPool </a> by <a href="https://sketchfab.com/nymuh?utm_medium=embed&utm_campaign=share-popup&utm_content=e023edda904f421584823ee0b65a2423" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> nymuh </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=e023edda904f421584823ee0b65a2423" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
 
 
-├───Galaxy
-│       galaxy.glb  Esta es una galaxia, y sip podrias ponerla en el cielo, l animacion igual se veia medio grande, no tanto como las particulas que te mencionaba pero si algo grande.. 
+reactor ark de iron man 
+<div class="sketchfab-embed-wrapper"> <iframe title="Arc Reactor Mk 1 ( Iron man )" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/4164df7d99c3480eba7bf7c05261e764/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/arc-reactor-mk-1-iron-man-4164df7d99c3480eba7bf7c05261e764?utm_medium=embed&utm_campaign=share-popup&utm_content=4164df7d99c3480eba7bf7c05261e764" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Arc Reactor Mk 1 ( Iron man ) </a> by <a href="https://sketchfab.com/igi44?utm_medium=embed&utm_campaign=share-popup&utm_content=4164df7d99c3480eba7bf7c05261e764" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Lt-47 </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=4164df7d99c3480eba7bf7c05261e764" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
 
+Arma de thanos
+<div class="sketchfab-embed-wrapper"> <iframe title="Thanos Infinity Sword [Avengers Endgame] Movie V" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/4bf027f5b458449cbfdd7fb3b97bb133/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/thanos-infinity-sword-avengers-endgame-movie-v-4bf027f5b458449cbfdd7fb3b97bb133?utm_medium=embed&utm_campaign=share-popup&utm_content=4bf027f5b458449cbfdd7fb3b97bb133" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Thanos Infinity Sword [Avengers Endgame] Movie V </a> by <a href="https://sketchfab.com/dark-minaz?utm_medium=embed&utm_campaign=share-popup&utm_content=4bf027f5b458449cbfdd7fb3b97bb133" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> dark-minaz </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=4bf027f5b458449cbfdd7fb3b97bb133" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
 
-├───Farolas sin el poste
-│       lanterns-compressed.glb
-│       lanterns.glb  ----> Estas estan muy bonitas son faorlas peroliteral no tienen el poste, entonces de que pues la puedes poner abajo a ras del piso y hacer una animación de que iluminan
-
-
-├───Frasco Estrellas
-│       frasco_con_estrellas.glb  ---> este esta muy lindo, literal es un frasco de estrellas, lo podrias poner sobre una mesa... y estaria padre que igual se pudiera caer y vaya que tengas fisicas de un objeto que se puede caer y mover ... pero vaya es un frasco de estrellas bonito
-
-
-├───Esfera Blanca
-│       Esfera blanca.glb  
-│
-├───Esfera roja
-│       esfera roja.glb
-
-Estas literal son esferas... me gustaria que esten por ahi alguna de las dos, la que quieras, pero si que tengan fisicas de una esfera, que a pueda mover con el carrito y todo, que ruede jaja.. 
-
-
-│   Mesa con artefactos para galaxia.glb ---> literalemnte es una mesa con artefactos de galaxia, solo un detalle, no es una mesa como tal, osea no tiene las patas de la mesa, es la pura tabla jaja puedes poner una mesa y encima esta animacion
-
-
-
-A ver te repito estos son animaciones que descargue no tienes que ponerlas todas todas ... las de la galxia con particulas y la galaxia normalita o estaria mal... pero te repito te lo dejo a tu criterio y diseño... igual si quieres diseñar mejor tu los artefactos igual esta bien .....
-Pero si no necesitas meterle todos... va?? 
-
+Arañita de blck widow 
+<div class="sketchfab-embed-wrapper"> <iframe title="Black Widow" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/b985c8275c8e4d7b8a8940e416932fb0/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/black-widow-b985c8275c8e4d7b8a8940e416932fb0?utm_medium=embed&utm_campaign=share-popup&utm_content=b985c8275c8e4d7b8a8940e416932fb0" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Black Widow </a> by <a href="https://sketchfab.com/YanaMelnyk?utm_medium=embed&utm_campaign=share-popup&utm_content=b985c8275c8e4d7b8a8940e416932fb0" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Yana Melnyk </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=b985c8275c8e4d7b8a8940e416932fb0" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>

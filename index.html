@@ -59,21 +59,59 @@
 
   <!-- ══ MODAL 1 — El Cofre ════════════════════════════════════ -->
   <div class="modal-backdrop" id="modal-1" aria-hidden="true">
-    <div class="modal-panel">
+    <div class="modal-panel modal-cofre">
       <button class="modal-close" data-modal="modal-1">✕</button>
       <div class="modal-num">01</div>
       <div class="modal-icon floating">🗝️</div>
       <h2 class="modal-title">El Cofre<br>de Recuerdos</h2>
-      <p class="modal-sub">Cada imagen guarda un momento que me cambió para siempre.</p>
+      <p class="modal-sub">Cada Imagen Guarda Un Momento Especial Contigo</p>
       <div class="photo-grid">
-        <!-- Cambia .photo-inner por <img src="tu-foto.jpg"> cuando tengas fotos -->
-        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 1</span></div>
-        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 2</span></div>
-        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 3</span></div>
-        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 4</span></div>
-        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 5</span></div>
-        <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 6</span></div>
+        <!-- Para agregar tus fotos: cambia "media/Fotos/foto1.jpg" por la ruta real -->
+        <!-- y edita la leyenda en data-caption="..." -->
+        <div class="photo-item" data-caption="Leyenda 1">
+          <div class="photo-inner" data-src="media/Fotos/foto1.jpg" data-caption="Leyenda 1">
+            <img src="media/Fotos/foto1.jpg" alt="Momento 1" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 1</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 2">
+          <div class="photo-inner" data-src="media/Fotos/foto2.jpg" data-caption="Leyenda 2">
+            <img src="media/Fotos/foto2.jpg" alt="Momento 2" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 2</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 3">
+          <div class="photo-inner" data-src="media/Fotos/foto3.jpg" data-caption="Leyenda 3">
+            <img src="media/Fotos/foto3.jpg" alt="Momento 3" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 3</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 4">
+          <div class="photo-inner" data-src="media/Fotos/foto4.jpg" data-caption="Leyenda 4">
+            <img src="media/Fotos/foto4.jpg" alt="Momento 4" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 4</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 5">
+          <div class="photo-inner" data-src="media/Fotos/foto5.jpg" data-caption="Leyenda 5">
+            <img src="media/Fotos/foto5.jpg" alt="Momento 5" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 5</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 6">
+          <div class="photo-inner" data-src="media/Fotos/foto6.jpg" data-caption="Leyenda 6">
+            <img src="media/Fotos/foto6.jpg" alt="Momento 6" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 6</span>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ══ LIGHTBOX ══════════════════════════════════════════════ -->
+  <div id="lightbox" class="hidden" aria-modal="true" role="dialog">
+    <div id="lightbox-backdrop"></div>
+    <div id="lightbox-panel">
+      <button id="lightbox-close">✕</button>
+      <div id="lightbox-img-wrap">
+        <img id="lightbox-img" src="" alt="">
+        <div id="lightbox-placeholder">📸</div>
+      </div>
+      <p id="lightbox-caption"></p>
     </div>
   </div>
 
@@ -243,5 +281,50 @@
 
   <!-- ══ MAIN — entrada del juego ═══════════════════════════════ -->
   <script src="assets/js/Main.js"></script>
+
+  <!-- ══ LIGHTBOX ════════════════════════════════════════════════ -->
+  <script>
+  (function() {
+    const lb       = document.getElementById('lightbox');
+    const lbImg    = document.getElementById('lightbox-img');
+    const lbPh     = document.getElementById('lightbox-placeholder');
+    const lbCap    = document.getElementById('lightbox-caption');
+    const lbClose  = document.getElementById('lightbox-close');
+    const lbBg     = document.getElementById('lightbox-backdrop');
+
+    function openLightbox(src, caption) {
+      if(src && src !== '') {
+        lbImg.src = src;
+        lbImg.style.display = 'block';
+        lbPh.style.display  = 'none';
+      } else {
+        lbImg.style.display = 'none';
+        lbPh.style.display  = 'block';
+      }
+      lbCap.textContent = caption || '';
+      lb.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lb.classList.add('hidden');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // Clicks en las fotos del grid
+    document.addEventListener('click', function(e) {
+      const inner = e.target.closest('.photo-inner');
+      if(!inner) return;
+      const src     = inner.dataset.src || '';
+      const caption = inner.dataset.caption || '';
+      openLightbox(src, caption);
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbBg.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+  })();
+  </script>
 </body>
 </html>
