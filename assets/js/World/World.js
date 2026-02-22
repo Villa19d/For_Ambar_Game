@@ -30,9 +30,6 @@ class World {
     this.track   = new Track(scene);
     this.foliage = new Foliage(scene, this.colliders);
     this._buildIslands();
-
-    // EXPONER ISLAS PARA EL VEHÍCULO
-    window._islands = this.islands;
   }
 
   /* ─── ILUMINACIÓN ──────────────────────────────────────── */
@@ -71,8 +68,8 @@ class World {
         cfg: { id:'modal-1', label:'El Cofre', icon:'🗝️', x:-55, z:-40, color:0xc9963c, emissive:0x6b4d10 }
       },
       {
-        Class: IslandRadio,
-        cfg: { id:'modal-2', label:'La Radio', icon:'📻', x:58, z:-38, color:0xe8714a, emissive:0x7a2c0f }
+        Class: IslandMirador,
+        cfg: { id:'modal-2', label:'El Mirador', icon:'🌠', x:58, z:-38, color:0x6699ff, emissive:0x1a2a6c }
       },
       {
         Class: IslandFaro,

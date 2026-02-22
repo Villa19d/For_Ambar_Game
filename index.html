@@ -76,22 +76,83 @@
     </div>
   </div>
 
-  <!-- ══ MODAL 2 — La Radio ════════════════════════════════════ -->
+  <!-- ══ MODAL 2 — El Mirador ═══════════════════════════════════ -->
   <div class="modal-backdrop" id="modal-2" aria-hidden="true">
-    <div class="modal-panel">
+    <div class="modal-panel modal-mirador">
       <button class="modal-close" data-modal="modal-2">✕</button>
       <div class="modal-num">02</div>
-      <div class="modal-icon pulsing">📻</div>
-      <h2 class="modal-title">Nuestra<br>Radio</h2>
-      <p class="modal-sub">Las canciones que suenan en mi cabeza cuando pienso en ti.</p>
-      <ul class="playlist">
-        <li class="track"><span class="track-n">01</span><div class="track-info"><b>Canción especial #1</b><small>Artista</small></div><span class="track-dur">3:24</span></li>
-        <li class="track"><span class="track-n">02</span><div class="track-info"><b>Canción especial #2</b><small>Artista</small></div><span class="track-dur">4:01</span></li>
-        <li class="track"><span class="track-n">03</span><div class="track-info"><b>Canción especial #3</b><small>Artista</small></div><span class="track-dur">3:47</span></li>
-        <li class="track"><span class="track-n">04</span><div class="track-info"><b>Canción especial #4</b><small>Artista</small></div><span class="track-dur">4:55</span></li>
-      </ul>
+      <div class="modal-icon pulsing">🌠</div>
+      <h2 class="modal-title">El Mirador<br>de las Estrellas</h2>
+      <p class="modal-sub">Mira hacia arriba. Las estrellas tienen algo que decirte.</p>
+
+      <div class="mirador-sky">
+        <div class="mirador-stars" id="mirador-stars"></div>
+        <p class="mirador-constellation">✦ T E &nbsp; A M O &nbsp; Á M B A R ✦</p>
+      </div>
+
+      <div class="mirador-message">
+        <p class="mirador-quote">❝ Te quiero 1000 vidas conmigo ❞</p>
+        <p class="mirador-note">Cada estrella de ahí arriba tiene tu nombre.</p>
+      </div>
     </div>
   </div>
+
+  <style>
+    .modal-mirador { text-align: center; }
+    .mirador-sky {
+      position: relative;
+      background: radial-gradient(ellipse at center, #06102e 0%, #03071a 100%);
+      border-radius: 14px;
+      height: 130px;
+      margin: 18px 0 14px;
+      overflow: hidden;
+      border: 1px solid rgba(100,160,255,0.2);
+    }
+    .mirador-stars { position: absolute; inset: 0; }
+    .mirador-stars::before, .mirador-stars::after {
+      content: '✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧';
+      position: absolute;
+      color: rgba(180,210,255,0.6);
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      width: 100%;
+      text-align: center;
+    }
+    .mirador-stars::before { top: 18px; animation: twinkle 2.8s ease-in-out infinite; }
+    .mirador-stars::after  { top: 52px; animation: twinkle 2.1s ease-in-out infinite reverse; opacity:0.5; }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.4; } 50% { opacity: 1; }
+    }
+    .mirador-constellation {
+      position: absolute;
+      bottom: 18px; width: 100%;
+      text-align: center;
+      color: #aac4ff;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 3px;
+      animation: glow-text 3s ease-in-out infinite;
+      margin: 0;
+    }
+    @keyframes glow-text {
+      0%,100% { text-shadow: 0 0 6px #4488ff88; }
+      50%      { text-shadow: 0 0 18px #88aaff, 0 0 30px #4466ff44; }
+    }
+    .mirador-message { padding: 4px 0 10px; }
+    .mirador-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-style: italic;
+      color: #d0e4ff;
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+    .mirador-note {
+      font-size: 0.88rem;
+      color: rgba(180,210,255,0.6);
+      margin: 0;
+    }
+  </style>
 
   <!-- ══ MODAL 3 — El Faro ══════════════════════════════════════ -->
   <div class="modal-backdrop" id="modal-3" aria-hidden="true">
@@ -129,8 +190,8 @@
     </div>
   </div>
 
-  <!-- Flip hint — fuera del HUD para no solaparse
-  <div id="flip-hint">A / D para levantarte</div> -->
+  <!-- Flip hint — fuera del HUD para no solaparse -->
+  <div id="flip-hint">A / D para levantarte</div>
 
   <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -150,7 +211,7 @@
   <!-- Islas — clase base antes que las subclases -->
   <script src="assets/js/World/Islands/IslandBase.js"></script>
   <script src="assets/js/World/Islands/IslandCofre.js"></script>
-  <script src="assets/js/World/Islands/IslandRadio.js"></script>
+  <script src="assets/js/World/Islands/IslandMirador.js"></script>
   <script src="assets/js/World/Islands/IslandFaro.js"></script>
   <script src="assets/js/World/Islands/IslandRocola.js"></script>
   <!-- Para agregar una isla: <script src="assets/js/World/Islands/IslandNueva.js"></script> -->
