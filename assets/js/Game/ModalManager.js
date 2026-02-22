@@ -1,208 +1,126 @@
 /* ═══════════════════════════════════════════════════════════
    Game/ModalManager.js  —  Maneja modales, rocola, carta
-   Reemplaza Checkpoints.js. La detección de proximidad
-   ya vive en cada IslandBase; este módulo solo maneja UI.
+   La detección de proximidad vive en IslandBase.
+   Este módulo solo maneja UI.
    ═══════════════════════════════════════════════════════════ */
 
 class ModalManager {
   constructor() {
     this.currentModal = null;
-    this.jukeboxOpen  = false;
-    this.currentSong  = 0;
     this.discovered   = 0;
     this._twTimer     = null;
+    this.audio        = null;   // referencia a GameAudio (se pone con setAudio)
 
     this._discEl = document.getElementById('disc-count');
     this._hintEl = document.getElementById('proximity-hint');
 
     this._setupListeners();
 
-    // Exponer funciones globales que IslandBase llama
-    window.openModal         = (id) => this.openModal(id);
+    // Exponer globales para que IslandBase los pueda llamar sin importar nada
+    window.openModal          = (id) => this.openModal(id);
     window.onIslandDiscovered = (id) => this._onDiscovered(id);
-
-     this.jukebox = null;
-     this.audio = null; // Referencia a GameAudio
-
 
     console.log('%c📋 ModalManager listo', 'color:#ffd60a');
   }
 
-    // Método para conectar con GameAudio
   setAudio(audioInstance) {
-        this.audio = audioInstance;
-    }
+    this.audio = audioInstance;
+  }
 
   /* ─── LISTENERS ─────────────────────────────────────────── */
   _setupListeners() {
-    // Cerrar con botón ✕
-    document.querySelectorAll('.modal-close').forEach(b => {
-      b.addEventListener('click', () => this.closeModal(b.dataset.modal));
-    });
-
-    // Cerrar al click en backdrop
-    document.querySelectorAll('.modal-backdrop').forEach(el => {
-      el.addEventListener('click', e => {
-        if(e.target === el) this.closeModal(el.id);
-      });
-    });
-
-    // Teclado — ESC cierra, flechas cambian canción en jukebox
+    document.querySelectorAll('.modal-close').forEach(b =>
+      b.addEventListener('click', () => this.closeModal(b.dataset.modal))
+    );
+    document.querySelectorAll('.modal-backdrop').forEach(el =>
+      el.addEventListener('click', e => { if(e.target === el) this.closeModal(el.id); })
+    );
     window.addEventListener('keydown', e => {
-      if(e.key === 'Escape' && this.currentModal)
-        this.closeModal(this.currentModal);
-      if(this.jukeboxOpen) {
-        if(e.key === 'ArrowLeft')  this._changeSong(-1);
-        if(e.key === 'ArrowRight') this._changeSong(+1);
-      }
-    });
-
-    // Botones de jukebox
-    document.addEventListener('click', e => {
-      if(e.target.id === 'jukebox-prev') this._changeSong(-1);
-      if(e.target.id === 'jukebox-next') this._changeSong(+1);
+      if(e.key === 'Escape' && this.currentModal) this.closeModal(this.currentModal);
     });
   }
 
-  /* ─── ABRIR / CERRAR MODAL ──────────────────────────────── */
+  /* ─── ABRIR ─────────────────────────────────────────────── */
   openModal(id) {
-    if (this.currentModal === id) return;
-        if (this.currentModal) this.closeModal(this.currentModal);
-        
-        this.currentModal = id;
-        const el = document.getElementById(id);
-        if (!el) return;
-        
-        el.classList.add('open');
-        el.setAttribute('aria-hidden', 'false');
-        
-        // Usar GameAudio para el sonido de abrir
-        if (this.audio) this.audio.open();
-        
-        if (id === 'modal-3') this._typewrite();
-        
-        if (id === 'jukebox') {
-            this._openJukebox();
-        }
+    if(this.currentModal === id) return;
+    if(this.currentModal) this.closeModal(this.currentModal);
 
+    this.currentModal = id;
+    const el = document.getElementById(id);
+    if(!el) return;
+
+    el.classList.add('open');
+    el.setAttribute('aria-hidden', 'false');
+
+    if(this.audio) this.audio.open();
+
+    if(id === 'modal-3') this._typewrite();
+
+    if(id === 'jukebox') {
+      // Pasarle el control al Jukebox real
+      const jukebox = this.audio?.initJukebox();
+      if(jukebox) {
+        jukebox.onModalOpen();
+        // Primera canción si no está sonando
+        if(!jukebox.isPlaying) {
+          jukebox.playSong(0, SONGS[0].startTime ?? 0);
+        }
+      }
+    }
   }
 
-  _openJukebox() {
-        this.jukeboxOpen = true;
-        
-        // Inicializar jukebox a través de GameAudio si no existe
-        if (this.audio && !this.jukebox) {
-            this.jukebox = this.audio.initJukebox();
-        }
-        
-        this._updateJukeboxUI();
-        
-        // Iniciar primera canción si no está sonando
-        if (this.jukebox && !this.jukebox.isPlaying) {
-            this.jukebox.playSong(0, SONGS[0].startTime);
-        }
-    }
-
+  /* ─── CERRAR ─────────────────────────────────────────────── */
   closeModal(id) {
     const el = document.getElementById(id);
     if(!el) return;
 
-    if(typeof gsap !== 'undefined') {
-      gsap.to(el, { opacity:0, duration:0.25, ease:'power2.in', onComplete:() => {
-        el.classList.remove('open');
-        el.setAttribute('aria-hidden', 'true');
-        gsap.set(el, { clearProps:'opacity' });
-        if (id === 'jukebox' && this.jukebox) {
-                    this.jukebox.stopCurrentSong(true); // true = return to base
-                }
-      }});
-    } else {
+    gsap.to(el, { opacity:0, duration:0.25, ease:'power2.in', onComplete:() => {
       el.classList.remove('open');
       el.setAttribute('aria-hidden', 'true');
-    }
+      gsap.set(el, { clearProps:'opacity' });
+    }});
 
     if(this.currentModal === id) this.currentModal = null;
+
     if(id === 'jukebox') {
-      if(typeof gameAudio !== 'undefined') gameAudio.stopSong();
-      this.jukeboxOpen = false;
+      const jukebox = this.audio?._jukebox;
+      if(jukebox) {
+        jukebox.onModalClose();
+        jukebox.stopCurrentSong(true);   // volver a música base
+      }
     }
   }
 
-  /* ─── DESCUBRIMIENTO DE ISLAS ───────────────────────────── */
+  /* ─── DESCUBRIMIENTO ────────────────────────────────────── */
   _onDiscovered(id) {
     this.discovered++;
     if(this._discEl) this._discEl.textContent = this.discovered;
-
-    // 3 islas normales descubiertas = pantalla final
     if(this.discovered >= 3) this._finalScreen();
   }
 
-  /* ─── HINT DE PROXIMIDAD ─────────────────────────────────── */
+  /* ─── HINT ───────────────────────────────────────────────── */
   showHint(visible) {
     if(!this._hintEl) return;
     if(visible) this._hintEl.classList.remove('hidden');
     else        this._hintEl.classList.add('hidden');
   }
-
-  /* ─── JUKEBOX ────────────────────────────────────────────── */
-  _openJukebox() {
-    this.jukeboxOpen = true;
-    this._updateJukeboxUI();
-    if(typeof gameAudio !== 'undefined') gameAudio.startSong(this.currentSong);
-    this._showJukeboxInterface();
+  update(anyIslandInRange) {
+    this.showHint(anyIslandInRange && !this.currentModal);
   }
 
-  _showJukeboxInterface() {
-        // Mostrar carátula de la canción base por defecto
-        const coverImg = document.getElementById('jukebox-cover');
-        const titleEl = document.getElementById('jukebox-song-title');
-        const artistEl = document.getElementById('jukebox-artist');
-        
-        if (coverImg) coverImg.src = `media/Audio/Album/${BASE_SONG.cover}`;
-        if (titleEl) titleEl.textContent = BASE_SONG.title;
-        if (artistEl) artistEl.textContent = BASE_SONG.artist;
-    }
-
-  _changeSong(dir) {
-    const total = typeof SONGS !== 'undefined' ? SONGS.length : 4;
-    this.currentSong = (this.currentSong + dir + total) % total;
-    this._updateJukeboxUI();
-    if (this.jukebox) {
-            this.jukebox.playSong(this.currentSong, SONGS[this.currentSong].startTime);
-        }
-    if(typeof gameAudio !== 'undefined') {
-      gameAudio.startSong(this.currentSong);
-      gameAudio.tone(440 + this.currentSong * 110, 0.15, 'sine', 0.1);
-    }
-  }
-
-  _updateJukeboxUI() {
-    const n = document.getElementById('jukebox-song-name');
-    if(n && typeof SONGS !== 'undefined') n.textContent = SONGS[this.currentSong].title;
-
-    document.querySelectorAll('.jukebox-dot').forEach((d, i) => {
-      const active = i === this.currentSong;
-      d.classList.toggle('active', active);
-      d.style.background = active && typeof SONGS !== 'undefined'
-        ? SONGS[this.currentSong].color : '';
-    });
-  }
-
-  /* ─── TYPEWRITER (Carta del Faro) ───────────────────────── */
+  /* ─── TYPEWRITER ─────────────────────────────────────────── */
   _typewrite() {
     const el = document.getElementById('typewriter-out');
     if(!el || typeof CARTA_TEXTO === 'undefined') return;
-    el.textContent = '';
-    el.classList.remove('done');
-    let i = 0;
-    clearInterval(this._twTimer);
+    el.textContent = ''; el.classList.remove('done');
+    let i = 0; clearInterval(this._twTimer);
     this._twTimer = setInterval(() => {
       if(i < CARTA_TEXTO.length) el.textContent += CARTA_TEXTO[i++];
       else { clearInterval(this._twTimer); el.classList.add('done'); }
     }, 36);
   }
 
-  /* ─── PANTALLA FINAL ────────────────────────────────────── */
+  /* ─── PANTALLA FINAL ─────────────────────────────────────── */
   _finalScreen() {
     setTimeout(() => {
       const fs = document.getElementById('final-screen');
@@ -213,8 +131,7 @@ class ModalManager {
       ['💛','🌻','💫','✨','🌼','💕'].forEach(em => {
         for(let j = 0; j < 4; j++){
           const h = document.createElement('span');
-          h.className = 'heart-float';
-          h.textContent = em;
+          h.className = 'heart-float'; h.textContent = em;
           h.style.setProperty('--l',   Math.random() * 100 + '%');
           h.style.setProperty('--d',   (3 + Math.random() * 5) + 's');
           h.style.setProperty('--del', Math.random() * 3 + 's');
@@ -222,11 +139,5 @@ class ModalManager {
         }
       });
     }, 600);
-  }
-
-  /* ─── UPDATE — llamado desde el tick loop ───────────────── */
-  // Recibe si ALGUNA isla está en rango (lo calcula World)
-  update(anyIslandInRange) {
-    this.showHint(anyIslandInRange && !this.currentModal);
   }
 }
