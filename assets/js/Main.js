@@ -2,37 +2,6 @@
    Main.js  —  Entrada del juego con LOADER
    ═══════════════════════════════════════════════════════════ */
 
-// ── PARCHAR RUTAS PARA USAR EL ZIP DE MODELOS (CORREGIDO) ──
-// ── VERSIÓN CON jsDelivr (SÍ tiene CORS) ──
-// ── PARCHAR RUTAS CON jsDelivr (RUTA CORREGIDA) ──
-// ── PARCHAR RUTAS CON jsDelivr (¡VERSIÓN CORREGIDA!) ──
-// ── PARCHAR RUTAS PARA GITHUB PAGES (VERSIÓN 100% FUNCIONAL) ──
-// ── PARCHAR RUTAS USANDO RAW (sin LFS) ──
-(function patchGLBPaths() {
-  // RAW sirve los archivos directamente, no los punteros LFS
-  const BASE_URL = `https://raw.githubusercontent.com/Villa19d/For_Ambar_Game/main/models/`;
-
-  console.log('%c🔧 Usando RAW (sin LFS):', 'color:#00ff00', BASE_URL);
-
-  const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
-
-  THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
-    if (url.includes('.glb') && !url.includes('http')) {
-      // Limpiamos la ruta
-      let cleanPath = url.replace(/^(\.\/|models\/)/, '');
-      const encodedPath = cleanPath.replace(/ /g, '%20');
-      
-      const newUrl = `${BASE_URL}${encodedPath}`;
-      
-      console.log(`%c📦 Cargando: ${newUrl}`, 'color:#ff9900');
-      
-      return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
-    }
-    return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
-  };
-
-  console.log('%c🔥 Parche activado con RAW', 'color:#ffaa00');
-})();
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
 const canvas   = document.getElementById('webgl-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
