@@ -10,7 +10,7 @@ class ModalManager {
     this.discovered   = 0;
     this._twTimer     = null;
     this.audio        = null;   // referencia a GameAudio (se pone con setAudio)
-
+     this._finalShown  = false; 
     this._discEl = document.getElementById('disc-count');
     this._hintEl = document.getElementById('proximity-hint');
 
@@ -69,34 +69,42 @@ class ModalManager {
     }
   }
 
-  /* ─── CERRAR ─────────────────────────────────────────────── */
-  closeModal(id) {
-    const el = document.getElementById(id);
-    if(!el) return;
 
-    gsap.to(el, { opacity:0, duration:0.25, ease:'power2.in', onComplete:() => {
-      el.classList.remove('open');
-      el.setAttribute('aria-hidden', 'true');
-      gsap.set(el, { clearProps:'opacity' });
-    }});
 
-    if(this.currentModal === id) this.currentModal = null;
+/* ─── DESCUBRIMIENTO ────────────────────────────────────── */
+_onDiscovered(id) {
+  this.discovered++;
+  if(this._discEl) this._discEl.textContent = this.discovered;
+  // ELIMINAR this._finalScreen() de aquí
+  // if(this.discovered >= 3) this._finalScreen(); <-- BORRAR
+}
 
-    if(id === 'jukebox') {
-      const jukebox = this.audio?._jukebox;
-      if(jukebox) {
-        jukebox.onModalClose();
-        jukebox.stopCurrentSong(true);   // volver a música base
-      }
+/* ─── CERRAR ─────────────────────────────────────────────── */
+closeModal(id) {
+  const el = document.getElementById(id);
+  if(!el) return;
+
+  gsap.to(el, { opacity:0, duration:0.25, ease:'power2.in', onComplete:() => {
+    el.classList.remove('open');
+    el.setAttribute('aria-hidden', 'true');
+    gsap.set(el, { clearProps:'opacity' });
+    
+    // ── VERIFICAR SI YA SE COMPLETARON TODOS ──
+    if (this.discovered >= 3) {
+      this._finalScreen();
+    }
+  }});
+
+  if(this.currentModal === id) this.currentModal = null;
+
+  if(id === 'jukebox') {
+    const jukebox = this.audio?._jukebox;
+    if(jukebox) {
+      jukebox.onModalClose();
+      jukebox.stopCurrentSong(true);
     }
   }
-
-  /* ─── DESCUBRIMIENTO ────────────────────────────────────── */
-  _onDiscovered(id) {
-    this.discovered++;
-    if(this._discEl) this._discEl.textContent = this.discovered;
-    if(this.discovered >= 3) this._finalScreen();
-  }
+}
 
   /* ─── HINT ───────────────────────────────────────────────── */
   showHint(visible) {
@@ -122,22 +130,26 @@ class ModalManager {
 
   /* ─── PANTALLA FINAL ─────────────────────────────────────── */
   _finalScreen() {
-    setTimeout(() => {
-      const fs = document.getElementById('final-screen');
-      if(!fs) return;
-      fs.classList.remove('hidden');
-      const cont = document.getElementById('final-hearts');
-      if(!cont) return;
-      ['💛','🌻','💫','✨','🌼','💕'].forEach(em => {
-        for(let j = 0; j < 4; j++){
-          const h = document.createElement('span');
-          h.className = 'heart-float'; h.textContent = em;
-          h.style.setProperty('--l',   Math.random() * 100 + '%');
-          h.style.setProperty('--d',   (3 + Math.random() * 5) + 's');
-          h.style.setProperty('--del', Math.random() * 3 + 's');
-          cont.appendChild(h);
-        }
-      });
-    }, 600);
-  }
+  // Evitar que se muestre más de una vez
+  if (this._finalShown) return;
+  this._finalShown = true;
+  
+  setTimeout(() => {
+    const fs = document.getElementById('final-screen');
+    if(!fs) return;
+    fs.classList.remove('hidden');
+    const cont = document.getElementById('final-hearts');
+    if(!cont) return;
+    ['💛','🌻','💫','✨','🌼','💕'].forEach(em => {
+      for(let j = 0; j < 4; j++){
+        const h = document.createElement('span');
+        h.className = 'heart-float'; h.textContent = em;
+        h.style.setProperty('--l',   Math.random() * 100 + '%');
+        h.style.setProperty('--d',   (3 + Math.random() * 5) + 's');
+        h.style.setProperty('--del', Math.random() * 3 + 's');
+        cont.appendChild(h);
+      }
+    });
+  }, 600);
+ }
 }

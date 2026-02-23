@@ -46,14 +46,15 @@ const CHECKPOINTS = [
 const TRIGGER_DIST = 6;    // más grande para la isla Rocola ampliada
 
 const CARTA_TEXTO =
-`Hay lugares en el mundo que no están en ningún mapa,
-pero que existen porque tú los iluminaste.
-
-Este pequeño rincón lo construí pensando en ti,
-en tu forma de reír cuando algo te sorprende,
-y en cómo todo se vuelve más bonito cuando estás cerca.
-
-Gracias por ser mi lugar favorito.`;
+`No dudes ni un segundo que eres todo lo que quiero.
+Amo tu carita, tu sarcasmo, tus chistes… me encantas completa.
+Estoy profundamente enamorado de ti, bonita.
+Eres una mujer maravillosa, increíble, hermosa e inteligente; te admiro más de lo que imaginas.
+Hay veces que solo me quedo viéndote y pienso: Dios, qué feliz soy contigo.
+Sé que no todo es fácil, pero estoy seguro de querer atravesar cualquier tormenta a tu lado.
+Siempre estaré ahí para ti, aunque seas la más independiente del mundo.
+Te amo con todo mi corazón, con mi vida y todavía más.
+Y cómo me encantaría ahora mismo plantarte un besote mi amor por que COMO ME ENCANTAAAS PRECIOSA`;
 
 const SONGS = [
     { 
@@ -61,7 +62,7 @@ const SONGS = [
         artist: 'Justin Bieber',
         file: 'DAISIES.mp3',
         cover: 'Daises.jpg',
-        startTime: 65, // 1:05 en segundos
+        startTime: 70, // 1:05 en segundos
         color: '#f5e56b'
     },
     { 
