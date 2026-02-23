@@ -152,75 +152,53 @@ class Vehicle {
 _updateCollisions() {
   const CAR_R = 0.9;
   
-  // Colisiones con discos de islas (código original)
+  // IMPORTANTE: Combinar todos los colliders
+  // this.colliders viene de World y contiene TODOS los colliders
+  // incluyendo los de las letras (window._islandColliders)
+  
   for (const col of this.colliders) {
     const dx = this.group.position.x - col.x;
     const dz = this.group.position.z - col.z;
     const d  = Math.sqrt(dx*dx + dz*dz);
     const md = CAR_R + (col.r || 1.0);
+    
     if (d < md && d > 0.001) {
       const nx = dx/d, nz = dz/d;
-      this.group.position.x += nx*(md-d);
-      this.group.position.z += nz*(md-d);
+      
+      // Separar el carro del obstáculo
+      const overlap = md - d;
+      this.group.position.x += nx * overlap;
+      this.group.position.z += nz * overlap;
+      
+      // Rebote
       const dot = this.vel.x*nx + this.vel.z*nz;
       if (dot < 0) {
-        this.vel.x -= dot*nx*1.3; 
-        this.vel.z -= dot*nz*1.3;
-        this.vel.multiplyScalar(0.6);
-        if (typeof gameAudio !== 'undefined') gameAudio.collision(Math.abs(dot));
-      }
-    }
-  }
-  
-  // ── NUEVO: Colisiones con la pared de ladrillos ──
-  if (window._wallColliders) {
-    for (const wall of window._wallColliders) {
-      // Calcular distancia al centro del segmento de pared
-      const dx = this.group.position.x - wall.x;
-      const dz = this.group.position.z - wall.z;
-      
-      // Transformar a coordenadas locales de la pared
-      const cos = Math.cos(-wall.rotation);
-      const sin = Math.sin(-wall.rotation);
-      const localX = dx * cos - dz * sin;
-      const localZ = dx * sin + dz * cos;
-      
-      // Verificar si está dentro del rectángulo de la pared
-      const halfWidth = wall.width / 2;
-      const halfDepth = wall.depth / 2;
-      
-      if (Math.abs(localX) < halfWidth + CAR_R && 
-          Math.abs(localZ) < halfDepth + CAR_R) {
-        
-        // Resolver colisión
-        const overlapX = halfWidth + CAR_R - Math.abs(localX);
-        const overlapZ = halfDepth + CAR_R - Math.abs(localZ);
-        
-        if (overlapX > 0 && overlapZ > 0) {
-          if (overlapX < overlapZ) {
-            // Colisión en X
-            const signX = localX > 0 ? 1 : -1;
-            this.group.position.x += signX * overlapX * cos;
-            this.group.position.z += signX * overlapX * sin;
-            this.vel.x *= -0.3;
-            this.vel.z *= -0.3;
-          } else {
-            // Colisión en Z
-            const signZ = localZ > 0 ? 1 : -1;
-            this.group.position.x += signZ * overlapZ * -sin;
-            this.group.position.z += signZ * overlapZ * cos;
-            this.vel.x *= -0.3;
-            this.vel.z *= -0.3;
-          }
+        // Rebote más fuerte para letras
+        if (col.isLetter) {
+          this.vel.x -= dot * nx * 1.5;
+          this.vel.z -= dot * nz * 1.5;
+          this.vel.multiplyScalar(0.4); // Más freno al chocar con letras
           
-          // Sonido de impacto
-          if (typeof gameAudio !== 'undefined') {
-            gameAudio.collision(0.8);
-          }
+          // Feedback visual (opcional)
+          this.group.scale.set(1.1, 0.9, 1.1);
+          setTimeout(() => this.group.scale.set(1,1,1), 150);
+          
+          console.log('%c💥 Chocaste con una letra!', 'color:#ff3366');
+        } else {
+          this.vel.x -= dot * nx * 1.3;
+          this.vel.z -= dot * nz * 1.3;
+          this.vel.multiplyScalar(0.6);
+        }
+        
+        // Sonido
+        if (typeof gameAudio !== 'undefined') {
+          gameAudio.collision(Math.min(Math.abs(dot) * 2, 1));
         }
       }
     }
   }
+  
+  // Eliminamos la parte de window._wallColliders porque ya no la necesitamos
 }
 
   /* ── Bruno: updatePostPhysics ── */
