@@ -4,29 +4,32 @@
 
 // ── PARCHAR RUTAS PARA USAR EL ZIP DE MODELOS (CORREGIDO) ──
 // ── VERSIÓN CON jsDelivr (SÍ tiene CORS) ──
+// ── PARCHAR RUTAS CON jsDelivr (RUTA CORREGIDA) ──
 (function patchGLBPaths() {
   const RELEASE_TAG = 'v1.0-modelos';
-  // jsDelivr puede servir desde releases también
-  const BASE_URL = `https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@${RELEASE_TAG}/`;
+  const BASE_URL = `https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@${RELEASE_TAG}/models/`;
 
-  console.log('%c🔧 USANDO jsDelivr (CORS habilitado)', 'color:#00ff00;font-size:14px');
+  console.log('%c🔧 Usando jsDelivr con ruta CORREGIDA:', 'color:#00ff00', BASE_URL);
 
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
 
   THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
     if (url.includes('.glb') && !url.includes('http')) {
+      // Limpiar la ruta: quitamos "models/" si existe al inicio
       let cleanPath = url.replace(/^(\.\/|models\/)/, '');
       const encodedPath = cleanPath.replace(/ /g, '%20');
       
-      // jsDelivr sirve directamente desde el tag
+      // ¡AHORA SÍ! BASE_URL ya incluye /models/
       const newUrl = `${BASE_URL}${encodedPath}`;
       
-      console.log('📦 jsDelivr URL:', newUrl);
+      console.log(`%c📦 Cargando: ${newUrl}`, 'color:#ff9900');
       
       return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
     }
     return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
   };
+
+  console.log('%c🔥 Parche activado con ruta corregida', 'color:#ffaa00');
 })();
 
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
