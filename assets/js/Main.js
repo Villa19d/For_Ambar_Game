@@ -2,6 +2,33 @@
    Main.js  —  Entrada del juego con LOADER
    ═══════════════════════════════════════════════════════════ */
 
+   // ── PARCHAR RUTAS PARA GITHUB PAGES ──
+(function patchGLBPaths() {
+  const BASE_URL = 'https://raw.githubusercontent.com/Villa19d/For_Ambar_Game/main/';
+  
+  // Guardar referencia al GLTFLoader original
+  const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
+  
+  // Sobrescribir el método load
+  THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
+    // Solo parchear archivos .glb que no vengan ya completos
+    if (url.includes('.glb') && !url.includes('http')) {
+      // Eliminar 'models/' del inicio si existe
+      const cleanPath = url.replace(/^(\.\/|models\/)/, '');
+      // Codificar espacios
+      const encodedPath = cleanPath.replace(/ /g, '%20');
+      const newUrl = BASE_URL + 'models/' + encodedPath;
+      
+      console.log(`%c🔄 GLB redirigido: ${url} → ${newUrl}`, 'color:#88ccff');
+      
+      return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
+    }
+    return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
+  };
+  
+  console.log('%c🔧 Parche de rutas GLB activado para GitHub Pages', 'color:#ffaa00');
+})();
+
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
 const canvas   = document.getElementById('webgl-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
