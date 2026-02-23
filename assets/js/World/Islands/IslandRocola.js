@@ -99,6 +99,23 @@ class IslandRocola extends IslandBase {
     stageCollider.position.set(wx, 1.2, wz); // Altura del escenario
     this.scene.add(stageCollider);
     window._islandColliders.push(stageCollider);
+
+    // Después de crear stageCollider:
+if (window._groundColliders) {
+  window._groundColliders.push({
+    x: wx,
+    z: wz,
+    r: 14,
+    y: 0.25 // Altura del suelo principal
+  });
+  window._groundColliders.push({
+    x: wx,
+    z: wz,
+    r: 8,
+    y: 1.2 // Altura del escenario
+  });
+}
+
     }
 
     /* ── DECORACIÓN PRINCIPAL ─────────────────────────────── */

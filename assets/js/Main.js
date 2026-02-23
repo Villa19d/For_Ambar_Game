@@ -29,21 +29,21 @@ window.addEventListener('resize', () => {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 });
 
-/* ══ 3. MÓDULOS ════════════════════════════════════════════
-   Orden idéntico a Bruno Simon: Input → Audio → World → Vehicle → Camera → UI
-════════════════════════════════════════════════════════════ */
+/* ══ 3. MÓDULOS ════════════════════════════════════════════ */
 const input      = new Input();
 const gameAudio  = new GameAudio();
-const world      = new World(scene);
-const vehicle    = new Vehicle(scene, world.colliders);
 
-// ── MOVER EL CARRO MÁS ATRÁS (para que no spawnee entre las letras) ──
-vehicle.group.position.set(0, 0.5, 10); // 15 unidades hacia atrás (Z positivo)
-
-
-// 2. Crear ModalManager y conectar GameAudio
+// 🟢 PRIMERO: Crear ModalManager y conectarlo
 window._modalManager = new ModalManager();
 window._modalManager.setAudio(gameAudio);  // ¡Importante!
+
+// 🟢 SEGUNDO: Crear World (que usará _modalManager en su update)
+const world      = new World(scene);
+
+// 🟢 TERCERO: Crear Vehicle y Camera
+const vehicle    = new Vehicle(scene, world.colliders);
+vehicle.group.position.set(0, 0.5, 10); // Mover carro más atrás
+
 const gameCamera = new GameCamera(threeCamera, canvas);
 
 /* ══ 4. INTRO PARTÍCULAS ═══════════════════════════════════ */
