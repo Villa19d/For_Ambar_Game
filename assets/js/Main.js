@@ -2,43 +2,28 @@
    Main.js  —  Entrada del juego con LOADER
    ═══════════════════════════════════════════════════════════ */
 
-// ── PARCHAR RUTAS PARA GITHUB PAGES (VERSIÓN MEJORADA) ──
 (function patchGLBPaths() {
-  // Usar jsDelivr que tiene mejor caché
   const BASE_URL = 'https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@main/';
   
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
   
   THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
-    // Solo parchear archivos .glb
     if (url.includes('.glb') && !url.includes('http')) {
-      // Limpiar la ruta
       let cleanPath = url.replace(/^(\.\/|models\/)/, '');
-      // Codificar espacios
-      cleanPath = cleanPath.replace(/ /g, '%20');
+      const encodedPath = cleanPath.replace(/ /g, '%20');
       
-      // Construir URL completa
-      const newUrl = BASE_URL + 'models/' + cleanPath;
+      // FORZAR VERSIÓN NUEVA con purge parameter
+      const timestamp = Date.now(); // Cache buster
+      const newUrl = BASE_URL + 'models/' + encodedPath + '?v=' + timestamp;
       
-      console.log(`%c🔄 GLB redirigido: ${url} → ${newUrl}`, 'color:#88ccff');
-      
-      // Hacer fetch manual para verificar
-      fetch(newUrl, { method: 'HEAD' })
-        .then(res => {
-          if (!res.ok) {
-            console.warn(`⚠️ URL no accesible: ${newUrl} (${res.status})`);
-          } else {
-            console.log(`✅ URL OK: ${newUrl} (${res.status})`);
-          }
-        })
-        .catch(err => console.warn(`❌ Error verificando ${newUrl}:`, err));
+      console.log(`%c🔄 GLB redirigido con cache busting: ${url} → ${newUrl}`, 'color:#88ccff');
       
       return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
     }
     return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
   };
   
-  console.log('%c🔧 Parche de rutas GLB activado para GitHub Pages (jsDelivr)', 'color:#ffaa00');
+  console.log('%c🔧 Parche activado con cache busting (timestamp)', 'color:#ffaa00');
 })();
 
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
