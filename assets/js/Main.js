@@ -7,40 +7,32 @@
 // ── PARCHAR RUTAS CON jsDelivr (RUTA CORREGIDA) ──
 // ── PARCHAR RUTAS CON jsDelivr (¡VERSIÓN CORREGIDA!) ──
 // ── PARCHAR RUTAS PARA GITHUB PAGES (VERSIÓN 100% FUNCIONAL) ──
+// ── PARCHAR RUTAS USANDO RAW (sin LFS) ──
 (function patchGLBPaths() {
-  const RELEASE_TAG = 'v1.0-modelos';
-  const BASE_URL = `https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@${RELEASE_TAG}`;
+  // RAW sirve los archivos directamente, no los punteros LFS
+  const BASE_URL = `https://raw.githubusercontent.com/Villa19d/For_Ambar_Game/main/models/`;
 
-  console.log('%c🔧 PARCHE ACTIVADO - Usando jsDelivr', 'color:#ff00ff;font-size:14px');
-  console.log('📍 BASE_URL:', BASE_URL);
+  console.log('%c🔧 Usando RAW (sin LFS):', 'color:#00ff00', BASE_URL);
 
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
 
   THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
-    // Solo interceptamos archivos .glb
     if (url.includes('.glb') && !url.includes('http')) {
-      // Limpiamos la ruta: quitamos "models/" del inicio si existe
+      // Limpiamos la ruta
       let cleanPath = url.replace(/^(\.\/|models\/)/, '');
-      
-      // Codificamos espacios
       const encodedPath = cleanPath.replace(/ /g, '%20');
       
-      // 🚀🚀🚀 PARTE CRÍTICA: añadimos /models/ EXPLÍCITAMENTE
-      const newUrl = `${BASE_URL}/models/${encodedPath}`;
+      const newUrl = `${BASE_URL}${encodedPath}`;
       
-      console.log('%c📦 URL GENERADA:', 'color:#ff9900', newUrl);
-      console.log('   Path original:', url);
-      console.log('   Path limpio:', cleanPath);
+      console.log(`%c📦 Cargando: ${newUrl}`, 'color:#ff9900');
       
-      // Llamamos al loader original con la nueva URL
       return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
     }
     return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
   };
 
-  console.log('%c🔥 ESPERANDO PETICIONES...', 'color:#00ff00;font-size:12px');
+  console.log('%c🔥 Parche activado con RAW', 'color:#ffaa00');
 })();
-
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
 const canvas   = document.getElementById('webgl-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
