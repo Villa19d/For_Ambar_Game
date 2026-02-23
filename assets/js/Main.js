@@ -3,11 +3,13 @@
    ═══════════════════════════════════════════════════════════ */
 
 // ── PARCHAR RUTAS PARA USAR EL ZIP DE MODELOS (CORREGIDO) ──
-// ── PARCHAR RUTAS USANDO jsDelivr (¡CON CORS HABILITADO!) ──
+// ── VERSIÓN CON jsDelivr (SÍ tiene CORS) ──
 (function patchGLBPaths() {
-  // jsDelivr puede servir archivos desde GitHub Releases también
-  const BASE_URL = 'https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@v1.0-modelos/';
-  //                              usa la etiqueta del release 👆
+  const RELEASE_TAG = 'v1.0-modelos';
+  // jsDelivr puede servir desde releases también
+  const BASE_URL = `https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@${RELEASE_TAG}/`;
+
+  console.log('%c🔧 USANDO jsDelivr (CORS habilitado)', 'color:#00ff00;font-size:14px');
 
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
 
@@ -16,18 +18,17 @@
       let cleanPath = url.replace(/^(\.\/|models\/)/, '');
       const encodedPath = cleanPath.replace(/ /g, '%20');
       
-      // jsDelivr sirve directamente desde el tag del release
+      // jsDelivr sirve directamente desde el tag
       const newUrl = `${BASE_URL}${encodedPath}`;
       
-      console.log(`%c📦 GLB desde jsDelivr: ${url} → ${newUrl}`, 'color:#ff9900;font-weight:bold');
-
+      console.log('📦 jsDelivr URL:', newUrl);
+      
       return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
     }
     return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
   };
-
-  console.log('%c🔥 Parche activado: usando jsDelivr (CORS habilitado)', 'color:#ffaa00;font-weight:bold');
 })();
+
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
 const canvas   = document.getElementById('webgl-canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
