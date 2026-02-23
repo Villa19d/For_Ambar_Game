@@ -29,6 +29,7 @@ class World {
     this.ground  = new Ground(scene);
     this.track   = new Track(scene);
     this.foliage = new Foliage(scene, this.colliders);
+    this.nature  = new Nature(scene, this.colliders); 
     this._buildIslands();
   }
 
@@ -96,6 +97,7 @@ _buildIslands() {
   /* ─── UPDATE ────────────────────────────────────────────── */
   update(dt, t, carPos, input, lastAction) {
     this.foliage.update(dt, t);
+    this.nature.update(t);
 
     let anyInRange = false;
     this.islands.forEach(island => {
