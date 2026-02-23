@@ -118,7 +118,7 @@ const BASE_SONG = {
 
 const GRASS_CFG = {
   GLB_PATH : 'models/grass/grass.glb',
-  COUNT    : 300,
+  COUNT    : 500,
   MIN_SCALE: 0.8,
   MAX_SCALE: 2.2,
   SPREAD   : 40,
