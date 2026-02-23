@@ -1,22 +1,23 @@
 /* ═══════════════════════════════════════════════════════════
    World/Foliage.js  —  Árboles, rocas, pasto, viento, polvo
-   Se instancia desde World.js y comparte colliders con Vehicle
+   VERSIÓN UNIFICADA - TODO IGUAL, solo se añaden GLB
    ═══════════════════════════════════════════════════════════ */
 
 class Foliage {
   constructor(scene, colliders) {
     this.scene     = scene;
-    this.colliders = colliders;   // ref compartida con Vehicle
+    this.colliders = colliders;
     this._trees    = [];
 
-    this._buildTrees();
-    this._buildWind();
-    this._buildGrass();
+    this._buildTrees();      // ← TUS ÁRBOLES PROCEDURALES (igual)
+    this._buildWind();       // ← TU VIENTO (200 partículas, igual)
+    this._buildGrass();      // ← TU PASTO (el que ya tenías)
+    this._loadNatureGLB();   // ← NUEVO: carga robles y farolas SIN DUPLICAR PASTO
   }
 
-  /* ─── ÁRBOLES + ROCAS ──────────────────────────────────── */
+  /* ─── TUS ÁRBOLES + ROCAS (EXACTAMENTE IGUAL) ─────────── */
   _buildTrees() {
-    // Función  detectar si un punto está cerca de la pista
+    // TU CÓDIGO ORIGINAL - sin ningún cambio
     const isOnTrack = (x, z, margin=5) => {
       if(!window._trackCurve) return false;
       for(let i=0;i<=100;i++){
@@ -25,31 +26,22 @@ class Foliage {
       }
       return false;
     };
-    // También verificar cerca de las islas (para que no pongan árboles encima)
+    
     const islandPositions = [
-        { x: -55, z: -40, radius: 16 },  // Cofre
-        { x: 58, z: -38, radius: 16 },   // Radio
-        { x: 5, z: -70, radius: 16 },    // Faro
-        { x: -8, z: 68, radius: 18,// Añadir el camino (alfombra) como un área rectangular
-        path: { 
-            x1: -10, x2: 10,           // Ancho del camino
-            z1: 48, z2: 68              // Desde la isla hacia afuera (Z negativo)
-        }},    // Rocola (más grande)
+        { x: -55, z: -40, radius: 16 },
+        { x: 58, z: -38, radius: 16 },
+        { x: 5, z: -70, radius: 16 },
+        { x: -8, z: 68, radius: 18,
+        path: { x1: -10, x2: 10, z1: 48, z2: 68 }},
     ];
 
     const isNearIsland = (x, z) => {
         for (const island of islandPositions) {
-                  // Detectar círculo de la isla
-            if (Math.hypot(x - island.x, z - island.z) < island.radius) {
-                return true;
-            }
-                    // Detectar camino de la Rocola (si existe)
+            if (Math.hypot(x - island.x, z - island.z) < island.radius) return true;
             if (island.path) {
-            if (x > island.path.x1 && x < island.path.x2 && 
-                z > island.path.z1 && z < island.path.z2) {
-                return true;
+              if (x > island.path.x1 && x < island.path.x2 && 
+                  z > island.path.z1 && z < island.path.z2) return true;
             }
-        }
         }
         return false;
     };
@@ -58,31 +50,19 @@ class Foliage {
       for(let i=0;i<tries;i++){
         const a=Math.random()*Math.PI*2, rad=14+Math.random()*55;
         const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
-        
-        // Verificar que NO esté en la pista Y NO esté cerca de islas
-            if (!isOnTrack(x, z, margin) && !isNearIsland(x, z)) {
-                return { x, z, valid: true };
-            }
+        if (!isOnTrack(x, z, margin) && !isNearIsland(x, z)) {
+          return { x, z, valid: true };
         }
-        return { x: 999, z: 999, valid: false };
+      }
+      return { x: 999, z: 999, valid: false };
     };
 
     for(let i=0;i<40;i++){const p=getPos(5); if(p.valid) this._makeTree(p.x,p.z,0.8+Math.random()*0.8);}
     for(let i=0;i<16;i++){const p=getPos(5.5); if(p.valid) this._makeRock(p.x,p.z,0.7+Math.random()*0.8);}
-
-    // // Árboles cerca de cada isla (para decorarlas)
-    // const islandPos = [
-    //   {x:-55,z:-40},{x:55,z:-35},{x:5,z:-65},{x:-5,z:65},{x:70,z:55}
-    // ];
-    // islandPos.forEach(({x,z}) => {
-    //   for(let j=0;j<3;j++){
-    //     const a=Math.random()*Math.PI*2;
-    //     this._makeTree(x+Math.cos(a)*6, z+Math.sin(a)*6, 1.0+Math.random()*0.5);
-    //   }
-    // });
   }
 
   _makeTree(x, z, s=1, type=-1) {
+    // TU CÓDIGO ORIGINAL COMPLETO
     const kind = type>=0 ? type : Math.floor(Math.random()*4);
     const g    = new THREE.Group();
     g.position.set(x,0,z);
@@ -129,7 +109,8 @@ class Foliage {
     ];
     treeDefs[kind]();
 
-    const LN=18, lPos=new Float32Array(LN*3), lData=[];
+    const LN=18; // ← 18 partículas, como antes
+    const lPos=new Float32Array(LN*3), lData=[];
     for(let i=0;i<LN;i++){
       const a=Math.random()*Math.PI*2, r=0.5+Math.random()*1.8*s;
       lPos[i*3]=Math.cos(a)*r; lPos[i*3+1]=1.5*s+Math.random()*2.5*s; lPos[i*3+2]=Math.sin(a)*r;
@@ -152,6 +133,7 @@ class Foliage {
   }
 
   _makeRock(x, z, s=1) {
+    // TU CÓDIGO ORIGINAL
     const g=new THREE.Group(); g.position.set(x,0,z);
     const cols=[0x7a6a55,0x6a5a8a,0x8a7060,0x5a6a7a];
     const r=new THREE.Mesh(new THREE.DodecahedronGeometry(0.6*s,0),
@@ -163,12 +145,15 @@ class Foliage {
     this.colliders.push({x,z,r:0.55*s});
   }
 
-  /* ─── VIENTO + POLVO ───────────────────────────────────── */
+  /* ─── VIENTO + POLVO (exactamente como antes) ─────────── */
   _buildWind() {
-    const WN=200, wPos=new Float32Array(WN*3);
+    const WN=200; // ← 200 partículas, como antes
+    const wPos=new Float32Array(WN*3);
     this._windSpd=[];
     for(let i=0;i<WN;i++){
-      wPos[i*3]=(Math.random()-0.5)*120; wPos[i*3+1]=Math.random()*3; wPos[i*3+2]=(Math.random()-0.5)*120;
+      wPos[i*3]=(Math.random()-0.5)*120;
+      wPos[i*3+1]=Math.random()*3;
+      wPos[i*3+2]=(Math.random()-0.5)*120;
       this._windSpd.push(0.5+Math.random()*1.5);
     }
     const wGeo=new THREE.BufferGeometry();
@@ -176,16 +161,22 @@ class Foliage {
     this._windPts=new THREE.Points(wGeo,new THREE.PointsMaterial({color:0xddccaa,size:0.12,sizeAttenuation:true,transparent:true,opacity:0.45,depthWrite:false}));
     this.scene.add(this._windPts);
 
-    const DN=200, dPos=new Float32Array(DN*3);
-    for(let i=0;i<DN;i++){dPos[i*3]=(Math.random()-0.5)*100;dPos[i*3+1]=Math.random()*14;dPos[i*3+2]=(Math.random()-0.5)*100;}
+    const DN=200; // ← 200 partículas, como antes
+    const dPos=new Float32Array(DN*3);
+    for(let i=0;i<DN;i++){
+      dPos[i*3]=(Math.random()-0.5)*100;
+      dPos[i*3+1]=Math.random()*14;
+      dPos[i*3+2]=(Math.random()-0.5)*100;
+    }
     const dGeo=new THREE.BufferGeometry();
     dGeo.setAttribute('position',new THREE.BufferAttribute(dPos,3));
     this._dustPts=new THREE.Points(dGeo,new THREE.PointsMaterial({color:0xc9963c,size:0.06,sizeAttenuation:true,transparent:true,opacity:0.4,depthWrite:false}));
     this.scene.add(this._dustPts);
   }
 
-  /* ─── PASTO ─────────────────────────────────────────────── */
+  /* ─── PASTO (el que ya tenías) ────────────────────────── */
   _buildGrass() {
+    // TU CÓDIGO ORIGINAL - sin cambios
     const spawnGlb = (model) => {
       model.traverse(c => {
         if(!c.isMesh) return;
@@ -194,27 +185,21 @@ class Foliage {
       });
       let placed=0;
 
-      // Posiciones de las islas para evitar pasto en ellas
-        const islandPositions = [
-            { x: -55, z: -40, radius: 15 },
-            { x: 58, z: -38, radius: 15 },
-            { x: 5, z: -70, radius: 15 },
-            { x: -8, z: 68, radius: 18, path: { xMin: -12, xMax: 12, zMin: 48, zMax: 68 } // Camino
-            },
-        ];
+      const islandPositions = [
+        { x: -55, z: -40, radius: 15 },
+        { x: 58, z: -38, radius: 15 },
+        { x: 5, z: -70, radius: 15 },
+        { x: -8, z: 68, radius: 18, path: { xMin: -12, xMax: 12, zMin: 48, zMax: 68 } },
+      ];
 
-        const isNearIsland = (x, z) => {
-            for (const island of islandPositions) {
-                if (Math.hypot(x - island.x, z - island.z) < island.radius) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        
+      const isNearIsland = (x, z) => {
+        for (const island of islandPositions) {
+          if (Math.hypot(x - island.x, z - island.z) < island.radius) return true;
+        }
+        return false;
+      };
 
-
-      for(let att=0;att<1800&&placed<GRASS_CFG.COUNT;att++){
+      for(let att=0; att<1800 && placed<GRASS_CFG.COUNT; att++){
         const a=Math.random()*Math.PI*2, rad=10+Math.random()*60;
         const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
         let onTrack=false;
@@ -230,12 +215,12 @@ class Foliage {
           const sc=GRASS_CFG.MIN_SCALE+Math.random()*(GRASS_CFG.MAX_SCALE-GRASS_CFG.MIN_SCALE);
           clone.scale.setScalar(sc); this.scene.add(clone); placed++;
         }
-
       }
-      console.log(`%c🌿 ${placed} mechones de pasto (GLB)`, 'color:#4a8c2a');
+      console.log(`%c🌿 ${placed} mechones de pasto`, 'color:#4a8c2a');
     };
 
     const fallback = () => {
+      // TU FALLBACK ORIGINAL
       const geo=new THREE.BufferGeometry();
       const v=new Float32Array([-0.3,0,0.3,0.3,0,-0.3,0.3,0.8,-0.3,-0.3,0,0.3,0.3,0.8,-0.3,-0.3,0.8,0.3,-0.3,0,-0.3,0.3,0,0.3,0.3,0.8,0.3,-0.3,0,-0.3,0.3,0.8,0.3,-0.3,0.8,-0.3]);
       const uv=new Float32Array([0,0,1,0,1,1,0,0,1,1,0,1,0,0,1,0,1,1,0,0,1,1,0,1]);
@@ -264,14 +249,123 @@ class Foliage {
 
     const sc=document.createElement('script');
     sc.src='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
-    sc.onload=()=>new THREE.GLTFLoader().load(GRASS_CFG.GLB_PATH,g=>spawnGlb(g.scene),null,fallback);
+    sc.onload=()=>new THREE.GLTFLoader().load(GRASS_CFG.GLB_PATH, g=>spawnGlb(g.scene), null, fallback);
     sc.onerror=fallback;
     document.head.appendChild(sc);
   }
 
-  /* ─── UPDATE ────────────────────────────────────────────── */
+  /* ─── NUEVO: CARGAR GLB DE NATURALEZA (sin afectar nada) ─ */
+  _loadNatureGLB() {
+    const loader = new THREE.GLTFLoader();
+    
+    // Configurar DRACO
+    if (THREE.DRACOLoader) {
+      try {
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+        loader.setDRACOLoader(dracoLoader);
+      } catch (e) {}
+    }
+
+    // ROBLES (15 árboles)
+    for(let i = 0; i < 15; i++) {
+      setTimeout(() => {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 20 + Math.random() * 50;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        
+        // Verificar posición
+        if (this._isValidPosition(x, z)) {
+          loader.load('models/oakTrees/oakTreesVisual.glb', (gltf) => {
+            const model = gltf.scene;
+            const scale = 1.0 + Math.random() * 0.8;
+            
+            model.position.set(x, 0, z);
+            model.scale.setScalar(scale);
+            model.rotation.y = Math.random() * Math.PI * 2;
+            
+            model.traverse(node => {
+              if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+              }
+            });
+            
+            this.scene.add(model);
+            this.colliders.push({ x, z, r: 1.2 * scale, type: 'oakTree' });
+          }, undefined, () => {});
+        }
+      }, i * 100);
+    }
+
+    // FAROLAS (2 farolas)
+    for(let i = 0; i < 2; i++) {
+      setTimeout(() => {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 20 + Math.random() * 50;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        
+        if (this._isValidPosition(x, z)) {
+          loader.load('models/Farolas sin el poste/lanterns.glb', (gltf) => {
+            const model = gltf.scene;
+            const scale = 0.7 + Math.random() * 0.2;
+            
+            model.position.set(x, 0, z);
+            model.scale.setScalar(scale);
+            model.rotation.y = Math.random() * Math.PI * 2;
+            
+            model.traverse(node => {
+              if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+              }
+            });
+            
+            this.scene.add(model);
+            
+            // Luz
+            const light = new THREE.PointLight(0xffaa33, 0.8, 5);
+            light.position.set(x, 1.5, z);
+            this.scene.add(light);
+            
+          }, undefined, () => {});
+        }
+      }, i * 100 + 500);
+    }
+  }
+
+  _isValidPosition(x, z) {
+    // Evitar islas
+    const islands = [
+      { x: -55, z: -40, r: 22 },
+      { x: 58, z: -38, r: 22 },
+      { x: 5, z: -70, r: 22 },
+      { x: -8, z: 68, r: 25 },
+    ];
+    
+    for (const isla of islands) {
+      if (Math.hypot(x - isla.x, z - isla.z) < isla.r) return false;
+    }
+    
+    // Evitar letras
+    if (x > -15 && x < 18 && z > -10 && z < 10) return false;
+    
+    // Evitar pista
+    if (window._trackCurve) {
+      for (let i = 0; i <= 50; i+=5) {
+        const p = window._trackCurve.getPoint(i / 50);
+        if (Math.hypot(p.x - x, p.z - z) < 8) return false;
+      }
+    }
+    
+    return true;
+  }
+
+  /* ─── UPDATE (exactamente como antes) ─────────────────── */
   update(dt, t) {
-    // Viento
+    // VIENTO - IGUAL QUE ANTES
     const pos=this._windPts.geometry.attributes.position.array;
     const tt=Date.now()*0.0002;
     const wx=Math.cos(tt)*8, wz=Math.sin(tt*0.7)*4;
@@ -282,14 +376,16 @@ class Foliage {
       pos[i*3+2]+=wz*sp*dt; if(pos[i*3+2]>60) pos[i*3+2]=-60; if(pos[i*3+2]<-60) pos[i*3+2]=60;
     }
     this._windPts.geometry.attributes.position.needsUpdate=true;
+    
     this._dustPts.rotation.y+=dt*0.015;
 
+    // PASTO - IGUAL
     if(this._grassMeshes) this._grassMeshes.forEach((m,i)=>{
       m.rotation.x=Math.sin(t*0.9+i*0.3)*0.038;
       m.rotation.z=Math.sin(t*0.7+i*0.2)*0.028;
     });
 
-    // Árboles
+    // ÁRBOLES - IGUAL
     this._trees.forEach(tree=>{
       const ph=tree.userData.windPhase||0, sp=tree.userData.windSpeed||1, sc=tree.userData.treeScale||1;
       tree.rotation.x=Math.sin(t*sp+ph)*0.018*sc;

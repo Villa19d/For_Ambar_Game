@@ -97,6 +97,17 @@ class IslandMirador extends IslandBase {
     // Guardar referencia para el raycast
     if(!window._islandColliders) window._islandColliders = [];
     window._islandColliders.push(colDisk);
+
+    // Después de crear el colDisk:
+    if (window._groundColliders) {
+      window._groundColliders.push({
+        x: this.cfg.x,
+        z: this.cfg.z,
+        r: 13.5,
+        y: 0.38
+      });
+    }
+
   }
 
   /* ── Decoración ─────────────────────────────────────────── */

@@ -36,6 +36,15 @@ class IslandBase {
     // ── IMPORTANTE: Solo añadir collider si NO es la isla de letras ──
     if (cfg.id !== 'letras') {
       colliders.push({ x: cfg.x, z: cfg.z, r: 3.5 });
+      // 2. Collider de altura para el suelo (NUEVO)
+      // Este es un objeto especial que el Vehicle usará para saber la altura
+      if (!window._groundColliders) window._groundColliders = [];
+      window._groundColliders.push({
+        x: cfg.x,
+        z: cfg.z,
+        r: 14, // Radio de la plataforma (ajusta según cada isla)
+        y: 0.38 // Altura del suelo de la isla
+      });
     } else {
       console.log('%c📍 Isla de letras: sin collider base', 'color:#ffaa00');
     }

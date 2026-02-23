@@ -68,6 +68,15 @@ class IslandCofre extends IslandBase {
     this.scene.add(colDisk);
     if(!window._islandColliders) window._islandColliders = [];
     window._islandColliders.push(colDisk);
+
+    if (window._groundColliders) {
+      window._groundColliders.push({
+        x: wx,
+        z: wz,
+        r: 15.5, // Radio de la plataforma
+        y: 0.38
+      });
+    }
   }
 
   /* ── Decoración ─────────────────────────────────────────── */

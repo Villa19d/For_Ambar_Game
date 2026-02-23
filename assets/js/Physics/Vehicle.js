@@ -132,21 +132,37 @@ class Vehicle {
   }
 
   /* ── Gravedad + Salto ── */
-  _updateVertical(dt, input) {
-    const groundY = this._getGroundY(this.group.position.x, this.group.position.z, this.group.position.y);
-    if (input.jump && this.onGround) { this.velY = CFG.jumpForce; this.onGround = false; }
-    this.velY -= CFG.gravity * dt;
-    this.group.position.y += this.velY * dt;
-    if (this.group.position.y <= groundY) {
-      this.group.position.y = groundY;
-      if (this.velY < -4) {
-        const impact = Math.min(Math.abs(this.velY) / CFG.jumpForce, 1);
-        this.group.scale.set(1+impact*0.1, 1-impact*0.15, 1+impact*0.1);
-        gsap.to(this.group.scale, { x:1,y:1,z:1, duration:0.28, ease:'elastic.out(1,0.5)' });
-      }
-      this.velY = 0; this.onGround = true;
-    } else { this.onGround = false; }
+_updateVertical(dt, input) {
+  const groundY = this._getGroundY(this.group.position.x, this.group.position.z, this.group.position.y);
+  
+  // Si no hay groundY, usar 0
+  const effectiveGroundY = groundY || 0;
+  
+  if (input.jump && this.onGround) { 
+    this.velY = CFG.jumpForce; 
+    this.onGround = false; 
   }
+  
+  this.velY -= CFG.gravity * dt;
+  this.group.position.y += this.velY * dt;
+  
+  // Si está por debajo del suelo, corregir
+  if (this.group.position.y <= effectiveGroundY) {
+    this.group.position.y = effectiveGroundY;
+    
+    // Efecto de impacto si cayó fuerte
+    if (this.velY < -4) {
+      const impact = Math.min(Math.abs(this.velY) / CFG.jumpForce, 1);
+      this.group.scale.set(1+impact*0.1, 1-impact*0.15, 1+impact*0.1);
+      gsap.to(this.group.scale, { x:1,y:1,z:1, duration:0.28, ease:'elastic.out(1,0.5)' });
+    }
+    
+    this.velY = 0;
+    this.onGround = true;
+  } else {
+    this.onGround = false;
+  }
+}
 
   /* ── Colisiones ── */
 _updateCollisions() {
@@ -237,40 +253,55 @@ _updateCollisions() {
   }
 
 _getGroundY(x, z, carY) {
-    this._rayOrigin.set(x, carY + 2, z);
-    this._raycaster.set(this._rayOrigin, this._rayDown);
+  this._rayOrigin.set(x, carY + 2, z);
+  this._raycaster.set(this._rayOrigin, this._rayDown);
 
-    let groundY = 0; // Valor por defecto
+  let groundY = 0;
 
-    // 1. Raycast contra discos de plataformas de islas (solo los que son meshes)
-    if (window._islandColliders && Array.isArray(window._islandColliders)) {
-        try {
-            // IMPORTANTE: Solo usar los que SON MESHES para el raycast
-            const meshColliders = window._islandColliders.filter(c => c && c.isMesh === true);
-            if (meshColliders.length > 0) {
-                const hits = this._raycaster.intersectObjects(meshColliders);
-                if (hits.length > 0 && hits[0].point.y <= carY + 2) {
-                    groundY = hits[0].point.y;
-                }
-            }
-        } catch (e) {
-            console.warn('Error en raycast de islas:', e);
-        }
+  // 1. PRIMERO: Usar groundColliders (más rápido y preciso)
+  if (window._groundColliders && Array.isArray(window._groundColliders)) {
+    for (const col of window._groundColliders) {
+      const dx = x - col.x;
+      const dz = z - col.z;
+      const dist = Math.sqrt(dx*dx + dz*dz);
+      if (dist < col.r) {
+        groundY = Math.max(groundY, col.y);
+      }
     }
+  }
 
-    // 2. Raycast contra la pista (con protección)
-    if (window._trackCollision && window._trackCollision.isMesh) {
-        try {
-            const hits = this._raycaster.intersectObject(window._trackCollision);
-            if (hits.length > 0 && hits[0].point.y <= carY + 0.8) {
-                groundY = Math.max(groundY, hits[0].point.y);
+  // 2. SEGUNDO: Raycast contra discos de plataformas (backup)
+  if (window._islandColliders && Array.isArray(window._islandColliders)) {
+    try {
+      const meshColliders = window._islandColliders.filter(c => c && c.isMesh === true);
+      if (meshColliders.length > 0) {
+        const hits = this._raycaster.intersectObjects(meshColliders);
+        if (hits.length > 0) {
+          let highestHit = null;
+          hits.forEach(hit => {
+            if (!highestHit || hit.point.y > highestHit.point.y) {
+              highestHit = hit;
             }
-        } catch (e) {
-            console.warn('Error en raycast de pista:', e);
+          });
+          if (highestHit && highestHit.point.y <= carY + 2) {
+            groundY = Math.max(groundY, highestHit.point.y);
+          }
         }
-    }
-    
-    return groundY;
+      }
+    } catch (e) {}
+  }
+
+  // 3. TERCERO: Raycast contra la pista
+  if (window._trackCollision && window._trackCollision.isMesh) {
+    try {
+      const hits = this._raycaster.intersectObject(window._trackCollision);
+      if (hits.length > 0 && hits[0].point.y <= carY + 0.8) {
+        groundY = Math.max(groundY, hits[0].point.y);
+      }
+    } catch (e) {}
+  }
+  
+  return groundY;
 }
 
   _buildMesh() {

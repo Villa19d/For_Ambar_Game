@@ -100,6 +100,16 @@ class IslandFaro extends IslandBase {
     this.scene.add(colDisk);
     if(!window._islandColliders) window._islandColliders = [];
     window._islandColliders.push(colDisk);
+
+        // Después de crear el colDisk:
+    if (window._groundColliders) {
+      window._groundColliders.push({
+        x: wx,
+        z: wz,
+        r: 12.5,
+        y: 0.32
+      });
+    }
   }
 
   /* ── Decoración principal ───────────────────────────────── */
