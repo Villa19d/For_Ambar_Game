@@ -128,9 +128,36 @@ closeModal(id) {
     }, 36);
   }
 
-  /* ─── PANTALLA FINAL ─────────────────────────────────────── */
-  _finalScreen() {
-  // Evitar que se muestre más de una vez
+
+/* ─── INICIALIZAR CARTA INTERACTIVA ─────────────────────── */
+_initCarta() {
+  const carta = document.getElementById('carta');
+  if (!carta) return;
+  
+  // Remover event listeners anteriores (por si acaso)
+  carta.removeEventListener('click', this._toggleCarta);
+  
+  // Definir función de toggle
+  this._toggleCarta = () => {
+    carta.classList.toggle('abierta');
+    
+    // Sonido sutil al abrir/cerrar (opcional)
+    if (this.audio) {
+      this.audio.tone(800, 0.1, 'sine', 0.1);
+    }
+    
+    console.log('📬 Carta', carta.classList.contains('abierta') ? 'abierta' : 'cerrada');
+  };
+  
+  // Asignar evento
+  carta.addEventListener('click', this._toggleCarta);
+  
+  // Asegurar que empiece cerrada
+  carta.classList.remove('abierta');
+}
+
+  //===============PANTALLA FINAL=================
+_finalScreen() {
   if (this._finalShown) return;
   this._finalShown = true;
   
@@ -138,18 +165,25 @@ closeModal(id) {
     const fs = document.getElementById('final-screen');
     if(!fs) return;
     fs.classList.remove('hidden');
+    
+    // Corazones flotantes
     const cont = document.getElementById('final-hearts');
-    if(!cont) return;
-    ['💛','🌻','💫','✨','🌼','💕'].forEach(em => {
-      for(let j = 0; j < 4; j++){
-        const h = document.createElement('span');
-        h.className = 'heart-float'; h.textContent = em;
-        h.style.setProperty('--l',   Math.random() * 100 + '%');
-        h.style.setProperty('--d',   (3 + Math.random() * 5) + 's');
-        h.style.setProperty('--del', Math.random() * 3 + 's');
-        cont.appendChild(h);
-      }
-    });
+    if(cont) {
+      ['💛','🌻','💫','✨','🌼','💕'].forEach(em => {
+        for(let j = 0; j < 4; j++){
+          const h = document.createElement('span');
+          h.className = 'heart-float'; h.textContent = em;
+          h.style.setProperty('--l',   Math.random() * 100 + '%');
+          h.style.setProperty('--d',   (3 + Math.random() * 5) + 's');
+          h.style.setProperty('--del', Math.random() * 3 + 's');
+          cont.appendChild(h);
+        }
+      });
+    }
+    
+    // ── INICIALIZAR CARTA ─────────────────────────────
+    this._initCarta();
+    
   }, 600);
- }
+}
 }
