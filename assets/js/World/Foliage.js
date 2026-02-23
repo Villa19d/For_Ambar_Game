@@ -15,6 +15,27 @@ class Foliage {
     this._loadNatureGLB();   // ← NUEVO: carga robles y farolas SIN DUPLICAR PASTO
   }
 
+_getGroundHeight(x, z) {
+  // Valor por defecto
+  let groundY = 0;
+  
+  // Verificar colliders de islas (tienen altura)
+  if (window._groundColliders) {
+    for (const col of window._groundColliders) {
+      const dx = x - col.x;
+      const dz = z - col.z;
+      const dist = Math.sqrt(dx*dx + dz*dz);
+      if (dist < col.r) {
+        groundY = col.y;
+        break;
+      }
+    }
+  }
+  
+  return groundY;
+}
+
+
   /* ─── TUS ÁRBOLES + ROCAS (EXACTAMENTE IGUAL) ─────────── */
   _buildTrees() {
     // TU CÓDIGO ORIGINAL - sin ningún cambio
@@ -161,7 +182,7 @@ class Foliage {
     this._windPts=new THREE.Points(wGeo,new THREE.PointsMaterial({color:0xddccaa,size:0.12,sizeAttenuation:true,transparent:true,opacity:0.45,depthWrite:false}));
     this.scene.add(this._windPts);
 
-    const DN=200; // ← 200 partículas, como antes
+    const DN=300; // ← 200 partículas, como antes
     const dPos=new Float32Array(DN*3);
     for(let i=0;i<DN;i++){
       dPos[i*3]=(Math.random()-0.5)*100;
@@ -299,41 +320,87 @@ class Foliage {
       }, i * 100);
     }
 
-    // FAROLAS (2 farolas)
-    for(let i = 0; i < 2; i++) {
-      setTimeout(() => {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = 20 + Math.random() * 50;
-        const x = Math.cos(angle) * radius;
-        const z = Math.sin(angle) * radius;
-        
-        if (this._isValidPosition(x, z)) {
-          loader.load('models/Farolas sin el poste/lanterns.glb', (gltf) => {
-            const model = gltf.scene;
-            const scale = 0.7 + Math.random() * 0.2;
-            
-            model.position.set(x, 0, z);
-            model.scale.setScalar(scale);
-            model.rotation.y = Math.random() * Math.PI * 2;
-            
-            model.traverse(node => {
-              if (node.isMesh) {
-                node.castShadow = true;
-                node.receiveShadow = true;
-              }
-            });
-            
-            this.scene.add(model);
-            
-            // Luz
-            const light = new THREE.PointLight(0xffaa33, 0.8, 5);
-            light.position.set(x, 1.5, z);
-            this.scene.add(light);
-            
-          }, undefined, () => {});
-        }
-      }, i * 100 + 500);
+    // FAROLAS (1 farolas)
+    // FAROLAS - Control total
+const lanternConfig = {
+  count: 2,              // <-- Total en todo el mapa
+  minRadius: 15,         // <-- Más lejos del centro
+  maxRadius: 60,
+  minScale: 0.6,
+  maxScale: 0.8,
+  checkHeight: true,     // <-- Verificar altura del suelo
+  avoidRadius: 12        // <-- Separación entre farolas
+};
+
+// Array para llevar registro de posiciones de farolas
+this._lanternPositions = [];
+
+for(let i = 0; i < lanternConfig.count; i++) {
+  // Intentar varias veces encontrar una buena posición
+  let placed = false;
+  let attempts = 0;
+  const maxAttempts = 50;
+  
+  while (!placed && attempts < maxAttempts) {
+    attempts++;
+    
+    const angle = Math.random() * Math.PI * 2;
+    const radius = lanternConfig.minRadius + Math.random() * (lanternConfig.maxRadius - lanternConfig.minRadius);
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    
+    // Verificar posición base
+    if (!this._isValidPosition(x, z, lanternConfig.avoidRadius)) continue;
+    
+    // Verificar que no esté muy cerca de otra farola
+    let tooClose = false;
+    for (const pos of this._lanternPositions) {
+      if (Math.hypot(x - pos.x, z - pos.z) < lanternConfig.avoidRadius) {
+        tooClose = true;
+        break;
+      }
     }
+    if (tooClose) continue;
+    
+    // Verificar altura del suelo (evitar que floten)
+    if (lanternConfig.checkHeight) {
+      const groundY = this._getGroundHeight(x, z);
+      // Si el suelo está muy por encima de 0, está en una isla elevada
+      if (Math.abs(groundY) > 0.5) continue;
+    }
+    
+    // ¡Posición válida!
+    this._lanternPositions.push({ x, z });
+    placed = true;
+    
+    // Cargar farola con delay
+    setTimeout(() => {
+      loader.load('models/Farolas sin el poste/lanterns.glb', (gltf) => {
+        const model = gltf.scene;
+        const scale = lanternConfig.minScale + Math.random() * (lanternConfig.maxScale - lanternConfig.minScale);
+        
+        model.position.set(x, 0, z);  // Y=0 porque el suelo está a 0
+        model.scale.setScalar(scale);
+        model.rotation.y = Math.random() * Math.PI * 2;
+        
+        model.traverse(node => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+          }
+        });
+        
+        this.scene.add(model);
+        
+        // Luz a altura correcta
+        const light = new THREE.PointLight(0xffaa33, 0.6, 6); // <-- Menos intensa
+        light.position.set(x, 1.2, z);  // Altura fija sobre el suelo
+        this.scene.add(light);
+        
+      }, undefined, () => {});
+    }, i * 100 + 500);
+  }
+}
   }
 
   _isValidPosition(x, z) {
