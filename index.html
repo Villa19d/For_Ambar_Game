@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para Ámbar 💛</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💛</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- ══ INTRO ════════════════════════════════════════════════ -->
+  <div id="intro-screen">
+    <div class="intro-inner">
+      <div class="intro-tag">un pequeño universo hecho para ti</div>
+      <h1 class="intro-title">Para<br><em>Ámbar</em></h1>
+      <p class="intro-body">
+        Conduce por el mapa y descubre<br>
+        los lugares que hice para ti.
+      </p>
+      <div class="intro-controls">
+        <div class="keys-group">
+          <div class="key-row"><kbd>W</kbd></div>
+          <div class="key-row"><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+        </div>
+        <span class="key-sep">o</span>
+        <div class="keys-group">
+          <div class="key-row"><kbd>↑</kbd></div>
+          <div class="key-row"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
+        </div>
+        <p class="key-label">Mover · <kbd>E</kbd> abrir · <kbd>␣</kbd> saltar</p>
+      </div>
+      <button id="start-btn">
+        <span>Comenzar</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="intro-particles" id="intro-particles"></div>
+  </div>
+
+  <!-- ══ HUD ══════════════════════════════════════════════════ -->
+  <div id="hud" class="hidden">
+    <div id="hud-discoveries">
+      <span id="disc-count">0</span><span class="disc-sep"> / 3</span>
+      <p>descubiertos</p>
+    </div>
+  </div>
+
+  <!-- Hint independiente — centrado en pantalla -->
+  <div id="proximity-hint" class="hidden">
+    <span class="ping-dot"></span>
+    Presiona <kbd>E</kbd> para abrir
+  </div>
+
+ <!-- ══ MODAL 1 — El Cofre ════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-1" aria-hidden="true">
+    <div class="modal-panel modal-cofre">
+      <button class="modal-close" data-modal="modal-1">✕</button>
+      <div class="modal-num">01</div>
+      <div class="modal-icon floating">📸</div>
+      <h2 class="modal-title">Camara<br>de Recuerdos</h2>
+      <p class="modal-sub">Momentos Especiales Contigo</p>
+      <div class="photo-grid">
+        <!-- Para agregar tus fotos: cambia "media/Fotos/foto1.jpg" por la ruta real -->
+        <!-- y edita la leyenda en data-caption="..." -->
+        <div class="photo-item" data-caption="Leyenda1">
+          <div class="photo-inner" data-src="media/Fotos/foto1.jpeg" data-caption="Primero que nada... Dioos que PRECIOSA mujer!">
+            <img src="media/Fotos/foto1.jpeg" alt="Momento 1" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 1</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 2">
+          <div class="photo-inner" data-src="media/Fotos/foto2.jpeg" data-caption="Ame estar contigo este día, me la pase genial contigo, te veías preciosa, y yo todo presumido de estar con la mujer mas bonita">
+            <img src="media/Fotos/foto2.jpeg" alt="Momento 2" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 2</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 3">
+          <div class="photo-inner" data-src="media/Fotos/foto3.jpeg" data-caption="No voy a olvidar jamás nuestro primer TE AMO, y me encanto que me lo dijeras, yo besarte y decirte... Te amooo te amoo mujer ...y Aghhh como te amooo">
+            <img src="media/Fotos/foto3.jpeg" alt="Momento 3" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 3</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 4">
+          <div class="photo-inner" data-src="media/Fotos/foto4.jpeg" data-caption="Un día en el parque con mi novia, qué mejor que eso? Me encantas bonita">
+            <img src="media/Fotos/foto4.jpeg" alt="Momento 4" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 4</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 5">
+          <div class="photo-inner" data-src="media/Fotos/foto5.jpeg" data-caption="Esta fue del día que te pedi que fueras mi novia, y no sabes como me encanto estar contigo ese día">
+            <img src="media/Fotos/foto5.jpeg" alt="Momento 5" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 5</span>
+        </div>
+        <div class="photo-item" data-caption="Leyenda 6">
+          <div class="photo-inner" data-src="media/Fotos/foto6.jpeg" data-caption="Gracias por ese día quedarte tan noche conmigo... Me encanta tu compañia. Amor ya hay que tomarnos mas fotos jajaja ">
+            <img src="media/Fotos/foto6.jpeg" alt="Momento 6" onerror="this.parentElement.innerHTML='📸'">
+          </div><span>Momento 6</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- ══ LIGHTBOX ══════════════════════════════════════════════ -->
+  <div id="lightbox" class="hidden" aria-modal="true" role="dialog">
+    <div id="lightbox-backdrop"></div>
+    <div id="lightbox-panel">
+      <button id="lightbox-close">✕</button>
+      <div id="lightbox-img-wrap">
+        <img id="lightbox-img" src="" alt="">
+        <div id="lightbox-placeholder">📸</div>
+      </div>
+      <p id="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <!-- ══ MODAL 2 — El Mirador ═══════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-2" aria-hidden="true">
+    <div class="modal-panel modal-mirador">
+      <button class="modal-close" data-modal="modal-2">✕</button>
+      <div class="modal-num">02</div>
+      <div class="modal-icon pulsing">🌠</div>
+      <h2 class="modal-title">El Mirador<br>de las Estrellas</h2>
+      <p class="modal-sub">Mira hacia arriba. Las estrellas tienen algo que decirte.</p>
+
+      <div class="mirador-sky">
+        <span class="mirador-star-row mirador-star-row--a">✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧</span>
+        <span class="mirador-star-row mirador-star-row--b">⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦ ✧ ⭒ ✦</span>
+        <p class="mirador-constellation">✦ T E &nbsp; A M O &nbsp; Á M B A R ✦</p>
+      </div>
+
+      <div class="mirador-message">
+        <p class="mirador-quote">❝ Te quiero 1000 vidas conmigo ❞</p>
+        <p class="mirador-note">💡 Mantén clic derecho + arrastra para ver todo el escenario</p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal-mirador { text-align: center; }
+    .mirador-sky {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      background: radial-gradient(ellipse at 50% 40%, #06102e 0%, #03071a 100%);
+      border-radius: 14px;
+      height: 130px;
+      margin: 18px 0 14px;
+      overflow: hidden;
+      border: 1px solid rgba(100,160,255,0.22);
+      padding: 10px 0 0;
+    }
+    .mirador-star-row {
+      display: block;
+      width: 100%;
+      text-align: center;
+      color: rgba(180,210,255,0.6);
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      line-height: 1;
+    }
+    .mirador-star-row--a { animation: twinkle 2.8s ease-in-out infinite; }
+    .mirador-star-row--b { animation: twinkle 2.1s ease-in-out infinite reverse; opacity: 0.5; }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.4; } 50% { opacity: 1; }
+    }
+    .mirador-constellation {
+      width: 100%;
+      text-align: center;
+      color: #cce0ff;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 3px;
+      animation: glow-text 3s ease-in-out infinite;
+      margin: 0;
+      padding-bottom: 10px;
+    }
+    @keyframes glow-text {
+      0%,100% { text-shadow: 0 0 6px #4488ff88; }
+      50%      { text-shadow: 0 0 18px #88aaff, 0 0 30px #4466ff44; }
+    }
+    .mirador-message { padding: 4px 0 10px; }
+    .mirador-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-style: italic;
+      color: #ffffff;
+      text-shadow: 0 0 12px #6699ff;
+      margin: 0 0 10px;
+      line-height: 1.4;
+    }
+    .mirador-note {
+      font-size: 0.84rem;
+      color: #aac4ff;
+      background: rgba(30,50,120,0.4);
+      border: 1px solid rgba(100,160,255,0.2);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: inline-block;
+      margin: 0;
+    }
+  </style>
+
+  <!-- ══ MODAL 3 — El Faro ══════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-3" aria-hidden="true">
+    <div class="modal-panel modal-letter">
+      <button class="modal-close" data-modal="modal-3">✕</button>
+      <div class="modal-num">03</div>
+      <div class="modal-icon">🏮</div>
+      <h2 class="modal-title">El Faro</h2>
+      <div class="letter">
+        <p class="letter-open">Querida Ámbar,</p>
+        <p class="letter-body" id="typewriter-out"></p>
+        <p class="letter-sign">Con todo mi amor, <em>Rodrigo</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL ROCOLA ══════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="jukebox" aria-hidden="true">
+    <div class="modal-panel jukebox-panel">
+      <button class="modal-close" data-modal="jukebox">✕</button>
+      <div class="modal-num">🎵</div>
+      <h2 class="modal-title">La Rocola</h2>
+      <!-- El resto de la UI la construye Jukebox.js dinámicamente -->
+    </div>
+  </div>
+
+  <!-- ══ PANTALLA FINAL ════════════════════════════════════════ -->
+  <div id="final-screen" class="hidden">
+    <div class="final-inner">
+      <div class="final-hearts" id="final-hearts"></div>
+      <p class="final-pre">lo encontraste todo, Eso!</p>
+      <h2 class="final-title">Te quiero<br><em>muchísimo</em></h2>
+      <p class="final-body">Feliz 14 de Febrero mi Amor.Espero que este pequeño mundo te haya hecho sonreír aunque sea un segundo. 💐</p>
+      
+      
+      
+     <!-- ══ CARTA FINAL  ═══════════════════ -->
+<div class="carta-container" id="carta-container">
+  <div class="carta-label">📜 Abre esta carta, si quieres leer lo que tengo para decirte...</div>
+  <div class="carta" id="carta">
+    <div class="carta-front">
+      <div class="carta-sobre">
+        <div class="carta-icon">📬</div>
+        <div class="carta-texto-pequeno">Para Ámbar</div>
+        <div class="carta-texto-fecha">Viernes 21/02/2026</div>
+      </div>
+    </div>
+    <div class="carta-back">
+      <div class="carta-mensaje-contenedor">
+        <p class="carta-linea">Ámbar,</p>
+        <p class="carta-linea">Lo siento… de verdad. Lo único que quería era verte feliz, tranquila, en paz conmigo… y sé que muchas veces no supe darte eso como merecías.</p>
+        <p class="carta-linea">Lamento las peleas, mis actitudes, los momentos en los que en lugar de cuidarnos, nos lastimamos.</p>
+        <p class="carta-linea">Aun así, estoy profundamente agradecido con la vida por haberte puesto en mi camino; gracias por enseñarme a amar como tú amas.</p>
+        <p class="carta-linea">Visto como tú me enseñaste a ver las cosas, no me quedo con el final… me quedo con la fortuna de haber amado y sido amado por una mujer increíble.</p>
+        <p class="carta-linea">Nunca dudes lo mucho que te amo, ni que mi intención siempre fue que estuvieras bien, incluso cuando no lo hice perfecto.</p>
+        <p class="carta-linea">Si algo me duele no es perder, es no haberte dado siempre la paz que quería darte.</p>
+        <p class="carta-linea">Te amo con todo lo que soy.</p>
+        <p class="carta-linea">Y pase lo que pase, haber coincidido contigo siempre será algo que voy a cuidar en mi corazón.</p>
+        <p class="carta-firma">Con todo mi amor,<br><em>Rodrigo</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <button id="replay-btn">Volver a explorar</button>
+    </div>
+  </div>
+
+
+  <!-- ══ LOADER (oculto por defecto) ════════════════════════ -->
+<div id="game-loader" class="hidden">
+  <div class="loader-content">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">
+      <span class="loader-title">Construyendo el mundo</span>
+      <div class="loader-bar">
+        <div class="loader-progress" style="width: var(--progress, 0%);"></div>
+      </div>
+      <span class="loader-percentage" id="loader-percentage">0%</span>
+    </div>
+  </div>
+</div>
+
+  <!-- Flip hint — fuera del HUD para no solaparse -->
+  <!-- <div id="flip-hint">A / D para levantarte</div> -->
+
+  <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- GLTFLoader compatible con script clásico (no módulo) -->
+  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/DRACOLoader.js"></script>
+
+  <!-- ══ CONFIGURACIÓN ══════════════════════════════════════════ -->
+  <script src="assets/js/Config.js"></script>
+
+  <!-- ══ FÍSICA ════════════════════════════════════════════════ -->
+  <script src="assets/js/Physics/Vehicle.js"></script>
+
+  <!-- ══ MUNDO — orden importante: base primero, islas después ══ -->
+  <script src="assets/js/World/Ground.js"></script>
+  <script src="assets/js/World/Track.js"></script>
+  <script src="assets/js/World/Foliage.js"></script>
+
+  <!-- Naturaleza (árboles, bancos, farolas) -->
+  <script src="assets/js/World/Nature.js"></script>
+
+  <!-- Islas — clase base antes que las subclases -->
+  <script src="assets/js/World/Islands/IslandBase.js"></script>
+  <script src="assets/js/World/Islands/IslandCofre.js"></script>
+  <script src="assets/js/World/Islands/IslandMirador.js"></script>
+  <script src="assets/js/World/Islands/IslandFaro.js"></script>
+  <script src="assets/js/World/Islands/IslandRocola.js"></script>
+
+   <!-- NUEVA ISLA DE LETRAS -->
+   <script src="assets/js/World/Islands/IslandLetras.js"></script>
+
+  <!-- Orquestador — debe ir después de todos los módulos -->
+  <script src="assets/js/World/World.js"></script>
+
+  <!-- ══ ENTRADA / CÁMARA / AUDIO ═══════════════════════════════ -->
+  <script src="assets/js/Game/Input.js"></script>
+  <script src="assets/js/Game/Camera.js"></script>
+  <script src="assets/js/Game/Jukebox.js"></script>
+  <script src="assets/js/Game/Audio.js"></script>
+  <script src="assets/js/Game/ModalManager.js"></script>
+
+  <!-- ══ MAIN — entrada del juego ═══════════════════════════════ -->
+  <script src="assets/js/Main.js"></script>
+
+  <!-- ══ LIGHTBOX ════════════════════════════════════════════════ -->
+  <script>
+  (function() {
+    const lb       = document.getElementById('lightbox');
+    const lbImg    = document.getElementById('lightbox-img');
+    const lbPh     = document.getElementById('lightbox-placeholder');
+    const lbCap    = document.getElementById('lightbox-caption');
+    const lbClose  = document.getElementById('lightbox-close');
+    const lbBg     = document.getElementById('lightbox-backdrop');
+
+    function openLightbox(src, caption) {
+      if(src && src !== '') {
+        lbImg.src = src;
+        lbImg.style.display = 'block';
+        lbPh.style.display  = 'none';
+      } else {
+        lbImg.style.display = 'none';
+        lbPh.style.display  = 'block';
+      }
+      lbCap.textContent = caption || '';
+      lb.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lb.classList.add('hidden');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // Clicks en las fotos del grid
+    document.addEventListener('click', function(e) {
+      const inner = e.target.closest('.photo-inner');
+      if(!inner) return;
+      const src     = inner.dataset.src || '';
+      const caption = inner.dataset.caption || '';
+      openLightbox(src, caption);
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lbBg.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+  })();
+  </script>
+</body>
+</html>

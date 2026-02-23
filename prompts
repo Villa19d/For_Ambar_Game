@@ -1,0 +1,4382 @@
+Bruno simon estructura: 
+
+Ok va ... ahora vamos a basarnos completamente en el diseño de bruno-simon ... ya que nuestro carrito no tiene las fisicas que este chavo si pudo ponerle...
+Ademas de que necesito que me ayudes con las fisicas del vehiculo por que el carro sigue yendose de largo, acelera muy fuerte , derapa demasiado... 
+Y vamos a tratarle de copiar muchas fisicas que el usa ... asi que trata de hacer eso... copiale las fisicas que veas utiles a nuestro proyecto, diseños, particulas, colores, cosas de ese estilo... 
+Entonces te volvere a pasar algunos archivos que tiene bruno simon en su carpeta 
+
+Estructura de su carpeta 
+
+    Directorio: C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025\resources
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    da---l     21/02/2026  02:22 a. m.                models
+    da---l     21/02/2026  02:22 a. m.                renders
+    da---l     21/02/2026  02:22 a. m.                sounds
+    da---l     21/02/2026  02:22 a. m.                textures
+    -a---l     21/02/2026  02:22 a. m.       15806932 folio-2025.blend
+    -a---l     21/02/2026  02:22 a. m.       15763364 folio-2025.blend1
+    -a---l     21/02/2026  02:22 a. m.            362 palette.png
+    -a---l     21/02/2026  02:22 a. m.       27851611 references-inspiration.pur
+    -a---l     21/02/2026  02:22 a. m.          30344 slabs.sbs
+    -a---l     21/02/2026  02:22 a. m.        4093036 stars.psd
+    -a---l     21/02/2026  02:22 a. m.        4089167 terrain.psd
+    PS C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025\resources> 
+
+    C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025> ls
+
+
+        Directorio: C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025
+
+
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    da---l     21/02/2026  02:22 a. m.                resources
+    da---l     21/02/2026  02:22 a. m.                scripts
+    da---l     21/02/2026  02:22 a. m.                sources
+    da---l     21/02/2026  02:22 a. m.                static
+    -a---l     21/02/2026  02:22 a. m.            181 .env.example
+    -a---l     21/02/2026  02:22 a. m.            106 .gitignore
+    -a---l     21/02/2026  02:22 a. m.           1087 license.md
+    -a---l     21/02/2026  02:22 a. m.         238194 package-lock.json
+    -a---l     21/02/2026  02:22 a. m.           1329 package.json
+    -a---l     21/02/2026  02:22 a. m.           3043 readme.md
+    -a---l     21/02/2026  02:22 a. m.           1136 vite.config.js
+
+
+    PS C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025> cd scripts
+    PS C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025\scripts> tree /f
+    Listado de rutas de carpetas para el volumen Acer
+    El número de serie del volumen es 5ED4-26EE
+    C:.
+        compress.js
+
+    No existe ninguna subcarpeta
+
+            PS C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025\sources> tree /f
+            Listado de rutas de carpetas para el volumen Acer
+            El número de serie del volumen es 5ED4-26EE
+            C:.
+            │   index.html
+            │   index.js
+            │   threejs-override.js
+            │
+            ├───data
+            │       achievements.js
+            │       consoleLog.js
+            │       countries.js
+            │       lab.js
+            │       projects.js
+            │       social.js
+            │
+            ├───Game
+            │   │   Achievements.js
+            │   │   Audio.js
+            │   │   ClosingManager.js
+            │   │   Debug.js
+            │   │   Easter.js
+            │   │   Events.js
+            │   │   Explosions.js
+            │   │   Fog.js
+            │   │   Game.js
+            │   │   InputFlag.js
+            │   │   InstancedGroup.js
+            │   │   InteractivePoints.js
+            │   │   KonamiCode.js
+            │   │   Ligthing.js
+            │   │   Map.js
+            │   │   Materials.js
+            │   │   Menu.js
+            │   │   Modals.js
+            │   │   Monitoring.js
+            │   │   Noises.js
+            │   │   Notifications.js
+            │   │   Objects.js
+            │   │   Options.js
+            │   │   Overlay.js
+            │   │   Player.js
+            │   │   PreRenderer.js
+            │   │   Quality.js
+            │   │   RayCursor.js
+            │   │   References.js
+            │   │   Rendering.js
+            │   │   ResourcesLoader.js
+            │   │   Respawns.js
+            │   │   Reveal.js
+            │   │   Server.js
+            │   │   Tabs.js
+            │   │   Terrain.js
+            │   │   TextCanvas.js
+            │   │   Ticker.js
+            │   │   Time.js
+            │   │   Title.js
+            │   │   Tornado.js
+            │   │   Tracks.js
+            │   │   Trails.js
+            │   │   View.js
+            │   │   Viewport.js
+            │   │   Water.js
+            │   │   Weather.js
+            │   │   Wind.js
+            │   │   Zones.js
+            │   │
+            │   ├───BlackFriday
+            │   │       BlackFriday.js
+            │   │       FragmentObject.js
+            │   │
+            │   ├───Cycles
+            │   │       Cycles.js
+            │   │       DayCycles.js
+            │   │       YearCycles.js
+            │   │
+            │   ├───Geometries
+            │   │       LineGeometry.js
+            │   │       PortalSlabsGeometry.js
+            │   │       WindLineGeometry.js
+            │   │
+            │   ├───Inputs
+            │   │       Gamepad.js
+            │   │       Inputs.js
+            │   │       InteractiveButtons.js
+            │   │       Keyboard.js
+            │   │       Nipple.js
+            │   │       Pointer.js
+            │   │       Wheel.js
+            │   │
+            │   ├───Materials
+            │   │       MeshDefaultMaterial.js
+            │   │       MeshGridMaterial.js
+            │   │
+            │   ├───Passes
+            │   │       cheapDOF.js
+            │   │
+            │   ├───Physics
+            │   │       Physics.js
+            │   │       PhysicsVehicle.js
+            │   │       PhysicsWireframe.js
+            │   │
+            │   ├───utilities
+            │   │       maths.js
+            │   │       ObservableMap.js
+            │   │       ObservableSet.js
+            │   │       time.js
+            │   │
+            │   └───World
+            │       │   Benches.js
+            │       │   Bricks.js
+            │       │   Bubble.js
+            │       │   Bushes.js
+            │       │   Confetti.js
+            │       │   ExplosiveCrates.js
+            │       │   Fences.js
+            │       │   Fireballs.js
+            │       │   Floor.js
+            │       │   Flowers.js
+            │       │   Foliage.js
+            │       │   Grass.js
+            │       │   Grid.js
+            │       │   Intro.js
+            │       │   Lanterns.js
+            │       │   Leaves.js
+            │       │   Lightnings.js
+            │       │   PoleLights.js
+            │       │   RainLines.js
+            │       │   Scenery.js
+            │       │   Snow.js
+            │       │   Trees.js
+            │       │   VisualTornado.js
+            │       │   VisualVehicle.js
+            │       │   WaterSurface.js
+            │       │   Whispers.js
+            │       │   WindLines.js
+            │       │   World.js
+            │       │
+            │       └───Areas
+            │               AchievementsArea.js
+            │               AltarArea.js
+            │               Area.js
+            │               Areas.js
+            │               BehindTheSceneArea.js
+            │               BowlingArea.js
+            │               CareerArea.js
+            │               CircuitArea.js
+            │               CookieArea.js
+            │               LabArea.js
+            │               LandingArea.js
+            │               ProjectsArea.js
+            │               SocialArea.js
+            │               TimeMachine.js
+            │               ToiletArea.js
+            │
+            └───style
+                    achievements.styl
+                    behindTheScene.styl
+                    blackFriday.styl
+                    circuit-end.styl
+                    circuit.styl
+                    controls.styl
+                    discord.styl
+                    fonts.styl
+                    general.styl
+                    index.styl
+                    interactiveButtons.styl
+                    map.styl
+                    menu.styl
+                    modals.styl
+                    notifications.styl
+                    options.styl
+                    tabs.styl
+                    tooltips.styl
+                    tweakpane.styl
+                    whispers.styl
+
+            PS C:\Users\Rodrigo\Dropbox\Escuela\Bruno-simon\folio-2025\sources> 
+
+Ahora los Códigos:
+
+Physics.js  (Paste2)
+        import { Game } from '../Game.js'
+        import * as THREE from 'three/webgpu'
+
+        export class Physics
+        {
+            constructor()
+            {
+                this.game = Game.getInstance()
+
+                this.world = new this.game.RAPIER.World(
+                    { x: 0.0, y: -9.81, z: 0.0 },
+                    
+                    // {
+                    //     contact_erp: 0.2,
+                    //     dt: 1.0 / 60.0,
+                    //     lengthUnit: 1,
+                    //     maxCcdSubsteps: 1,
+                    //     minIslandSize: 128,
+                    //     normalizedAllowedLinearError: 0.001,
+                    //     normalizedPredictionDistance: 0.002,
+                    //     numAdditionalFrictionIterations: 1,
+                    //     numInternalPgsIterations: 1,
+                    //     numSolverIterations: 2
+                    // }
+                )
+                this.eventQueue = new this.game.RAPIER.EventQueue(true)
+
+                this.physicals = []
+
+                this.groups = {
+                    all: 0b0000000000000001,
+                    object:  0b0000000000000010,
+                    bumper:  0b0000000000000100
+                }
+                this.categories = {
+                    floor: (this.groups.all) << 16 | (this.groups.all),
+                    object: (this.groups.all | this.groups.object) << 16 | (this.groups.all | this.groups.bumper),
+                    bumper: (this.groups.bumper) << 16 | this.groups.object,
+                }
+                this.frictionRules = {
+                    average: this.game.RAPIER.CoefficientCombineRule.Average,
+                    min: this.game.RAPIER.CoefficientCombineRule.Min,
+                    max: this.game.RAPIER.CoefficientCombineRule.Max,
+                    multiply: this.game.RAPIER.CoefficientCombineRule.Multiply,
+                }
+
+                // this.world.integrationParameters.numSolverIterations = 4 // 4
+                // this.world.numAdditionalFrictionIterations = 0 // 0
+                // this.world.integrationParameters.numAdditionalFrictionIterations = 0 // 0
+                // this.world.numInternalPgsIterations = 1 // 1
+                // this.world.integrationParameters.numInternalPgsIterations = 1 // 1
+                // this.world.integrationParameters.normalizedAllowedLinearError = 0.001 // 0.001
+                // this.world.integrationParameters.minIslandSize = 128 // 128
+                // this.world.integrationParameters.maxCcdSubsteps = 1 // 1
+                // this.world.integrationParameters.normalizedPredictionDistance = 0.002 // 0.002
+                // this.world.lengthUnit = 1 // 1
+                // this.world.integrationParameters.lengthUnit = 1 // 1
+                
+                this.game.ticker.events.on('tick', () =>
+                {
+                    this.update()
+                }, 3)
+
+                if(this.game.debug.active)
+                {
+                    this.debugPanel = this.game.debug.panel.addFolder({
+                        title: '⬇️ Physics',
+                        expanded: false,
+                    })
+                    this.debugPanel.addBinding(this.world.gravity, 'y', { min: - 20, max: 20, step: 0.01 })
+                }
+            }
+
+            getBinaryGroups(groupNames)
+            {
+                let binary = 0b0000000000000000
+                
+                for(const groupName of groupNames)
+                    binary |= this.groups[groupName]
+
+                return binary
+            }
+
+            getPhysical(_physicalDescription)
+            {
+                const physical = {}
+
+                // Attributes
+                physical.waterGravityMultiplier = typeof _physicalDescription.waterGravityMultiplier !== 'undefined' ? _physicalDescription.waterGravityMultiplier : - 1.5
+                physical.linearDamping = typeof _physicalDescription.linearDamping !== 'undefined' ? _physicalDescription.linearDamping : 0.1
+                physical.angularDamping = typeof _physicalDescription.angularDamping !== 'undefined' ? _physicalDescription.angularDamping : 0.1
+
+                // Body
+                let rigidBodyDesc = this.game.RAPIER.RigidBodyDesc
+                
+                if(_physicalDescription.type === 'dynamic' || typeof _physicalDescription.type === 'undefined')
+                {
+                    physical.type = 'dynamic'
+                    rigidBodyDesc = rigidBodyDesc.dynamic()
+                }
+                else if(_physicalDescription.type === 'fixed')
+                {
+                    physical.type = 'fixed'
+                    rigidBodyDesc = rigidBodyDesc.fixed()
+                }
+                else if(_physicalDescription.type === 'kinematicPositionBased')
+                {
+                    physical.type = 'kinematicPositionBased'
+                    rigidBodyDesc = rigidBodyDesc.kinematicPositionBased()
+                }
+                else if(_physicalDescription.type === 'kinematicVelocityBased')
+                {
+                    physical.type = 'kinematicVelocityBased'
+                    rigidBodyDesc = rigidBodyDesc.kinematicVelocityBased()
+                }
+
+                if(typeof _physicalDescription.position !== 'undefined')
+                    rigidBodyDesc.setTranslation(_physicalDescription.position.x, _physicalDescription.position.y, _physicalDescription.position.z)
+
+                if(typeof _physicalDescription.rotation !== 'undefined')
+                    rigidBodyDesc.setRotation(_physicalDescription.rotation)
+
+                if(typeof _physicalDescription.canSleep !== 'undefined')
+                    rigidBodyDesc.setCanSleep(_physicalDescription.canSleep)
+
+                rigidBodyDesc.setLinearDamping(physical.linearDamping)
+
+                rigidBodyDesc.setAngularDamping(physical.angularDamping)
+
+                if(typeof _physicalDescription.sleeping !== 'undefined')
+                    rigidBodyDesc.setSleeping(_physicalDescription.sleeping)
+
+                if(typeof _physicalDescription.enabled !== 'undefined')
+                    rigidBodyDesc.setEnabled(_physicalDescription.enabled)
+                
+                physical.body = this.world.createRigidBody(rigidBodyDesc)
+
+                // Colliders
+                let collidersOverwrite = {}
+                if(typeof _physicalDescription.collidersOverwrite !== 'undefined')
+                    collidersOverwrite = _physicalDescription.collidersOverwrite
+
+                physical.colliders = []
+                for(let _colliderDescription of _physicalDescription.colliders)
+                {
+                    let colliderDescription = this.game.RAPIER.ColliderDesc
+
+                    _colliderDescription = {
+                        ..._colliderDescription,
+                        ...collidersOverwrite
+                    }
+
+                    if(_colliderDescription.shape === 'cuboid')
+                        colliderDescription = colliderDescription.cuboid(..._colliderDescription.parameters)
+                    if(_colliderDescription.shape === 'ball')
+                        colliderDescription = colliderDescription.ball(..._colliderDescription.parameters)
+                    if(_colliderDescription.shape === 'cylinder')
+                        colliderDescription = colliderDescription.cylinder(..._colliderDescription.parameters)
+                    else if(_colliderDescription.shape === 'trimesh')
+                        colliderDescription = colliderDescription.trimesh(..._colliderDescription.parameters)
+                    else if(_colliderDescription.shape === 'hull')
+                        colliderDescription = colliderDescription.convexHull(..._colliderDescription.parameters)
+                    else if(_colliderDescription.shape === 'heightfield')
+                        colliderDescription = colliderDescription.heightfield(..._colliderDescription.parameters)
+
+                    if(_colliderDescription.position)
+                        colliderDescription = colliderDescription.setTranslation(_colliderDescription.position.x, _colliderDescription.position.y, _colliderDescription.position.z)
+
+                    if(_colliderDescription.quaternion)
+                        colliderDescription = colliderDescription.setRotation(_colliderDescription.quaternion)
+                        
+                    colliderDescription = colliderDescription.setDensity(0.1)
+                        
+                    if(typeof _colliderDescription.mass !== 'undefined') // From collider description
+                    {
+                        if(typeof _colliderDescription.centerOfMass !== 'undefined')
+                            colliderDescription = colliderDescription.setMassProperties(_colliderDescription.mass, _colliderDescription.centerOfMass, { x: 1, y: 1, z: 1 }, new THREE.Quaternion().setFromAxisAngle(new THREE.Euler(0, 1, 0), - Math.PI * 0))
+                        else
+                            colliderDescription = colliderDescription.setMass(_colliderDescription.mass)
+                    }
+                        
+                    if(typeof _physicalDescription.mass !== 'undefined') // From body description
+                    {
+                        colliderDescription = colliderDescription.setMass(_physicalDescription.mass / _physicalDescription.colliders.length)
+                    }
+
+                    if(typeof _physicalDescription.friction !== 'undefined')
+                        colliderDescription = colliderDescription.setFriction(_physicalDescription.friction)
+                    else if(typeof _colliderDescription.friction !== 'undefined')
+                        colliderDescription = colliderDescription.setFriction(_colliderDescription.friction)
+                    else
+                        colliderDescription = colliderDescription.setFriction(0.2)
+
+                    if(typeof _physicalDescription.frictionRule !== 'undefined')
+                    {
+                        colliderDescription = colliderDescription.setFrictionCombineRule(this.frictionRules[_physicalDescription.frictionRule])
+                    }
+                        
+                    if(typeof _physicalDescription.restitution !== 'undefined')
+                        colliderDescription = colliderDescription.setRestitution(_physicalDescription.restitution)
+                    else if(typeof _colliderDescription.restitution !== 'undefined')
+                        colliderDescription = colliderDescription.setRestitution(_colliderDescription.restitution)
+                    else
+                        colliderDescription = colliderDescription.setRestitution(0.15)
+                        
+                    let category = 'object'
+                    if(typeof _physicalDescription.category !== 'undefined')
+                        category = _physicalDescription.category
+                    else if(typeof _colliderDescription.category !== 'undefined')
+                        category = _colliderDescription.category
+
+                    colliderDescription = colliderDescription.setCollisionGroups(this.categories[category])
+                    
+                    if(typeof _physicalDescription.onCollision === 'function' || typeof _physicalDescription.contactThreshold !== 'undefined')
+                    {
+                        colliderDescription = colliderDescription.setActiveEvents(this.game.RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS)
+                        
+                        colliderDescription = colliderDescription.setContactForceEventThreshold(typeof _physicalDescription.contactThreshold !== 'undefined' ? _physicalDescription.contactThreshold : 15)
+
+                        if(typeof _physicalDescription.onCollision === 'function')
+                            physical.onCollision = _physicalDescription.onCollision
+                    }
+
+                    const collider = this.world.createCollider(colliderDescription, physical.body)
+                    physical.colliders.push(collider)
+                }
+
+                // Original transform
+                physical.initialState = {
+                    position: { x: physical.body.translation().x, y: physical.body.translation().y, z: physical.body.translation().z },
+                    rotation: physical.body.rotation(),
+                    sleeping: physical.body.isSleeping() 
+                }
+
+                this.physicals.push(physical)
+
+                return physical
+            }
+
+            update()
+            {
+                this.world.timestep = this.game.ticker.deltaScaled
+            
+                for(const physical of this.physicals)
+                {
+                    const waterDepth = Math.max(- physical.body.translation().y, this.game.water.surfaceElevation)
+                    // physical.body.setGravityScale(1 + waterDepth * physical.waterGravityMultiplier)
+
+                    if(waterDepth > 0)
+                    {
+                        physical.body.setLinearDamping(1)
+                        physical.body.setAngularDamping(1)
+                    }
+                    else
+                    {
+                        physical.body.setLinearDamping(physical.linearDamping)
+                        physical.body.setAngularDamping(physical.angularDamping)
+                    }
+                }
+                
+                // this.world.step()
+                this.world.step(this.eventQueue)
+
+                // // Works but not handy
+                // this.eventQueue.drainCollisionEvents((handle1, handle2, started) =>
+                // {
+                //     if(started)
+                //     {
+                //         const collider1 = this.world.getCollider(handle1)
+                //         const collider2 = this.world.getCollider(handle2)
+
+                //         console.log('---')
+                //         console.log(handle1)
+                //         console.log(handle2)
+                //         console.log(collider1)
+                //         console.log(collider2)
+                //     }
+                // })
+
+                // Doesn't work
+                this.eventQueue.drainContactForceEvents(event =>
+                {
+                    // Retrieve colliders
+                    const collider1 = this.world.getCollider(event.collider1())
+                    const collider2 = this.world.getCollider(event.collider2())
+
+                    // Retrieve bodies
+                    const body1 = collider1.parent()
+                    const body2 = collider2.parent()
+
+                    // Retrieve callbacks
+                    const callback1 = body1.userData?.object?.physical?.onCollision
+                    const callback2 = body2.userData?.object?.physical?.onCollision
+
+                    // Trigger callbacks with force
+                    if(typeof callback1 === 'function' || typeof callback2 === 'function')
+                    {
+                        const mass1 = body1.mass()
+                        const mass2 = body2.mass()
+                        const force = event.maxForceMagnitude() / (mass1 + mass2)
+                        
+                        const position1 = body1.translation()
+                        const position2 = body2.translation()
+                        
+                        const bodyPosition = (position1.x === 0 && position1.y === 0 && position1.z === 0) ? position2 : position1
+
+                        if(typeof callback1 === 'function')
+                            callback1(force, bodyPosition)
+                        if(typeof callback2 === 'function')
+                            callback2(force, bodyPosition)
+                    }
+                })
+            }
+        }
+
+PhysicsVehicle.js (Paste3)
+        r3(1, 0, 0)
+                this.position = new THREE.Vector3(0, 4, 0)
+                this.quaternion = new THREE.Quaternion()
+                this.velocity = new THREE.Vector3()
+                this.direction = this.forward.clone()
+                this.speed = 0
+                this.suspensionsHeights = {
+                    low: 0.88,
+                    mid: 1.23,
+                    high: 1.63
+                }
+                this.suspensionsStiffness = {
+                    low: 20,
+                    mid: 30,
+                    high: 40
+                }
+
+                // Debug
+                if(this.game.debug.active)
+                {
+                    this.debugPanel = this.game.physics.debugPanel.addFolder({
+                        title: 'Vehicle',
+                        expanded: true,
+                    })
+
+                    this.debugPanel.addBinding(this, 'steeringAmplitude', { min: 0, max: Math.PI * 0.5, step: 0.01 })
+                    this.debugPanel.addBinding(this, 'engineForceAmplitude', { min: 1, max: 20, step: 1 })
+                    this.debugPanel.addBinding(this, 'boostMultiplier', { min: 1, max: 5, step: 0.01 })
+                    this.debugPanel.addBinding(this, 'topSpeed', { min: 0, max: 20, step: 0.1 })
+                    this.debugPanel.addBinding(this, 'topSpeedBoost', { min: 0, max: 20, step: 0.1 })
+                    this.debugPanel.addBinding(this, 'brakeAmplitude', { min: 0, max: 200, step: 0.01 })
+                    this.debugPanel.addBinding(this, 'idleBrake', { min: 0, max: 1, step: 0.001 })
+                    this.debugPanel.addBinding(this, 'reverseBrake', { min: 0, max: 1, step: 0.001 })
+
+                    this.debugPanel.addBinding(this.suspensionsHeights, 'low', { min: 0, max: 2, step: 0.01 })
+                    this.debugPanel.addBinding(this.suspensionsHeights, 'mid', { min: 0, max: 2, step: 0.01 })
+                    this.debugPanel.addBinding(this.suspensionsHeights, 'high', { min: 0, max: 2, step: 0.01 })
+
+                    this.debugPanel.addBinding(this.suspensionsStiffness, 'low', { min: 0, max: 100, step: 0.1 })
+                    this.debugPanel.addBinding(this.suspensionsStiffness, 'mid', { min: 0, max: 100, step: 0.1 })
+                    this.debugPanel.addBinding(this.suspensionsStiffness, 'high', { min: 0, max: 100, step: 0.1 })
+                }
+
+                this.setChassis()
+                this.controller = this.game.physics.world.createVehicleController(this.chassis.physical.body)
+                this.setWheels()
+                this.setStop()
+                this.setUpsideDown()
+                this.setStuck()
+                // this.setBackWheel()
+                this.setFlip()
+
+                this.game.ticker.events.on('tick', () =>
+                {
+                    this.updatePrePhysics()
+                }, 2)
+                this.game.ticker.events.on('tick', () =>
+                {
+                    this.updatePostPhysics()
+                }, 5)
+            }
+
+            setChassis()
+            {
+                this.chassis = {}
+                const object = this.game.objects.add(null, {
+                    type: 'dynamic',
+                    position: this.position,
+                    friction: 0.4,
+                    rotation: new THREE.Quaternion().setFromAxisAngle(new THREE.Euler(0, 1, 0), Math.PI * 0),
+                    colliders: [
+                        { shape: 'cuboid', mass: 2.5, parameters: [ 1.3, 0.4, 0.85 ], position: { x: 0, y: -0.1, z: 0 }, centerOfMass: { x: 0, y: -0.5, z: 0 } }, // Main
+                        { shape: 'cuboid', mass: 0, parameters: [ 0.5, 0.15, 0.65 ], position: { x: 0, y: 0.4, z: 0 } }, // Top
+                        { shape: 'cuboid', mass: 0, parameters: [ 1.5, 0.5, 0.9 ], position: { x: 0.1, y: -0.2, z: 0 }, category: 'bumper' }, // Bumper
+                    ],
+                    canSleep: false,
+                    waterGravityMultiplier: 0,
+                    onCollision: (force, position) =>
+                    {
+                        this.game.audio.groups.get('hitDefault').playRandomNext(force, position)
+                    }
+                })
+                this.chassis.physical = object.physical
+                this.chassis.mass = this.chassis.physical.body.mass()
+            }
+
+            setWheels()
+            {
+                // Setup
+                this.wheels = {}
+                this.wheels.inContactCount = 0
+                this.wheels.justTouchedCount = 0
+                this.wheels.items = []
+
+                // Create wheels
+                for(let i = 0; i < 4; i++)
+                {
+                    const wheel = {}
+
+                    wheel.inContact = false
+                    wheel.contactPoint = null
+                    wheel.suspensionLength = null
+                    wheel.suspensionState = 'low'
+                    wheel.lastTouchTime = this.game.ticker.elapsed
+
+                    // Default wheel with random parameters
+                    this.controller.addWheel(new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), 1, 1)
+
+                    // Base position
+                    wheel.basePosition = new THREE.Vector3()
+
+                    this.wheels.items.push(wheel)
+                }
+
+                // Settings
+                this.wheels.settings = {
+                    offset: { x: 0.90, y: 0, z: 0.75 },
+                    radius: 0.4,
+                    directionCs: { x: 0, y: -1, z: 0 },
+                    axleCs: { x: 0, y: 0, z: 1 },
+                    frictionSlip: 0.9,
+                    maxSuspensionForce: 150,
+                    maxSuspensionTravel: 2,
+                    sideFrictionStiffness: 3,
+                    suspensionCompression: 10,
+                    suspensionRelaxation: 2.7,
+                    suspensionStiffness: 25,
+                }
+
+                this.wheels.updateSettings = () =>
+                {
+                    this.wheels.perimeter = this.wheels.settings.radius * Math.PI * 2
+
+                    const wheelsPositions = [
+                        new THREE.Vector3(  this.wheels.settings.offset.x, this.wheels.settings.offset.y,   this.wheels.settings.offset.z),
+                        new THREE.Vector3(  this.wheels.settings.offset.x, this.wheels.settings.offset.y, - this.wheels.settings.offset.z),
+                        new THREE.Vector3(- this.wheels.settings.offset.x, this.wheels.settings.offset.y,   this.wheels.settings.offset.z),
+                        new THREE.Vector3(- this.wheels.settings.offset.x, this.wheels.settings.offset.y, - this.wheels.settings.offset.z),
+                    ]
+                    
+                    let i = 0
+                    for(const wheel of this.wheels.items)
+                    {
+                        wheel.basePosition.copy(wheelsPositions[i])
+                        
+                        this.controller.setWheelDirectionCs(i, this.wheels.settings.directionCs)
+                        this.controller.setWheelAxleCs(i, this.wheels.settings.axleCs)
+                        this.controller.setWheelRadius(i, this.wheels.settings.radius)
+                        this.controller.setWheelChassisConnectionPointCs(i, wheel.basePosition)
+                        this.controller.setWheelFrictionSlip(i, this.wheels.settings.frictionSlip)
+                        this.controller.setWheelMaxSuspensionForce(i, this.wheels.settings.maxSuspensionForce)
+                        this.controller.setWheelMaxSuspensionTravel(i, this.wheels.settings.maxSuspensionTravel)
+                        this.controller.setWheelSideFrictionStiffness(i, this.wheels.settings.sideFrictionStiffness)
+                        this.controller.setWheelSuspensionCompression(i, this.wheels.settings.suspensionCompression)
+                        this.controller.setWheelSuspensionRelaxation(i, this.wheels.settings.suspensionRelaxation)
+
+                        i++
+                    }
+                }
+
+                this.wheels.updateSettings()
+
+                // Debug
+                if(this.game.debug.active)
+                {
+                    this.debugPanel.addBlade({ view: 'separator' })
+                    this.debugPanel.addBinding(this.wheels.settings, 'offset', { min: -1, max: 2, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'radius', { min: 0, max: 1, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'frictionSlip', { min: 0, max: 1, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'maxSuspensionForce', { min: 0, max: 1000, step: 1 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'maxSuspensionTravel', { min: 0, max: 2, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'sideFrictionStiffness', { min: 0, max: 10, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'suspensionCompression', { min: 0, max: 30, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'suspensionRelaxation', { min: 0, max: 10, step: 0.01 }).on('change', this.wheels.updateSettings)
+                    this.debugPanel.addBinding(this.wheels.settings, 'suspensionStiffness', { min: 0, max: 100, step: 0.1 }).on('change', this.wheels.updateSettings)
+                }
+            }
+
+            setStop()
+            {
+                this.stop = {}
+                this.stop.active = true
+                this.stop.lowThreshold = 0.04
+                this.stop.highThreshold = 0.7
+
+                this.stop.test = () =>
+                {
+
+                    if(this.speed < this.stop.lowThreshold)
+                    {
+                        if(!this.stop.active)
+                        {
+                            this.stop.active = true
+                            this.events.trigger('stop')
+                        }
+                    }
+                    else if(this.speed > this.stop.highThreshold)
+                    {
+                        if(this.stop.active)
+                        {
+                            this.stop.active = false
+                            this.events.trigger('start')
+                        }
+                    }
+                }
+            }
+
+            setUpsideDown()
+            {
+                this.upsideDown = {}
+                this.upsideDown.active = false
+                this.upsideDown.ratio = 0
+                this.upsideDown.threshold = 0.3
+
+                this.upsideDown.test = () =>
+                {
+                    this.upsideDown.ratio = this.upward.dot(new THREE.Vector3(0, - 1, 0)) * 0.5 + 0.5
+
+                    if(this.upsideDown.ratio > this.upsideDown.threshold)
+                    {
+                        if(!this.upsideDown.active)
+                        {
+                            this.upsideDown.active = true
+                            this.events.trigger('upsideDown', [ this.upsideDown.ratio ])
+                        }
+                    }
+                    else
+                    {
+                        if(this.upsideDown.active)
+                        {
+                            this.upsideDown.active = false
+                            this.events.trigger('rightSideUp')
+                        }
+                    }
+                }
+            }
+
+            setStuck()
+            {
+                this.stuck = {}
+                this.stuck.durationTest = 3
+                this.stuck.durationSaved = 0
+                this.stuck.savedItems = []
+                this.stuck.distance = 0
+                this.stuck.distanceThreshold = 0.5
+                this.stuck.active = false
+
+                this.stuck.accumulate = (traveled, time) =>
+                {
+                    this.stuck.savedItems.unshift([traveled, time])
+                    this.stuck.distance = 0
+                    this.stuck.durationSaved = 0
+
+                    for(let i = 0; i < this.stuck.savedItems.length; i++)
+                    {
+                        const item = this.stuck.savedItems[i]
+
+                        if(this.stuck.durationSaved >= this.stuck.durationTest)
+                        {
+                            this.stuck.savedItems.splice(i)
+                            break
+                        }
+                        else
+                        {
+                            this.stuck.distance += item[0]
+                            this.stuck.durationSaved += item[1]
+                        }
+                    }
+                }
+
+                this.stuck.test = () =>
+                {
+                    if(this.stuck.durationSaved >= this.stuck.durationTest && this.stuck.distance < this.stuck.distanceThreshold)
+                    {
+                        if(!this.stuck.active)
+                        {
+                            this.stuck.active = true
+                            this.events.trigger('stuck')
+                        }
+                    }
+                    else
+                    {
+                        if(this.stuck.active)
+                        {
+                            this.stuck.active = false
+                            this.events.trigger('unstuck')
+                        }
+                    }
+                }
+            }
+
+            // setBackWheel()
+            // {
+            //     this.backWheel = {}
+            //     this.backWheel.active = false
+            //     this.backWheel.test = () =>
+            //     {
+            //         if(
+            //             this.zRotation > 1 && this.zRotation < 1.7 &&
+            //             this.wheels.items[2].inContact && this.wheels.items[3].inContact
+            //         )
+            //         {
+            //             if(!this.backWheel.active)
+            //             {
+            //                 this.backWheel.active = true
+            //                 this.events.trigger('backWheel', [ this.backWheel.active ])
+            //             }
+            //         }
+            //         else
+            //         {
+            //             if(this.backWheel.active)
+            //             {
+            //                 this.backWheel.active = false
+            //                 this.events.trigger('backWheel', [ this.backWheel.active ])
+            //             }
+            //         }
+            //     }
+            // }
+
+            setFlip()
+            {
+                this.flip = {}
+                this.flip.force = 5
+                let inAir = false
+                
+                let previousXAngle = 0
+                let accumulatedXAngle = 0
+
+                let previousZAngle = 0
+                let accumulatedZAngle = 0
+
+                this.flip.test = () =>
+                {
+                    // Every wheel stop touching
+                    if(this.wheels.inContactCount === 0)
+                    {
+                        // Wasn't in the air => Start
+                        if(!inAir)
+                        {
+                            inAir = true
+                            
+                            previousXAngle = this.xRotation
+                            accumulatedXAngle = 0
+                            
+                            previousZAngle = this.zRotation
+                            accumulatedZAngle = 0
+                        }
+                    }
+
+                    // 4 wheels are touching
+                    if(this.wheels.inContactCount >= 4)
+                    {
+                        // Was in the air => stop
+                        if(inAir)
+                        {
+                            inAir = false
+
+                            if(
+                                Math.abs(accumulatedXAngle) < 1 &&
+                                Math.abs(accumulatedZAngle) > 5
+                            )
+                            {
+                                this.events.trigger('flip', [ Math.sign(accumulatedZAngle) ])
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(inAir)
+                        {
+                            accumulatedXAngle += smallestAngle(previousXAngle, this.xRotation)
+                            previousXAngle = this.xRotation
+
+                            accumulatedZAngle += smallestAngle(previousZAngle, this.zRotation)
+                            previousZAngle = this.zRotation
+                        }
+                    }
+                }
+
+                this.flip.jump = () =>
+                {
+                    accumulatedXAngle = 0
+                    accumulatedZAngle = 0
+
+                    const up = new THREE.Vector3(0, 1, 0)
+                    const sidewardDot = up.dot(this.sideward)
+                    const forwardDot = up.dot(this.forward)
+                    const upwarddDot = up.dot(this.upward)
+                    
+                    const sidewardAbsolute = Math.abs(sidewardDot)
+                    const forwardAbsolute = Math.abs(forwardDot)
+                    const upwarddAbsolute = Math.abs(upwarddDot)
+
+                    const impulse = new THREE.Vector3(0, 1, 0).multiplyScalar(this.flip.force * this.chassis.mass)
+                    this.chassis.physical.body.applyImpulse(impulse)
+
+                    // Upside down
+                    if(upwarddAbsolute > sidewardAbsolute && upwarddAbsolute > forwardAbsolute)
+                    {
+                        const torqueX = 0.8 * this.chassis.mass
+                        const torque = new THREE.Vector3(torqueX, 0, 0)
+                        torque.applyQuaternion(this.chassis.physical.body.rotation())
+                        this.chassis.physical.body.applyTorqueImpulse(torque)
+                    }
+                    // On the side
+                    else
+                    {
+                        const torqueX = sidewardDot * 0.4 * this.chassis.mass
+                        const torqueZ = - forwardDot * 0.8 * this.chassis.mass
+                        const torque = new THREE.Vector3(torqueX, 0, torqueZ)
+                        torque.applyQuaternion(this.chassis.physical.body.rotation())
+                        this.chassis.physical.body.applyTorqueImpulse(torque)
+                    }
+                }
+
+                if(this.game.debug.active)
+                {
+                    this.debugPanel.addBinding(this.flip, 'force', { label: 'flipForce', min: 0, max: 10, step: 0.01 })
+                }
+            }
+
+            moveTo(position, rotation = 0)
+            {
+                const quaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotation)
+                this.chassis.physical.body.setTranslation(position)
+                this.chassis.physical.body.setRotation(quaternion)
+                this.chassis.physical.body.setLinvel({ x: 0, y: 0, z: 0 })
+                this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 })
+
+                this.position.copy(position)
+            }
+
+            updatePrePhysics()
+            {
+                // Engine force
+                const topSpeed = lerp(this.topSpeed, this.topSpeedBoost, this.game.player.boosting)
+                const overflowSpeed = Math.max(0, this.speed - topSpeed)
+                let engineForce = (this.game.player.accelerating * (1 + this.game.player.boosting * this.boostMultiplier)) * this.engineForceAmplitude / (1 + overflowSpeed) * this.game.ticker.deltaScaled
+
+                // Brake
+                let brake = this.game.player.braking
+
+                if(!this.game.player.braking && Math.abs(this.game.player.accelerating) < 0.1)
+                    brake = this.idleBrake
+            
+                if(
+                    this.speed > 0.5 &&
+                    (
+                        (this.game.player.accelerating > 0 && !this.goingForward) ||
+                        (this.game.player.accelerating < 0 && this.goingForward)
+                    )
+                )
+                {
+                    brake = this.reverseBrake
+                    engineForce = 0
+                }
+
+                brake *= this.brakeAmplitude * this.game.ticker.deltaScaled
+
+                // Steer
+                const steer = this.game.player.steering * this.steeringAmplitude
+
+                // Update wheels
+                this.controller.setWheelSteering(0, steer)
+                this.controller.setWheelSteering(1, steer)
+
+                for(let i = 0; i < 4; i++)
+                {
+                    this.controller.setWheelBrake(i, brake)
+                    this.controller.setWheelEngineForce(i, engineForce)
+                    this.controller.setWheelSuspensionRestLength(i, this.suspensionsHeights[this.game.player.suspensions[i]])
+                    this.controller.setWheelSuspensionStiffness(i, this.suspensionsStiffness[this.game.player.suspensions[i]])
+
+                    // Ice slip
+                    const groundObject = this.controller.wheelGroundObject(i)
+
+                    if(groundObject && this.game.world.waterSurface)
+                    {
+                        const onIce = groundObject.parent() === this.game.world.waterSurface.ice.physical.body
+                        const iceFriction = lerp(this.wheels.settings.frictionSlip, 0.04, this.game.world.waterSurface.iceRatio.value)
+
+                        this.controller.setWheelFrictionSlip(i, onIce ? iceFriction : this.wheels.settings.frictionSlip)
+                    }
+                }
+
+                // Update controller
+                const delta = this.game.quality.level === 1 ? 1/60 : Math.min(1/60, this.game.ticker.deltaAverage)
+                this.controller.updateVehicle(delta)
+            }
+
+            updatePostPhysics()
+            {
+                // Various measures
+                const newPosition = new THREE.Vector3().copy(this.chassis.physical.body.translation())
+                this.velocity = newPosition.clone().sub(this.position)
+                this.direction = this.velocity.clone().normalize()
+                this.position.copy(newPosition)
+                this.quaternion.copy(this.chassis.physical.body.rotation())
+                this.sideward.set(0, 0, 1).applyQuaternion(this.quaternion)
+                this.upward.set(0, 1, 0).applyQuaternion(this.quaternion)
+                this.forward.set(1, 0, 0).applyQuaternion(this.quaternion)
+                // this.speed = this.controller.currentVehicleSpeed()
+                this.speed = this.velocity.length() / this.game.ticker.deltaScaled
+                this.xzSpeed = Math.hypot(this.velocity.x, this.velocity.z) / this.game.ticker.deltaScaled
+                this.forwardRatio = this.direction.dot(this.forward)
+                this.goingForward = this.forwardRatio > 0.5
+                this.forwardSpeed = this.speed * this.forwardRatio
+
+                this.xRotation = new THREE.Euler().setFromQuaternion(this.quaternion, 'XYZ').x
+                this.yRotation = new THREE.Euler().setFromQuaternion(this.quaternion, 'YXZ').y
+                this.zRotation = new THREE.Euler().setFromQuaternion(this.quaternion, 'ZYX').z
+
+                if(Math.abs(this.game.player.accelerating) > 0.5)
+                    this.stuck.accumulate(this.velocity.length(), this.game.ticker.deltaScaled)
+
+                let inContactCount = 0
+                for(let i = 0; i < 4; i++)
+                {
+                    const wheel = this.wheels.items[i]
+
+                    const inContact = this.controller.wheelIsInContact(i)
+
+                    if(inContact && !wheel.inContact)
+                    {
+                        wheel.lastTouchTime = this.game.ticker.elapsed
+                    }
+
+                    wheel.inContact = inContact
+                    wheel.contactPoint = this.controller.wheelContactPoint(i)
+                    wheel.suspensionLength = this.controller.wheelSuspensionLength(i)
+
+                    if(wheel.inContact)
+                        inContactCount++
+                }
+
+                let justTouchedCount = 0
+                if(inContactCount > this.wheels.inContactCount)
+                {
+                    for(const wheel of this.wheels.items)
+                    {
+                        if(wheel.lastTouchTime > this.game.ticker.elapsed - 0.2)
+                            justTouchedCount++
+                    }
+                }
+
+                this.wheels.inContactCount = inContactCount
+                this.wheels.justTouchedCount = justTouchedCount
+
+                this.stop.test()
+                this.upsideDown.test()
+                this.stuck.test()
+                // this.backWheel.test()
+                this.flip.test()
+            }
+
+            activate()
+            {
+                this.chassis.physical.body.setLinvel({ x: 0, y: 0, z: 0 })
+                this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 })
+                this.chassis.physical.body.setEnabled(true)
+            }
+
+            deactivate()
+            {
+                this.chassis.physical.body.setEnabled(false)
+            }
+        }
+
+ExplosiveCrates.js
+        import * as THREE from 'three/webgpu'
+        import gsap from 'gsap'
+        import { Game } from '../Game.js'
+        import { InstancedGroup } from '../InstancedGroup.js'
+
+        export class ExplosiveCrates
+        {
+            constructor()
+            {
+                this.game = Game.getInstance()
+
+                // Base and references
+                const [ base, references ] = InstancedGroup.getBaseAndReferencesFromInstances(this.game.resources.explosiveCratesModel.scene.children)
+                this.references = references
+                
+                // Setup base
+                base.castShadow = true
+                base.receiveShadow = true
+
+                // Update materials 
+                this.game.materials.updateObject(base)
+
+                // Create instanced group
+                this.instancedGroup = new InstancedGroup(this.references, base)
+
+                this.items = []
+                
+                let i = 0
+                for(const reference of this.references)
+                {
+                    const crate = {}
+                    crate.id = i
+                    crate.exploded = false
+                    crate.reference = reference.clone()
+                    crate.object = this.game.objects.add(
+                        {
+                            model: reference,
+                        },
+                        {
+                            type: 'dynamic',
+                            position: reference.position.clone(),
+                            rotation: reference.quaternion.clone(),
+                            friction: 0.7,
+                            mass: 0.02,
+                            sleeping: true,
+                            colliders: [ { shape: 'cuboid', parameters: [ 0.5, 0.5, 0.5 ], category: 'object' } ],
+                            waterGravityMultiplier: - 1,
+                            contactThreshold: 0,
+                            onCollision: () =>
+                            {
+                                this.explode(crate)
+                            }
+                        },
+                    )
+
+                    this.items.push(crate)
+
+                    i++
+                }
+
+                this.setSounds()
+
+                // Tick update
+                this.game.ticker.events.on('tick', () =>
+                {
+                    for(const crate of this.items)
+                    {
+                        if(!crate.object.physical.body.isSleeping() && crate.object.physical.body.isEnabled())
+                            crate.object.visual.object3D.needsUpdate = true
+                    }
+                }, 10)
+            }
+
+            setSounds()
+            {
+                this.sounds = {}
+
+                // Click sound
+                this.sounds.triggerClick = this.game.audio.register({
+                    path: 'sounds/clicks/Source Metal Clicks Delicate Light Sharp Clip Mid 07.mp3',
+                    autoplay: false,
+                    loop: false,
+                    volume: 0.4,
+                    antiSpam: 0.1,
+                    positions: new THREE.Vector3(),
+                    onPlay: (item, coordinates) =>
+                    {
+                        item.positions[0].copy(coordinates)
+                        item.volume = 1
+                        item.rate = 0.7 + Math.random() * 1.3
+                    }
+                })
+
+                const paths = [
+                    'sounds/explosions/SmallImpactMediumE PE281202.mp3',
+                    'sounds/explosions/SmallImpactMediumE PE281203.mp3'
+                ]
+
+                this.sounds.explosions = []
+
+                for(const path of paths)
+                {
+                    this.sounds.explosions.push(
+                        this.game.audio.register({
+                            path: path,
+                            autoplay: false,
+                            loop: false,
+                            volume: 0.4,
+                            antiSpam: 0.2,
+                            positions: new THREE.Vector3(),
+                            distanceFade: 25,
+                            onPlay: (item, coordinates) =>
+                            {
+                                item.positions[0].copy(coordinates)
+                                item.volume = 1
+                                item.rate = 0.9 + Math.random() * 0.3
+                            }
+                        })
+                    )
+                }
+            }
+
+            explode(crate)
+            {
+                if(crate.exploded)
+                    return
+
+                crate.exploded = true
+
+                this.sounds.triggerClick.play(crate.reference.position)
+
+                gsap.delayedCall(0.4, () =>
+                {
+                    // Sound
+                    this.sounds.explosions[Math.floor(Math.random() * this.sounds.explosions.length)].play(crate.reference.position)
+
+                    // Explode
+                    this.game.world.fireballs.create(crate.object.physical.body.translation())
+
+                    // Disable
+                    this.game.objects.disable(crate.object)
+                    crate.object.visual.object3D.position.y += 100 // Hide the instance reference
+                    crate.object.visual.object3D.needsUpdate = true
+
+                    // Achievements
+                    this.game.achievements.setProgress('explosiveCrates', crate.id)
+                })
+            }
+
+            reset()
+            {
+                for(const crate of this.items)
+                {
+                    this.game.objects.resetObject(crate.object)
+                    crate.exploded = false
+
+                    this.game.ticker.wait(2, () =>
+                    {
+                        crate.object.physical.body.setEnabled(true)
+                    })
+                }
+                
+                this.instancedGroup.needsUpdate = true
+
+                // Disable every other object to prevent explosion trigger
+                this.game.objects.list.forEach((object) =>
+                {
+                    // console.log(this.game.objects)
+                    if(
+                        object.physical &&
+                        (object.physical.type === 'dynamic' || object.physical.type === 'kinematicPositionBased') &&
+                        object.physical.body.isEnabled()
+                    )
+                    {
+                        object.physical.body.setEnabled(false)
+
+                        // Wait a second and reactivate
+                        this.game.ticker.wait(1, () =>
+                        {
+                            object.physical.body.setEnabled(true)
+
+                            // Sleep
+                            if(object.physical.initialState.sleeping)
+                                object.physical.body.sleep()
+
+                        })
+                    }
+                })
+            }
+        }
+
+
+
+Mi proyecto:
+index.html
+        <!DOCTYPE html>
+    <html lang="es">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Para Ámbar 💛</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💛</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+    </head>
+    <body>
+
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- ══ INTRO ════════════════════════════════════════════════ -->
+    <div id="intro-screen">
+        <div class="intro-inner">
+        <div class="intro-tag">un pequeño universo hecho para ti</div>
+        <h1 class="intro-title">Para<br><em>Ámbar</em></h1>
+        <p class="intro-body">
+            Conduce por el mapa y descubre<br>
+            los lugares que guardé para nosotros.
+        </p>
+        <div class="intro-controls">
+            <div class="keys-group">
+            <div class="key-row"><kbd>W</kbd></div>
+            <div class="key-row"><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+            </div>
+            <span class="key-sep">o</span>
+            <div class="keys-group">
+            <div class="key-row"><kbd>↑</kbd></div>
+            <div class="key-row"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
+            </div>
+            <p class="key-label">Mover · <kbd>E</kbd> abrir · <kbd>␣</kbd> saltar</p>
+        </div>
+        <button id="start-btn">
+            <span>Comenzar</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        </div>
+        <div class="intro-particles" id="intro-particles"></div>
+    </div>
+
+    <!-- ══ HUD ══════════════════════════════════════════════════ -->
+    <div id="hud" class="hidden">
+        <div id="hud-discoveries">
+        <span id="disc-count">0</span><span class="disc-sep"> / 3</span>
+        <p>descubiertos</p>
+        </div>
+        <div id="proximity-hint" class="hidden">
+        <span class="ping-dot"></span>
+        Presiona <kbd>E</kbd> para abrir
+        </div>
+
+    </div>
+
+    <!-- ══ MODAL 1 — El Cofre ════════════════════════════════════ -->
+    <div class="modal-backdrop" id="modal-1" aria-hidden="true">
+        <div class="modal-panel">
+        <button class="modal-close" data-modal="modal-1">✕</button>
+        <div class="modal-num">01</div>
+        <div class="modal-icon floating">🗝️</div>
+        <h2 class="modal-title">El Cofre<br>de Recuerdos</h2>
+        <p class="modal-sub">Cada imagen guarda un momento que me cambió para siempre.</p>
+        <div class="photo-grid">
+            <!-- Cambia .photo-inner por <img src="tu-foto.jpg"> cuando tengas fotos -->
+            <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 1</span></div>
+            <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 2</span></div>
+            <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 3</span></div>
+            <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 4</span></div>
+            <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 5</span></div>
+            <div class="photo-item"><div class="photo-inner">📸</div><span>Momento 6</span></div>
+        </div>
+        </div>
+    </div>
+
+    <!-- ══ MODAL 2 — La Radio ════════════════════════════════════ -->
+    <div class="modal-backdrop" id="modal-2" aria-hidden="true">
+        <div class="modal-panel">
+        <button class="modal-close" data-modal="modal-2">✕</button>
+        <div class="modal-num">02</div>
+        <div class="modal-icon pulsing">📻</div>
+        <h2 class="modal-title">Nuestra<br>Radio</h2>
+        <p class="modal-sub">Las canciones que suenan en mi cabeza cuando pienso en ti.</p>
+        <ul class="playlist">
+            <li class="track"><span class="track-n">01</span><div class="track-info"><b>Canción especial #1</b><small>Artista</small></div><span class="track-dur">3:24</span></li>
+            <li class="track"><span class="track-n">02</span><div class="track-info"><b>Canción especial #2</b><small>Artista</small></div><span class="track-dur">4:01</span></li>
+            <li class="track"><span class="track-n">03</span><div class="track-info"><b>Canción especial #3</b><small>Artista</small></div><span class="track-dur">3:47</span></li>
+            <li class="track"><span class="track-n">04</span><div class="track-info"><b>Canción especial #4</b><small>Artista</small></div><span class="track-dur">4:55</span></li>
+        </ul>
+        </div>
+    </div>
+
+    <!-- ══ MODAL 3 — El Faro ══════════════════════════════════════ -->
+    <div class="modal-backdrop" id="modal-3" aria-hidden="true">
+        <div class="modal-panel modal-letter">
+        <button class="modal-close" data-modal="modal-3">✕</button>
+        <div class="modal-num">03</div>
+        <div class="modal-icon">🏮</div>
+        <h2 class="modal-title">El Faro</h2>
+        <div class="letter">
+            <p class="letter-open">Querida Ámbar,</p>
+            <p class="letter-body" id="typewriter-out"></p>
+            <p class="letter-sign">Con todo mi amor, <em>tú sabes quién</em> 💛</p>
+        </div>
+        </div>
+    </div>
+
+    <!-- ══ MODAL ROCOLA ══════════════════════════════════════════ -->
+    <div class="modal-backdrop" id="jukebox" aria-hidden="true">
+        <div class="modal-panel jukebox-panel">
+        <button class="modal-close" data-modal="jukebox">✕</button>
+        <div class="modal-num">🎵</div>
+        <div class="modal-icon">🎸</div>
+        <h2 class="modal-title">La Rocola</h2>
+        <p class="modal-sub">Cambia de canción con las flechas del teclado o los botones.</p>
+
+        <!-- Visualizador de canción actual -->
+        <div class="jukebox-display">
+            <div class="jukebox-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            </div>
+            <p id="jukebox-song-name" class="jukebox-song">Canción #1 — Artista</p>
+        </div>
+
+        <!-- Controles -->
+        <div class="jukebox-controls">
+            <button class="jukebox-btn" id="jukebox-prev">◀ Anterior</button>
+            <button class="jukebox-btn jukebox-btn--main" id="jukebox-next">Siguiente ▶</button>
+        </div>
+
+        <!-- Indicadores de canción -->
+        <div class="jukebox-dots">
+            <span class="jukebox-dot active"></span>
+            <span class="jukebox-dot"></span>
+            <span class="jukebox-dot"></span>
+            <span class="jukebox-dot"></span>
+        </div>
+
+        <p class="jukebox-hint">← → cambia canción · ESC cierra</p>
+        </div>
+    </div>
+
+    <!-- ══ PANTALLA FINAL ════════════════════════════════════════ -->
+    <div id="final-screen" class="hidden">
+        <div class="final-inner">
+        <div class="final-hearts" id="final-hearts"></div>
+        <p class="final-pre">lo encontraste todo</p>
+        <h2 class="final-title">Te quiero<br><em>muchísimo</em></h2>
+        <p class="final-body">Espero que este pequeño mundo te haya hecho sonreír aunque sea un segundo. 🌻</p>
+        <button id="replay-btn">Volver a explorar</button>
+        </div>
+    </div>
+
+
+
+    <!-- ══ LIBRERÍAS ═════════════════════════════════════════════ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- ══ CONFIGURACIÓN ══════════════════════════════════════════ -->
+    <script src="assets/js/Config.js"></script>
+
+    <!-- ══ JUEGO ════════════════════════════════════════════════ -->
+    <script src="assets/js/Game/Audio.js"></script>
+    <script src="assets/js/Game/Jukebox.js"></script>  <!-- NUEVO -->
+
+    <!-- ══ FÍSICA ════════════════════════════════════════════════ -->
+    <script src="assets/js/Physics/Vehicle.js"></script>
+
+    <!-- ══ MUNDO — orden importante: base primero, islas después ══ -->
+    <script src="assets/js/World/Ground.js"></script>
+    <script src="assets/js/World/Track.js"></script>
+    <script src="assets/js/World/Foliage.js"></script>
+
+
+    <!-- Islas — clase base antes que las subclases -->
+    <script src="assets/js/World/Islands/IslandBase.js"></script>
+    <script src="assets/js/World/Islands/IslandCofre.js"></script>
+    <script src="assets/js/World/Islands/IslandRadio.js"></script>
+    <script src="assets/js/World/Islands/IslandFaro.js"></script>
+    <script src="assets/js/World/Islands/IslandRocola.js"></script>
+    <!-- Para agregar una isla: <script src="assets/js/World/Islands/IslandNueva.js"></script> -->
+
+    <!-- Orquestador — debe ir después de todos los módulos -->
+    <script src="assets/js/World/World.js"></script>
+
+    <!-- ══ ENTRADA / CÁMARA / AUDIO ═══════════════════════════════ -->
+    <script src="assets/js/Game/Input.js"></script>
+    <script src="assets/js/Game/Camera.js"></script>
+    <script src="assets/js/Game/ModalManager.js"></script>
+
+    <!-- ══ MAIN — entrada del juego ═══════════════════════════════ -->
+    <script src="assets/js/Main.js"></script>
+
+    
+    </body>
+    </html>
+
+Estructura:
+
+        S C:\Users\Rodrigo\Dropbox\Escuela\Amb> tree /f
+    Listado de rutas de carpetas para el volumen Acer
+    El número de serie del volumen es 5ED4-26EE
+    C:.
+    │   index.html
+    │   prompts
+    │
+    ├───assets
+    │   │   styles.css
+    │   │
+    │   └───js
+    │       │   Config.js
+    │       │   Main.js
+    │       │
+    │       ├───Game
+    │       │       Audio.js
+    │       │       Camera.js
+    │       │       Input.js
+    │       │       Jukebox.js
+    │       │       ModalManager.js
+    │       │
+    │       ├───Physics
+    │       │       Vehicle.js
+    │       │
+    │       └───World
+    │           │   Checkpoints.js
+    │           │   Foliage.js
+    │           │   Ground.js
+    │           │   Track.js
+    │           │   World.js
+    │           │
+    │           └───Islands
+    │                   IslandBase.js
+    │                   IslandCofre.js
+    │                   IslandFaro.js
+    │                   IslandRadio.js
+    │                   IslandRocola.js
+    │
+    ├───media
+    │   └───Audio
+    │       │   Chachacha.mp3
+    │       │   DAISIES.mp3
+    │       │   Fallin All In You.mp3
+    │       │   Pegao.mp3
+    │       │   Serotonina.mp3
+    │       │   The World Is Ugly.mp3
+    │       │
+    │       ├───Album
+    │       │       Chachacha.jpg
+    │       │       Daises.jpg
+    │       │       Fallin All In You.jpg
+    │       │       Pegao.jpg
+    │       │       Serotonina.jpg
+    │       │       The World Is Ugly.png
+    │       │
+    │       └───Song Base
+    │               daises chill.mp3
+    │
+    └───models
+        ├───Car
+        │       Car.glb
+        │
+        └───grass
+            │   grass.glb
+            │   grass2.glb
+            │   grass3.glb
+            │   license.txt
+            │   scene.bin
+            │   scene.gltf
+            │
+            └───textures
+                    material_0_diffuse.png
+                    material_0_emissive.png
+                    material_0_occlusion.png
+                    material_0_specularGlossiness.png
+
+    PS C:\Users\Rodrigo\Dropbox\Escuela\Amb> 
+
+Audio.js
+    /* ═══════════════════════════════════════════════════════════
+    Game/Audio.js  —  Sonidos + Música MP3 (VERSIÓN CORREGIDA)
+    ═══════════════════════════════════════════════════════════ */
+
+    class GameAudio {
+    constructor() { 
+        this._ctx = null; 
+        this._jbOsc = null;
+        this._jukebox = null; // Referencia al reproductor MP3
+    }
+
+    get ctx() {
+        if (!this._ctx) {
+        this._ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return this._ctx;
+    }
+
+    // Sonidos FX
+    tone(freq, dur, type = 'sine', vol = 0.18) {
+        try {
+        const c = this.ctx;
+        const o = c.createOscillator();
+        const g = c.createGain();
+        o.connect(g);
+        g.connect(c.destination);
+        o.type = type;
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol, c.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+        o.start();
+        o.stop(c.currentTime + dur);
+        } catch(_) {}
+    }
+
+    proximity()   { this.tone(660, 0.18, 'sine', 0.14); }
+    open()        { this.tone(523, 0.1, 'triangle', 0.13); setTimeout(() => this.tone(784, 0.2, 'triangle', 0.13), 90); }
+    collision(v)  { if (v > 3) this.tone(110 + Math.random()*40, 0.3, 'sawtooth', 0.08); }
+
+    // MÉTODOS PARA JUKEBOX
+    initJukebox() {
+        if (!this._jukebox) {
+        // Asegurar que el contexto existe
+        const ctx = this.ctx;
+        this._jukebox = new Jukebox(ctx);
+        }
+        return this._jukebox;
+    }
+
+    // Mantener compatibilidad con código antiguo
+    startSong(idx) {
+        if (this._jukebox) {
+        this._jukebox.playSong(idx, SONGS[idx]?.startTime || 0);
+        } else {
+        this._legacyStartSong(idx);
+        }
+    }
+
+    _legacyStartSong(idx) {
+        this.stopSong();
+        const freqs = [[261,329,392,523],[220,277,330,440],[196,247,294,392],[174,220,261,349]][idx % 4];
+        try {
+        const c = this.ctx;
+        const jg = c.createGain();
+        jg.gain.value = 0.12;
+        jg.connect(c.destination);
+        let beat = 0;
+        const play = () => {
+            const o = c.createOscillator();
+            const g = c.createGain();
+            o.connect(g);
+            g.connect(jg);
+            o.type = 'triangle';
+            o.frequency.value = freqs[beat % freqs.length];
+            g.gain.setValueAtTime(0.5, c.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.35);
+            o.start();
+            o.stop(c.currentTime + 0.4);
+            beat++;
+        };
+        play();
+        this._jbOsc = setInterval(play, 400);
+        } catch(_) {}
+    }
+
+    stopSong() {
+        if (this._jbOsc) { 
+        clearInterval(this._jbOsc); 
+        this._jbOsc = null; 
+        }
+        if (this._jukebox) {
+        this._jukebox.stopCurrentSong();
+        }
+    }
+    }
+
+Vehicle.js
+    /* ═══════════════════════════════════════════════════════════
+    Physics/Vehicle.js  —  Física estilo Bruno Simon
+    • engineForce / (1 + overflowSpeed)    Bruno: línea exacta
+    • brake * brakeAmplitude * dt          Bruno: línea exacta
+    • FRICCIÓN LATERAL                     lo que Rapier hace gratis
+    • stuck detection + respawn            Bruno: setStuck()
+    ═══════════════════════════════════════════════════════════ */
+
+    class Vehicle {
+    constructor(scene, colliders) {
+        this.scene     = scene;
+        this.colliders = colliders;
+
+        /* ── Parámetros Bruno Simon ── */
+        this.params = {
+        engineForceAmplitude: CFG.accel,
+        topSpeed:             CFG .speed,
+        brakeAmplitude:       CFG.accel * 0.12,
+        idleBrake:            0.06,
+        reverseBrake:         0.4,
+        steeringAmplitude:    0.5,
+        lateralDamping:       12.0,
+        };
+
+        /* ── Estado ── */
+        this.vel          = new THREE.Vector3();
+        this.velY         = 0;
+        this.yaw          = 0;
+        this.steer        = 0;
+        this.onGround     = true;
+        this.speed        = 0;
+        this.xzSpeed      = 0;
+        this.goingForward = true;
+        this.forwardRatio = 1;
+
+        /* ── Bruno: stop ── */
+        this.stop = {
+        active: true, lowThreshold: 0.04, highThreshold: 0.7,
+        test: () => {
+            if      (this.speed < this.stop.lowThreshold)  this.stop.active = true;
+            else if (this.speed > this.stop.highThreshold) this.stop.active = false;
+        }
+        };
+
+        /* ── Bruno: stuck ── */
+        this.stuck = {
+        durationTest: 3, durationSaved: 0, savedItems: [],
+        distance: 0, distanceThreshold: 0.5, active: false,
+        accumulate: (traveled, dt) => {
+            const s = this.stuck;
+            s.savedItems.unshift([traveled, dt]);
+            s.distance = 0; s.durationSaved = 0;
+            for (let i = 0; i < s.savedItems.length; i++) {
+            const item = s.savedItems[i];
+            if (s.durationSaved >= s.durationTest) { s.savedItems.splice(i); break; }
+            s.distance += item[0]; s.durationSaved += item[1];
+            }
+        },
+        test: () => {
+            const s = this.stuck;
+            const isStuck = s.durationSaved >= s.durationTest && s.distance < s.distanceThreshold;
+            if (isStuck && !s.active)  { s.active = true;  this._onStuck(); }
+            if (!isStuck && s.active)    s.active = false;
+        }
+        };
+
+        /* ── Visuales y helpers ── */
+        this.visualRoll = 0;
+        this._fwd       = new THREE.Vector3();
+        this._right     = new THREE.Vector3();
+        this._raycaster = new THREE.Raycaster();
+        this._rayOrigin = new THREE.Vector3();
+        this._rayDown   = new THREE.Vector3(0, -1, 0);
+
+        this._buildMesh();
+        console.log('%c🚙 Vehicle — física estilo Bruno Simon', 'color:#ffaa00;font-weight:bold');
+    }
+
+    update(dt, t, input) {
+        this._updatePrePhysics(dt, input);
+        this._updateVertical(dt, input);
+        this._updateLateralFriction(dt);
+        this._updateCollisions();
+        this._updatePostPhysics(dt, t, input);
+    }
+
+    /* ── Bruno: updatePrePhysics ── */
+    _updatePrePhysics(dt, input) {
+        const p = this.params;
+
+        this.speed = this.vel.length();
+        this._fwd.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
+        this._right.set(-Math.cos(this.yaw), 0, Math.sin(this.yaw));
+
+        this.forwardRatio = this.speed > 0.01 ? this.vel.dot(this._fwd) / this.speed : 1;
+        this.goingForward = this.forwardRatio > 0.5;
+
+        // Motor — Bruno: engineForce = accel / (1 + overflowSpeed) * deltaScaled
+        const overflowSpeed = Math.max(0, this.speed - p.topSpeed);
+        const accelerating  = input.forward ? 1 : input.backward ? -1 : 0;
+        let engineForce = accelerating * p.engineForceAmplitude / (1 + overflowSpeed * 0.6) * dt;
+
+        // Freno — Bruno: brake = idleBrake / reverseBrake, luego * brakeAmplitude * dt
+        let brake = 0;
+        const goingWrong = this.speed > 0.5 && (
+        (accelerating > 0 && !this.goingForward) ||
+        (accelerating < 0 &&  this.goingForward)
+        );
+        if (goingWrong)                 { brake = p.reverseBrake; engineForce = 0; }
+        else if (Math.abs(accelerating) < 0.1) { brake = p.idleBrake; }
+
+        if (brake > 0) {
+        const decay = Math.max(0, 1 - brake * p.brakeAmplitude * dt);
+        this.vel.multiplyScalar(decay);
+        }
+
+        // Giro — Bruno: steer = steering * steeringAmplitude
+        const steerFactor = Math.min(this.speed / 5, 1.0);
+        const rawSteer    = input.left ? 1 : input.right ? -1 : 0;
+        this.yaw += rawSteer * p.steeringAmplitude * steerFactor * dt * 3.5;
+        this.steer += (rawSteer - this.steer) * CFG.steerLerp * dt;
+
+        if (engineForce !== 0) this.vel.addScaledVector(this._fwd, engineForce);
+        this.group.position.addScaledVector(this.vel, dt);
+    }
+
+    /* ── Fricción lateral (sideFrictionStiffness de Rapier) ── */
+    _updateLateralFriction(dt) {
+        const lateralVel    = this.vel.dot(this._right);
+        const cancelFactor  = Math.min(this.params.lateralDamping * dt, 1.0);
+        this.vel.addScaledVector(this._right, -lateralVel * cancelFactor);
+    }
+
+    /* ── Gravedad + Salto ── */
+    _updateVertical(dt, input) {
+        // Primero, detectar altura de la pista
+        let groundY = this._getGroundY(this.group.position.x, this.group.position.z, this.group.position.y);
+        
+        // AHORA: detectar si estamos sobre alguna ISLA
+        // Las islas tienen altura 0.25 (base) + altura del escenario
+        if (window._islands) {
+            for (const island of window._islands) {
+                const dx = this.group.position.x - island.cfg.x;
+                const dz = this.group.position.z - island.cfg.z;
+                const dist = Math.sqrt(dx*dx + dz*dz);
+                
+                // Si estamos dentro del radio de la isla
+                if (dist < 15) { // Radio aproximado de las islas
+                    // Altura de la isla: base (0.25) + escenario (0.8) = ~1.05
+                    // Pero la isla Rocola tiene escenario más alto
+                    let islandHeight = 0.25; // altura base
+                    
+                    if (island.cfg.id === 'jukebox') {
+                        // Rocola: base 0.25 + escenario 0.8 = 1.05
+                        islandHeight = 1.05;
+                    } else {
+                        // Otras islas: base 0.25 + marker (pero el carro no debería subir tanto)
+                        islandHeight = 0.25;
+                    }
+                    
+                    // Si estamos cerca del centro, considerar la altura del escenario
+                    if (dist < 8 && island.cfg.id === 'jukebox') {
+                        // En la plataforma elevada de la Rocola
+                        islandHeight = 1.25; // altura de la pista de baile
+                    }
+                    
+                    // Si la altura de la isla es mayor que el groundY de la pista
+                    if (islandHeight > groundY) {
+                        groundY = islandHeight;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (input.jump && this.onGround) {
+            this.velY = CFG.jumpForce;
+            this.onGround = false;
+        }
+        
+        this.velY -= CFG.gravity * dt;
+        this.group.position.y += this.velY * dt;
+        
+        // Colisión con el suelo (pista o isla)
+        if (this.group.position.y <= groundY) {
+            this.group.position.y = groundY;
+            
+            if (this.velY < -4) {
+                const impact = Math.min(Math.abs(this.velY) / CFG.jumpForce, 1);
+                this.group.scale.set(1 + impact*0.1, 1 - impact*0.15, 1 + impact*0.1);
+                gsap.to(this.group.scale, { x:1, y:1, z:1, duration:0.28, ease:'elastic.out(1,0.5)' });
+            }
+            
+            this.velY = 0;
+            this.onGround = true;
+        } else {
+            this.onGround = false;
+        }
+    }
+
+    /* ── Colisiones ── */
+    _updateCollisions() {
+        const CAR_R = 0.9;
+        for (const col of this.colliders) {
+        const dx = this.group.position.x - col.x;
+        const dz = this.group.position.z - col.z;
+        const d  = Math.sqrt(dx*dx + dz*dz);
+        const md = CAR_R + col.r;
+        if (d < md && d > 0.001) {
+            const nx = dx/d, nz = dz/d;
+            this.group.position.x += nx*(md-d);
+            this.group.position.z += nz*(md-d);
+            const dot = this.vel.x*nx + this.vel.z*nz;
+            if (dot < 0) {
+            this.vel.x -= dot*nx*1.3; this.vel.z -= dot*nz*1.3;
+            this.vel.multiplyScalar(0.6);
+            if (typeof gameAudio !== 'undefined') gameAudio.collision(Math.abs(dot));
+            }
+        }
+        }
+    }
+
+    /* ── Bruno: updatePostPhysics ── */
+    _updatePostPhysics(dt, t, input) {
+        const accelerating = input.forward ? 1 : input.backward ? -1 : 0;
+        if (Math.abs(accelerating) > 0.5) this.stuck.accumulate(this.vel.length()*dt, dt);
+        this.stop.test();
+        this.stuck.test();
+        this.xzSpeed = Math.hypot(this.vel.x, this.vel.z);
+
+        const speedRatio = Math.min(this.speed / this.params.topSpeed, 1);
+        const targetRoll = -this.steer * speedRatio * 0.07;
+        this.visualRoll  += (targetRoll - this.visualRoll) * 8 * dt;
+        this.group.rotation.y = this.yaw;
+        this.group.rotation.z = this.visualRoll;
+
+        if (this.onGround && this.speed > 0.5)
+        this.group.position.y += Math.sin(t * this.speed * 0.9) * 0.003 * speedRatio;
+
+        const velFwd = this.vel.dot(this._fwd);
+        this.wheelMeshes.forEach(w => { w.rotation.x -= velFwd * dt * 1.4; });
+        this.frontPivots.forEach(p => { p.rotation.y += (this.steer*0.38 - p.rotation.y) * 10 * dt; });
+
+        this.carGlow.intensity = 0.3 + speedRatio * 2.5;
+        this.carGlow.color.setHSL(0.54 + Math.sin(t*1.5)*0.06, 1, 0.55);
+    }
+
+    /* ── Bruno: stuck respawn ── */
+    _onStuck() {
+        this.vel.set(0, 0, 0); this.velY = 4;
+        gsap.to(this.group.scale, {
+        x:0.85, y:0.85, z:0.85, duration:0.15, yoyo:true, repeat:3,
+        onComplete: () => { this.group.scale.set(1,1,1); }
+        });
+        setTimeout(() => { this.stuck.active = false; this.stuck.savedItems = []; }, 1800);
+    }
+
+    _getGroundY(x, z, carY) {
+        this._rayOrigin.set(x, carY + 2.0, z);
+        this._raycaster.set(this._rayOrigin, this._rayDown);
+        
+        if (window._trackCollision) {
+            const hits = this._raycaster.intersectObject(window._trackCollision);
+            if (hits.length > 0) {
+                const hitY = hits[0].point.y;
+                // Aumentar el margen para que el carro no se hunda
+                if (hitY <= carY + 1.0) return hitY;
+            }
+        }
+        
+        // Si no hay colisión, devolver 0 (suelo plano)
+        // PERO si estamos cerca de una isla, verificar altura de isla
+        // (esto se puede mejorar con un sistema de zonas)
+        return 0;
+    }
+
+    _buildMesh() {
+        this.group = new THREE.Group();
+        this.scene.add(this.group);
+        const C = { body:0x8b1a1a, body2:0x5a0f0f, dark:0x111118, chrome:0xb0b8c8, amber:0xffaa00, amberG:0xff8800, rubber:0x0d0d12, glass:0x0a1a2e, accent:0xff3300 };
+        const M  = (c,r=0.4,m=0,e=0,ei=0) => new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m,emissive:e,emissiveIntensity:ei});
+        const MT = (c,op=0.5) => new THREE.MeshStandardMaterial({color:c,transparent:true,opacity:op,roughness:0.05,metalness:0.3});
+        const g  = this.group;
+
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.0,0.22,4.0),M(C.body2,0.6,0.1)); chassis.position.y=0.5; chassis.castShadow=true; g.add(chassis);
+        const skid = new THREE.Mesh(new THREE.BoxGeometry(1.9,0.06,1.1),M(C.chrome,0.3,0.85)); skid.position.set(0,0.39,-1.55); g.add(skid);
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1.95,0.72,3.6),M(C.body,0.35,0.08)); body.position.y=0.97; body.castShadow=true; g.add(body);
+        const hood = new THREE.Mesh(new THREE.BoxGeometry(1.88,0.14,1.45),M(C.body2,0.4,0.1)); hood.position.set(0,1.34,-1.0); hood.castShadow=true; g.add(hood);
+        const hoodBulge = new THREE.Mesh(new THREE.BoxGeometry(0.6,0.1,1.3),M(C.dark,0.5,0.05)); hoodBulge.position.set(0,1.42,-1.0); g.add(hoodBulge);
+        for(let i=0;i<4;i++){const s=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.02,0.06),M(0x222228,0.8));s.position.set(0,1.475,-1.35+i*0.2);g.add(s);}
+        const roof=new THREE.Mesh(new THREE.BoxGeometry(1.88,0.1,1.7),M(C.dark,0.4,0.05)); roof.position.set(0,1.83,0.25); roof.castShadow=true; g.add(roof);
+        [[-1.06,-0.85],[1.06,-0.85],[-1.06,0.88],[1.06,0.88]].forEach(([x,z])=>{const f=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.35,1.05),M(C.dark,0.55,0.05));f.position.set(x,0.78,z);f.castShadow=true;g.add(f);});
+        [-0.85,0.85].forEach(x=>{const p=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.75,0.07),M(C.dark,0.3,0.4));p.position.set(x,1.56,0.78);g.add(p);});
+        const rollTop=new THREE.Mesh(new THREE.BoxGeometry(1.72,0.07,0.07),M(C.dark,0.3,0.4)); rollTop.position.set(0,1.93,0.78); g.add(rollTop);
+        const rd=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.07,0.8),M(C.dark,0.3,0.4)); rd.position.set(0,1.74,0.4); rd.rotation.x=0.55; g.add(rd);
+        const ws=new THREE.Mesh(new THREE.BoxGeometry(1.75,0.6,0.07),MT(C.glass,0.5)); ws.position.set(0,1.56,-0.22); ws.rotation.x=0.2; g.add(ws);
+        const wsF=new THREE.Mesh(new THREE.BoxGeometry(1.82,0.65,0.04),M(C.dark,0.4,0.1)); wsF.position.set(0,1.56,-0.19); wsF.rotation.x=0.2; g.add(wsF);
+        [-0.99,0.99].forEach(x=>{const w=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.38,0.85),MT(C.glass,0.4));w.position.set(x,1.56,0.3);g.add(w);});
+        const bump=new THREE.Mesh(new THREE.BoxGeometry(2.1,0.28,0.15),M(C.dark,0.4,0.15)); bump.position.set(0,0.56,-2.08); bump.castShadow=true; g.add(bump);
+        [[-0.7],[0.7]].forEach(([x])=>{const p=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.42,0.22),M(C.dark,0.45,0.1));p.position.set(x,0.58,-2.04);g.add(p);});
+        [[-0.88],[0.88]].forEach(([x])=>{const h=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.25,8),M(C.chrome,0.3,0.8));h.rotation.x=Math.PI/2;h.position.set(x,0.42,-2.18);g.add(h);});
+
+        const WHEEL_R=0.52, WHEEL_W=0.38;
+        this.wheelMeshes=[]; this.frontPivots=[];
+        const buildWheel=()=>{
+        const wg=new THREE.Group(); wg.rotation.z=Math.PI/2;
+        const tire=new THREE.Mesh(new THREE.CylinderGeometry(WHEEL_R,WHEEL_R,WHEEL_W,28),M(C.rubber,0.95)); tire.castShadow=true; wg.add(tire);
+        for(let b=0;b<5;b++){const band=new THREE.Mesh(new THREE.CylinderGeometry(WHEEL_R+0.012,WHEEL_R+0.012,0.032,24),M(0x0a0a10,0.98));band.position.y=-WHEEL_W*0.35+b*(WHEEL_W*0.18);wg.add(band);}
+        for(let i=0;i<6;i++){const sp=new THREE.Mesh(new THREE.BoxGeometry(0.055,WHEEL_R*0.78,0.045),M(C.chrome,0.2,0.9));sp.rotation.z=(i/6)*Math.PI*2;wg.add(sp);}
+        wg.add(new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.11,WHEEL_W+0.01,12),M(C.chrome,0.2,0.95)));
+        wg.add(new THREE.Mesh(new THREE.TorusGeometry(WHEEL_R*0.58,0.018,8,24),M(C.amber,0.15,0.2,C.amber,0.5)));
+        for(let i=0;i<6;i++){const nt=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.06,6),M(C.chrome,0.2,0.9));const a=(i/6)*Math.PI*2;nt.position.set(Math.cos(a)*0.16,WHEEL_W*0.52,Math.sin(a)*0.16);wg.add(nt);}
+        return wg;
+        };
+        [[1.18,-1.28],[-1.18,-1.28]].forEach(([x,z])=>{const pv=new THREE.Group();pv.position.set(x,WHEEL_R,z);const wg=buildWheel();pv.add(wg);g.add(pv);this.frontPivots.push(pv);this.wheelMeshes.push(wg);});
+        [[1.18,1.28],[-1.18,1.28]].forEach(([x,z])=>{const wg=buildWheel();wg.position.set(x,WHEEL_R,z);g.add(wg);this.wheelMeshes.push(wg);});
+
+        [-0.63,0.63].forEach(x=>{
+        const fb=new THREE.Mesh(new THREE.BoxGeometry(0.58,0.26,0.1),M(C.dark,0.3,0.15)); fb.position.set(x,1.0,-2.07); g.add(fb);
+        const fl2=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.18,0.05),M(C.amber,0.05,0.1,C.amber,3.5)); fl2.position.set(x,1.0,-2.11); g.add(fl2);
+        const sl=new THREE.SpotLight(0xffcc44,6,22,Math.PI*0.13,0.55); sl.position.set(x,1.0,-2.2); sl.target.position.set(x*0.4,0,-14); g.add(sl); g.add(sl.target);
+        const hl=new THREE.PointLight(C.amberG,1.2,4.5); hl.position.set(x,1.0,-2.15); g.add(hl);
+        });
+        const ab=new THREE.Mesh(new THREE.BoxGeometry(1.26,0.055,0.04),M(C.accent,0.1,0.1,C.accent,4.0)); ab.position.set(0,0.82,-2.1); g.add(ab);
+        const lc=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.14,0.18),M(C.dark,0.35,0.2)); lc.position.set(0,2.0,-0.22); g.add(lc);
+        for(let i=0;i<4;i++){
+        const cl=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.1,0.06),M(C.amber,0.05,0.05,C.amber,4.5)); cl.position.set(-0.45+i*0.3,2.0,-0.32); g.add(cl);
+        const sl2=new THREE.SpotLight(0xffcc44,2.5,18,Math.PI*0.12,0.6); sl2.position.set(-0.45+i*0.3,2.0,-0.36); sl2.target.position.set((-0.45+i*0.3)*0.3,0,-12); g.add(sl2); g.add(sl2.target);
+        }
+        [-0.65,0.65].forEach(x=>{
+        const rl=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.14,0.04),M(0xff1100,0.1,0.05,0xff1100,2.0)); rl.position.set(x,0.98,2.08); g.add(rl);
+        const rp=new THREE.PointLight(0xff2200,1.2,5); rp.position.set(x,0.98,2.2); g.add(rp);
+        });
+        this.carGlow=new THREE.PointLight(0xff6600,0,7); this.carGlow.position.set(0,0.1,0); g.add(this.carGlow);
+    }
+    }
+
+IslandBase.js
+    
+    /* ═══════════════════════════════════════════════════════════
+    World/Islands/IslandBase.js  —  Clase base para todas las islas
+
+    Cada isla es una zona del mapa alejada del centro con:
+    - Una plataforma elevada o área decorada diferente
+    - Un checkpoint (cubo flotante + modal)
+    - Decoración propia (luces, props)
+    - Colisión registrada en colliders
+
+    Uso:
+        class IslandCofre extends IslandBase {
+        _buildDecoration(g) { ... }
+        }
+    ═══════════════════════════════════════════════════════════ */
+
+    class IslandBase {
+    constructor(scene, colliders, cfg) {
+        this.scene     = scene;
+        this.colliders = colliders;
+        this.cfg       = cfg;   // { x, z, id, label, icon, color, emissive }
+
+        this.group     = new THREE.Group();
+        this.group.position.set(cfg.x, 0, cfg.z);
+        scene.add(this.group);
+
+        this._triggered  = false;
+        this._wasInRange = false;
+        this.cube        = null;
+        this.mat         = null;
+
+        this._buildPlatform();
+        this._buildMarker();
+        this._buildDecoration();    // override en cada subclase
+
+        // Registrar zona de colisión de la isla (barrera visual)
+        colliders.push({ x: cfg.x, z: cfg.z, r: 3.5 });
+    }
+
+    /* ── Plataforma base ──────────────────────────────────── */
+    _buildPlatform() {
+        const g = this.group;
+        const c = this.cfg;
+
+        // Suelo de la isla — ligeramente elevado y con color propio
+        const ground = new THREE.Mesh(
+        new THREE.CylinderGeometry(9, 10, 0.35, 18),
+        new THREE.MeshStandardMaterial({ color: 0x6b1a06, roughness: 0.85 })
+        );
+        ground.position.y = 0.17;
+        ground.receiveShadow = ground.castShadow = true;
+        g.add(ground);
+
+        // Borde decorativo
+        const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(9.3, 0.18, 6, 28),
+        new THREE.MeshStandardMaterial({ color: c.color, emissive: c.emissive, emissiveIntensity: 0.6, roughness: 0.3, metalness: 0.5 })
+        );
+        rim.rotation.x = Math.PI / 2;
+        rim.position.y = 0.38;
+        g.add(rim);
+
+        // Luz de suelo coloreada
+        const glow = new THREE.PointLight(c.color, 1.2, 18);
+        glow.position.y = 0.5;
+        g.add(glow);
+        this._rimLight = glow;
+
+        // Camino de acceso (strip de tierra hacia la pista)
+        const path = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.5, 14),
+        new THREE.MeshStandardMaterial({ color: 0x8a2808, roughness: 0.9 })
+        );
+        path.rotation.x = -Math.PI / 2;
+        path.position.set(0, 0.01, 11);   // apunta hacia el centro del mapa
+        path.receiveShadow = true;
+        g.add(path);
+    }
+
+    /* ── Marcador del checkpoint ────────────────────────── */
+    _buildMarker() {
+        const g = this.group;
+        const c = this.cfg;
+
+        // Base
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.7, 0.3, 16),
+        new THREE.MeshStandardMaterial({ color: 0x2e1608, roughness: 0.8 }));
+        base.position.y = 0.5; base.castShadow = true; g.add(base);
+
+        // Columna
+        const col = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 2.8, 10),
+        new THREE.MeshStandardMaterial({ color: 0x3d2010, roughness: 0.7 }));
+        col.position.y = 2.2; col.castShadow = true; g.add(col);
+
+        // Cubo flotante
+        this.mat = new THREE.MeshStandardMaterial({
+        color: c.color, emissive: c.emissive, emissiveIntensity: 0.8, roughness: 0.2, metalness: 0.4
+        });
+        this.cube = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 1.1), this.mat);
+        this.cube.position.y = 4.2; this.cube.castShadow = true; g.add(this.cube);
+
+        // Luz del cubo
+        const pt = new THREE.PointLight(c.color, 2.5, 18);
+        pt.position.y = 4.4; g.add(pt);
+
+        // Label
+        g.add(this._makeLabel(c.icon + ' ' + c.label, 0, 5.8));
+    }
+
+    /* ── Label canvas ───────────────────────────────────── */
+    _makeLabel(text, x=0, y=0) {
+        const cv = document.createElement('canvas');
+        cv.width = 512; cv.height = 128;
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle = 'rgba(20,10,4,0.85)';
+        ctx.beginPath(); ctx.roundRect(8, 8, 496, 112, 20); ctx.fill();
+        ctx.fillStyle = '#f5e8d0'; ctx.font = 'bold 44px serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(text, 256, 64);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(cv), transparent: true, depthTest: false
+        }));
+        sp.scale.set(4.5, 1.1, 1);
+        sp.position.set(x, y, 0);
+        return sp;
+    }
+
+    /* ── Override en subclases ──────────────────────────── */
+    _buildDecoration() {
+        // vacío por defecto
+    }
+
+    /* ── Update — llamado desde World.update() ──────────── */
+    update(t, carPos, input, lastAction) {
+        // Animar cubo flotante
+        if(this.cube) {
+        this.cube.position.y = 4.2 + Math.sin(t * 1.8 + this.cfg.x) * 0.3;
+        this.cube.rotation.y += 0.009;
+        this.mat.emissiveIntensity = 0.5 + Math.sin(t * 2 + this.cfg.z) * 0.45;
+        }
+        if(this._rimLight) this._rimLight.intensity = 1.0 + Math.sin(t * 1.3 + this.cfg.x) * 0.4;
+
+        // Detectar proximidad
+        const d = new THREE.Vector2(carPos.x, carPos.z)
+                    .distanceTo(new THREE.Vector2(this.cfg.x, this.cfg.z));
+        const inRange = d < TRIGGER_DIST;
+
+        if(inRange && !this._wasInRange && typeof gameAudio !== 'undefined')
+        gameAudio.proximity();
+        this._wasInRange = inRange;
+
+        // Trigger con acción — usa ModalManager global
+        if(inRange && input && !lastAction) {
+        if(window._modalManager) window._modalManager.openModal(this.cfg.id);
+        if(!this._triggered && !this.cfg.isJukebox) {
+            this._triggered = true;
+            if(this.mat) gsap.to(this.mat, { emissiveIntensity:3, duration:0.25, yoyo:true, repeat:4 });
+            if(window._modalManager) window._modalManager._onDiscovered(this.cfg.id);
+        }
+        }
+
+        return inRange;
+    }
+    }
+
+IslandRocola.js
+    /* ═══════════════════════════════════════════════════════════
+    World/Islands/IslandRocola.js  —  Isla de la Rocola REDISEÑADA
+    • Sin árbol recursivo (no compatible)
+    • Sin árboles pinos no deseados
+    • Pista de baile BIEN POSICIONADA
+    • Rocola estilo Bruno Simon
+    • Sin pasto invasor
+    • Colisiones corregidas
+    ═══════════════════════════════════════════════════════════ */
+
+    class IslandRocola extends IslandBase {
+        
+        /* ── PLATAFORMA (más grande) ─────────────────────────── */
+        _buildPlatform() {
+            const g = this.group;
+            const c = this.cfg;
+
+            // Suelo principal — radio 14 (más grande que las otras islas)
+            const ground = new THREE.Mesh(
+                new THREE.CylinderGeometry(14, 15, 0.5, 32),
+                new THREE.MeshStandardMaterial({ color: 0x0a0520, roughness: 0.6, metalness: 0.2 })
+            );
+            ground.position.y = 0.25;
+            ground.receiveShadow = ground.castShadow = true;
+            g.add(ground);
+
+            // Segundo nivel (escenario elevado) — BIEN CENTRADO
+            const stage = new THREE.Mesh(
+                new THREE.CylinderGeometry(8, 8.2, 0.8, 24),
+                new THREE.MeshStandardMaterial({ color: 0x1a0540, roughness: 0.4, metalness: 0.3 })
+            );
+            stage.position.y = 0.8;
+            stage.receiveShadow = stage.castShadow = true;
+            g.add(stage);
+            this._stage = stage;
+
+            // Borde con luces LED
+            const rimColors = [0xff44aa, 0xaa44ff, 0x44aaff, 0xffaa44];
+            rimColors.forEach((col, i) => {
+                const arc = new THREE.Mesh(
+                    new THREE.TorusGeometry(14.2, 0.15, 8, 40, Math.PI * 2 / rimColors.length),
+                    new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8 })
+                );
+                arc.rotation.x = Math.PI / 2;
+                arc.rotation.z = (i / rimColors.length) * Math.PI * 2;
+                arc.position.y = 0.55;
+                g.add(arc);
+            });
+
+            // Camino de acceso (más ancho)
+            const path = new THREE.Mesh(
+                new THREE.PlaneGeometry(6, 20),
+                new THREE.MeshStandardMaterial({ color: 0x150830, roughness: 0.7 })
+            );
+            path.rotation.x = -Math.PI / 2;
+            path.position.set(0, 0.03, -20);
+            path.receiveShadow = true;
+            g.add(path);
+
+            // Luces en el camino
+            [-2, 2].forEach(x => {
+                for(let zi = 0; zi < 4; zi++) {
+                    const lamp = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.15, 8, 6),
+                        new THREE.MeshStandardMaterial({ color: c.color, emissive: c.color, emissiveIntensity: 1.2 })
+                    );
+                    lamp.position.set(x, 0.4, -14 -zi * 3);
+                    g.add(lamp);
+                }
+            });
+
+            // Luz central de la isla
+            const mainLight = new THREE.PointLight(c.color, 2.5, 30);
+            mainLight.position.set(0, 4, 0);
+            g.add(mainLight);
+            this._mainLight = mainLight;
+        }
+
+        /* ── DECORACIÓN PRINCIPAL ─────────────────────────────── */
+        _buildDecoration() {
+            this._buildJukebox();      // Rocola estilo Bruno
+            this._buildDanceFloor();   // Pista de baile (BIEN POSICIONADA)
+            this._buildSpeakers();     // 4 bocinas en esquinas
+            this._buildCenterPiece();  // Elemento central (NO árbol recursivo)
+            this._buildSpotlights();   // Luces giratorias
+            this._buildNoteParticles(); // Notas musicales flotantes
+
+            // NO agregamos pasto aquí (la isla no debe tenerlo)
+            // NO agregamos árboles no deseados
+
+            console.log('%c🎵 Isla Rocola rediseñada', 'color:#d4a8ff;font-weight:bold');
+        }
+
+        /* ── ROCOLA ESTILO BRUNO SIMON ───────────────────────── */
+        _buildJukebox() {
+            const g = this.group;
+            const c = this.cfg.color;
+
+            // Grupo de la rocola (posición fija)
+            const jg = new THREE.Group();
+            jg.position.set(-4, 1.2, 3);
+            jg.rotation.y = 2.5;
+            g.add(jg);
+
+            // Materiales
+            const darkMetal = new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.3, metalness: 0.8 });
+            const chrome = new THREE.MeshStandardMaterial({ color: 0xaaccff, roughness: 0.1, metalness: 0.95 });
+            const glass = new THREE.MeshStandardMaterial({ color: 0x3366aa, roughness: 0.1, metalness: 0.3, transparent: true, opacity: 0.4 });
+            const glowMat = (col) => new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.2 });
+
+            // Cuerpo principal
+            const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 3.0, 1.0), darkMetal);
+            body.position.y = 1.5;
+            body.castShadow = true;
+            jg.add(body);
+
+            // Tapa superior curva
+            const top = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.3, 16), chrome);
+            top.position.y = 3.0;
+            top.castShadow = true;
+            jg.add(top);
+
+            // Pantalla frontal
+            const screen = new THREE.Mesh(
+                new THREE.BoxGeometry(1.2, 1.0, 0.1),
+                new THREE.MeshStandardMaterial({ color: 0x224466, emissive: 0x4488ff, emissiveIntensity: 0.8 })
+            );
+            screen.position.set(0, 2.0, 0.55);
+            jg.add(screen);
+
+            // Marco de la pantalla
+            const frame = new THREE.Mesh(new THREE.BoxGeometry(1.35, 1.15, 0.05), chrome);
+            frame.position.set(0, 2.0, 0.53);
+            jg.add(frame);
+
+            // Altavoces laterales
+            [-0.7, 0.7].forEach(x => {
+                const speaker = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.1, 16), darkMetal);
+                speaker.rotation.x = Math.PI / 2;
+                speaker.position.set(x, 1.2, 0.55);
+                jg.add(speaker);
+
+                const cone = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.2, 12), new THREE.MeshStandardMaterial({ color: 0x333344 }));
+                cone.rotation.x = Math.PI / 2;
+                cone.position.set(x, 1.2, 0.52);
+                jg.add(cone);
+            });
+
+            // Tiras LED laterales
+            const ledColors = [0xff44aa, 0x44ddff, 0xffaa44, 0xaa44ff];
+            ledColors.forEach((col, i) => {
+                const strip = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.06, 2.5, 0.03),
+                    glowMat(col)
+                );
+                strip.position.set(-0.8 + i * 0.55, 1.8, 0.54);
+                jg.add(strip);
+            });
+
+            // Botones inferiores
+            [-0.6, -0.2, 0.2, 0.6].forEach((x, i) => {
+                const btn = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.08, 0.08, 0.05, 8),
+                    glowMat(ledColors[i % ledColors.length])
+                );
+                btn.rotation.x = Math.PI / 2;
+                btn.position.set(x, 0.5, 0.55);
+                jg.add(btn);
+            });
+
+            // Antenas
+            [-0.7, 0.7].forEach(x => {
+                const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.8, 6), chrome);
+                antenna.position.set(x, 4.0, 0);
+                antenna.rotation.z = x > 0 ? -0.2 : 0.2;
+                jg.add(antenna);
+
+                const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6), glowMat(c));
+                tip.position.set(x + (x > 0 ? 0.3 : -0.3), 4.9, 0);
+                jg.add(tip);
+            });
+
+            // Luz principal
+            const light = new THREE.PointLight(c, 4, 15);
+            light.position.set(0, 2.5, 1);
+            jg.add(light);
+            this._jukeboxLight = light;
+            window._jukeboxLight = light;
+        }
+
+        /* ── PISTA DE BAILE (BIEN POSICIONADA) ───────────────── */
+        _buildDanceFloor() {
+            const g = this.group;
+            this._tiles = [];
+
+            const cols = 5, rows = 5;
+            const tileSize = 1.4;
+            const startX = - (cols - 1) * tileSize / 2;
+            const startZ = - (rows - 1) * tileSize / 2 - 1; // -1 para centrar mejor
+
+            const colors = [0xff44aa, 0xaa44ff, 0x44ddff, 0xffaa44, 0x44ffaa];
+
+            for(let row = 0; row < rows; row++) {
+                for(let col = 0; col < cols; col++) {
+                    const color = colors[(row + col) % colors.length];
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: color,
+                        emissive: color,
+                        emissiveIntensity: 0.3,
+                        roughness: 0.2,
+                        metalness: 0.6
+                    });
+
+                    const tile = new THREE.Mesh(
+                        new THREE.BoxGeometry(tileSize - 0.1, 0.1, tileSize - 0.1),
+                        mat
+                    );
+
+                    // POSICIÓN CORRECTA: sobre el escenario (y = 1.25)
+                    tile.position.set(
+                        startX + col * tileSize,
+                        1.25,  // Altura exacta del escenario + grosor
+                        startZ + row * tileSize
+                    );
+
+                    tile.receiveShadow = true;
+                    tile.userData.phase = (row * cols + col) * 0.5;
+                    g.add(tile);
+                    this._tiles.push(tile);
+                }
+            }
+
+            // Marco de la pista
+            const border = new THREE.Mesh(
+                new THREE.BoxGeometry(cols * tileSize + 0.4, 0.15, rows * tileSize + 0.4),
+                new THREE.MeshStandardMaterial({ color: 0x222233, roughness: 0.3, metalness: 0.7 })
+            );
+            border.position.set(0, 1.2, -1);
+            g.add(border);
+        }
+
+        /* ── 4 BOCINAS EN ESQUINAS ───────────────────────────── */
+        _buildSpeakers() {
+            const g = this.group;
+            const positions = [
+                [-10, -10], [10, -10], [-10, 10], [10, 10]
+            ];
+
+            positions.forEach(([sx, sz]) => {
+                const sg = new THREE.Group();
+                sg.position.set(sx, 0.8, sz);
+                
+                // Orientar hacia el centro
+                sg.rotation.y = Math.atan2(-sx, -sz);
+
+                // Cuerpo
+                const body = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.2, 2.2, 1.0),
+                    new THREE.MeshStandardMaterial({ color: 0x0a0a1a, roughness: 0.4, metalness: 0.5 })
+                );
+                body.position.y = 1.1;
+                body.castShadow = true;
+                sg.add(body);
+
+                // Conos
+                [-0.4, 0.4].forEach(dx => {
+                    const cone = new THREE.Mesh(
+                        new THREE.ConeGeometry(0.35, 0.25, 12),
+                        new THREE.MeshStandardMaterial({ color: 0x222233, roughness: 0.8 })
+                    );
+                    cone.rotation.x = Math.PI / 2;
+                    cone.position.set(dx, 1.3, 0.55);
+                    sg.add(cone);
+                });
+
+                // LED superior
+                const led = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.8, 0.1, 0.1),
+                    new THREE.MeshStandardMaterial({ color: this.cfg.color, emissive: this.cfg.color, emissiveIntensity: 0.8 })
+                );
+                led.position.set(0, 2.2, 0.5);
+                sg.add(led);
+
+                g.add(sg);
+            });
+        }
+
+        /* ── ELEMENTO CENTRAL (en lugar del árbol recursivo) ─── */
+        _buildCenterPiece() {
+            const g = this.group;
+
+            // Una estructura tipo "tótem" de música
+            const base = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.2, 1.5, 0.8, 8),
+                new THREE.MeshStandardMaterial({ color: 0x332244, roughness: 0.4, metalness: 0.3 })
+            );
+            base.position.set(0, 1.2, 0);
+            base.castShadow = true;
+            g.add(base);
+
+            // Columna central
+            const column = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.4, 0.5, 2.5, 8),
+                new THREE.MeshStandardMaterial({ color: 0x445566, roughness: 0.2, metalness: 0.8 })
+            );
+            column.position.set(0, 2.5, 0);
+            column.castShadow = true;
+            g.add(column);
+
+            // Esfera luminosa
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.7, 16, 12),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0xffffff, 
+                    emissive: this.cfg.color,
+                    emissiveIntensity: 1.5,
+                    roughness: 0.1,
+                    metalness: 0.3
+                })
+            );
+            sphere.position.set(0, 4.0, 0);
+            sphere.castShadow = true;
+            g.add(sphere);
+            this._centerSphere = sphere;
+
+            // Anillos alrededor
+            for(let i = 0; i < 3; i++) {
+                const ring = new THREE.Mesh(
+                    new THREE.TorusGeometry(1.2, 0.05, 8, 24),
+                    new THREE.MeshStandardMaterial({ color: this.cfg.color, emissive: this.cfg.color, emissiveIntensity: 0.5 })
+                );
+                ring.rotation.x = Math.PI / 2;
+                ring.rotation.z = (i / 3) * Math.PI * 2 / 3;
+                ring.position.set(0, 4.0, 0);
+                g.add(ring);
+                this[`_ring${i}`] = ring;
+            }
+
+            // Luz central
+            const centerLight = new THREE.PointLight(this.cfg.color, 3, 12);
+            centerLight.position.set(0, 4, 0);
+            g.add(centerLight);
+        }
+
+        /* ── SPOTLIGHTS GIRATORIOS ───────────────────────────── */
+        _buildSpotlights() {
+            const g = this.group;
+            this._spots = [];
+
+            const colors = [0xff44aa, 0x44ddff, 0xffaa44, 0xaa44ff];
+            const positions = [[-7, 7], [7, 7], [-7, -7], [7, -7]];
+
+            positions.forEach(([sx, sz], i) => {
+                // Poste
+                const pole = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.08, 0.1, 6, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x334466, roughness: 0.3, metalness: 0.8 })
+                );
+                pole.position.set(sx, 3.5, sz);
+                g.add(pole);
+
+                // Cabeza giratoria
+                const head = new THREE.Group();
+                head.position.set(sx, 6.5, sz);
+                g.add(head);
+
+                const lamp = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.3, 0.5, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x445588, roughness: 0.2, metalness: 0.9 })
+                );
+                lamp.rotation.x = Math.PI;
+                lamp.position.set(0, 0, 0);
+                head.add(lamp);
+
+                const light = new THREE.SpotLight(colors[i], 4, 20, Math.PI * 0.1);
+                light.position.set(0, 0, 0.2);
+                light.target.position.set(0, -3, 2);
+                head.add(light);
+                head.add(light.target);
+
+                head.userData.speed = 0.3 + i * 0.1;
+                head.userData.angle = (i / 4) * Math.PI * 2;
+                this._spots.push(head);
+            });
+        }
+
+        /* ── NOTAS MUSICALES FLOTANTES ───────────────────────── */
+        _buildNoteParticles() {
+            const g = this.group;
+            this._notes = [];
+
+            const noteSymbols = ['♪', '♫', '♩', '♬'];
+            const colors = [0xff44aa, 0x44ddff, 0xffaa44, 0xaa44ff];
+
+            // Crear 12 notas flotantes alrededor de la isla
+            for(let i = 0; i < 12; i++) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.font = '48px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(noteSymbols[i % noteSymbols.length], 32, 32);
+
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ 
+                    map: texture,
+                    color: colors[i % colors.length],
+                    transparent: true,
+                    blending: THREE.AdditiveBlending
+                });
+
+                const sprite = new THREE.Sprite(material);
+                
+                const angle = (i / 12) * Math.PI * 2;
+                const radius = 13;
+                sprite.position.set(
+                    Math.cos(angle) * radius,
+                    3 + Math.random() * 3,
+                    Math.sin(angle) * radius
+                );
+                
+                sprite.scale.set(0.8, 0.8, 1);
+                sprite.userData = {
+                    angle: angle,
+                    radius: radius,
+                    speed: 0.1 + Math.random() * 0.2,
+                    yOffset: Math.random() * 10,
+                    scale: 0.8
+                };
+                
+                g.add(sprite);
+                this._notes.push(sprite);
+            }
+        }
+
+        /* ── UPDATE ───────────────────────────────────────────── */
+        update(t, carPos, input, lastAction) {
+            // Animar pista de baile
+            if(this._tiles) {
+                this._tiles.forEach((tile, i) => {
+                    const beat = Math.abs(Math.sin(t * 3 + tile.userData.phase));
+                    tile.material.emissiveIntensity = 0.2 + beat * 0.8;
+                    tile.position.y = 1.25 + beat * 0.03;
+                });
+            }
+
+            // Animar esfera central
+            if(this._centerSphere) {
+                this._centerSphere.scale.setScalar(1 + Math.sin(t * 5) * 0.05);
+            }
+
+            // Animar anillos
+            for(let i = 0; i < 3; i++) {
+                if(this[`_ring${i}`]) {
+                    this[`_ring${i}`].rotation.y += 0.01;
+                }
+            }
+
+            // Animar spots
+            if(this._spots) {
+                this._spots.forEach(spot => {
+                    spot.rotation.y += 0.01 * spot.userData.speed;
+                });
+            }
+
+            // Animar notas musicales
+            if(this._notes) {
+                this._notes.forEach(note => {
+                    note.position.y += Math.sin(t * 2 + note.userData.yOffset) * 0.005;
+                    note.material.rotation += 0.01;
+                });
+            }
+
+            // Luz de la rocola pulsante
+            if(this._jukeboxLight) {
+                this._jukeboxLight.intensity = 3 + Math.sin(t * 6) * 1.5;
+            }
+
+            // Luz principal de la isla
+            if(this._mainLight) {
+                this._mainLight.color.setHSL((t * 0.1) % 1, 1, 0.5);
+            }
+
+            return super.update(t, carPos, input, lastAction);
+        }
+    }
+
+Foliage.js
+    /* ═══════════════════════════════════════════════════════════
+    World/Foliage.js  —  Árboles, rocas, pasto, viento, polvo
+    Se instancia desde World.js y comparte colliders con Vehicle
+    ═══════════════════════════════════════════════════════════ */
+
+    class Foliage {
+    constructor(scene, colliders) {
+        this.scene     = scene;
+        this.colliders = colliders;   // ref compartida con Vehicle
+        this._trees    = [];
+
+        this._buildTrees();
+        this._buildWind();
+        this._buildGrass();
+    }
+
+    /* ─── ÁRBOLES + ROCAS ──────────────────────────────────── */
+    _buildTrees() {
+        // Función  detectar si un punto está cerca de la pista
+        const isOnTrack = (x, z, margin=5) => {
+        if(!window._trackCurve) return false;
+        for(let i=0;i<=100;i++){
+            const p=window._trackCurve.getPoint(i/100);
+            if(Math.hypot(p.x-x,p.z-z)<margin) return true;
+        }
+        return false;
+        };
+        // También verificar cerca de las islas (para que no pongan árboles encima)
+        const islandPositions = [
+            { x: -55, z: -40, radius: 16 },  // Cofre
+            { x: 58, z: -38, radius: 16 },   // Radio
+            { x: 5, z: -70, radius: 16 },    // Faro
+            { x: -8, z: 68, radius: 18,// Añadir el camino (alfombra) como un área rectangular
+            path: { 
+                x1: -10, x2: 10,           // Ancho del camino
+                z1: 48, z2: 68              // Desde la isla hacia afuera (Z negativo)
+            }},    // Rocola (más grande)
+        ];
+
+        const isNearIsland = (x, z) => {
+            for (const island of islandPositions) {
+                    // Detectar círculo de la isla
+                if (Math.hypot(x - island.x, z - island.z) < island.radius) {
+                    return true;
+                }
+                        // Detectar camino de la Rocola (si existe)
+                if (island.path) {
+                if (x > island.path.x1 && x < island.path.x2 && 
+                    z > island.path.z1 && z < island.path.z2) {
+                    return true;
+                }
+            }
+            }
+            return false;
+        };
+
+        const getPos = (margin=5, tries=200) => {
+        for(let i=0;i<tries;i++){
+            const a=Math.random()*Math.PI*2, rad=14+Math.random()*55;
+            const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
+            
+            // Verificar que NO esté en la pista Y NO esté cerca de islas
+                if (!isOnTrack(x, z, margin) && !isNearIsland(x, z)) {
+                    return { x, z, valid: true };
+                }
+            }
+            return { x: 999, z: 999, valid: false };
+        };
+
+        for(let i=0;i<40;i++){const p=getPos(5); if(p.valid) this._makeTree(p.x,p.z,0.8+Math.random()*0.8);}
+        for(let i=0;i<16;i++){const p=getPos(5.5); if(p.valid) this._makeRock(p.x,p.z,0.7+Math.random()*0.8);}
+
+        // // Árboles cerca de cada isla (para decorarlas)
+        // const islandPos = [
+        //   {x:-55,z:-40},{x:55,z:-35},{x:5,z:-65},{x:-5,z:65},{x:70,z:55}
+        // ];
+        // islandPos.forEach(({x,z}) => {
+        //   for(let j=0;j<3;j++){
+        //     const a=Math.random()*Math.PI*2;
+        //     this._makeTree(x+Math.cos(a)*6, z+Math.sin(a)*6, 1.0+Math.random()*0.5);
+        //   }
+        // });
+    }
+
+    _makeTree(x, z, s=1, type=-1) {
+        const kind = type>=0 ? type : Math.floor(Math.random()*4);
+        const g    = new THREE.Group();
+        g.position.set(x,0,z);
+        g.userData.windPhase = Math.random()*Math.PI*2;
+        g.userData.windSpeed = 0.6+Math.random()*0.8;
+        g.userData.treeScale = s;
+
+        const trunkColor=[0x5c2e08,0x3a2208,0x6b2a10,0x4a3010][kind];
+        const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.14*s,0.22*s,(1.4+kind*0.3)*s,7),
+        new THREE.MeshStandardMaterial({color:trunkColor,roughness:0.95}));
+        trunk.position.y=(0.7+kind*0.15)*s; trunk.castShadow=true; g.add(trunk);
+
+        const treeDefs=[
+        ()=>{
+            const cols=[0xdd6611,0xe07720,0xcc5500,0xf08830];
+            [{ry:2.1,rs:1.4,dx:0,dz:0},{ry:2.6,rs:1.0,dx:0.8,dz:0.3},{ry:2.4,rs:0.9,dx:-0.7,dz:0.2},{ry:3.1,rs:0.75,dx:0.1,dz:-0.5}]
+            .forEach(({ry,rs,dx,dz},i)=>{
+            const l=new THREE.Mesh(new THREE.SphereGeometry(rs*s,7,5),new THREE.MeshStandardMaterial({color:cols[i],roughness:0.8,emissive:cols[i],emissiveIntensity:0.05}));
+            l.position.set(dx*s,ry*s,dz*s); l.castShadow=true; g.add(l);
+            });
+        },
+        ()=>{
+            [[0,1.5,1.6],[0,2.8,1.2],[0,3.8,0.85]].forEach(([dx,ry,rs])=>{
+            const c=new THREE.Mesh(new THREE.ConeGeometry(rs*s,2.0*s,7),new THREE.MeshStandardMaterial({color:0x224422,roughness:0.85,emissive:0x112211,emissiveIntensity:0.08}));
+            c.position.set(dx*s,ry*s,0); c.castShadow=true; g.add(c);
+            });
+        },
+        ()=>{
+            const cols=[0xff44aa,0xcc2288,0xff66cc,0xee3399];
+            [{ry:1.8,rs:1.6,dx:0,dz:0},{ry:2.2,rs:1.1,dx:0.9,dz:0},{ry:2.2,rs:1.1,dx:-0.9,dz:0},{ry:2.5,rs:0.9,dx:0,dz:0.8}]
+            .forEach(({ry,rs,dx,dz},i)=>{
+            const l=new THREE.Mesh(new THREE.SphereGeometry(rs*s,6,5),new THREE.MeshStandardMaterial({color:cols[i],roughness:0.75,emissive:cols[i],emissiveIntensity:0.08}));
+            l.position.set(dx*s,ry*s,dz*s); l.castShadow=true; g.add(l);
+            });
+        },
+        ()=>{
+            const cols=[0xddaa00,0xffcc22,0xcc9900,0xeebb11];
+            [{ry:2.0,rw:2.4,rh:1.8,dx:0,dz:0},{ry:3.2,rw:1.8,rh:1.4,dx:0.3,dz:0.2},{ry:2.6,rw:1.4,rh:1.2,dx:-0.5,dz:0.3}]
+            .forEach(({ry,rw,rh,dx,dz},i)=>{
+            const l=new THREE.Mesh(new THREE.BoxGeometry(rw*s,rh*s,rw*s*0.85),new THREE.MeshStandardMaterial({color:cols[i],roughness:0.8,emissive:cols[i],emissiveIntensity:0.06}));
+            l.position.set(dx*s,ry*s,dz*s); l.rotation.y=Math.random()*Math.PI; l.castShadow=true; g.add(l);
+            });
+        },
+        ];
+        treeDefs[kind]();
+
+        const LN=18, lPos=new Float32Array(LN*3), lData=[];
+        for(let i=0;i<LN;i++){
+        const a=Math.random()*Math.PI*2, r=0.5+Math.random()*1.8*s;
+        lPos[i*3]=Math.cos(a)*r; lPos[i*3+1]=1.5*s+Math.random()*2.5*s; lPos[i*3+2]=Math.sin(a)*r;
+        lData.push({angle:a,radius:r,speed:0.3+Math.random()*0.5,yOff:Math.random()*Math.PI*2});
+        }
+        const lGeo=new THREE.BufferGeometry();
+        lGeo.setAttribute('position',new THREE.BufferAttribute(lPos,3));
+        const leafColSets=[[0xffaa44,0xff8822,0xffcc66,0xff6633],[0x44ff88,0x22dd66,0x55ee99,0x33cc77],[0xff88cc,0xff44aa,0xffaadd,0xee3399],[0xffdd22,0xffbb00,0xffee55,0xddaa00]];
+        const lPts=new THREE.Points(lGeo,new THREE.PointsMaterial({
+        color:leafColSets[kind][Math.floor(Math.random()*4)],
+        size:0.18*s, sizeAttenuation:true, transparent:true, opacity:0.85, depthWrite:false,
+        }));
+        g.add(lPts);
+        g.userData.leafPts=lPts; g.userData.leafData=lData;
+
+        this.scene.add(g);
+        this._trees.push(g);
+        this.colliders.push({x,z,r:(kind===1?0.3:0.5)*s});
+        return g;
+    }
+
+    _makeRock(x, z, s=1) {
+        const g=new THREE.Group(); g.position.set(x,0,z);
+        const cols=[0x7a6a55,0x6a5a8a,0x8a7060,0x5a6a7a];
+        const r=new THREE.Mesh(new THREE.DodecahedronGeometry(0.6*s,0),
+        new THREE.MeshStandardMaterial({color:cols[Math.floor(Math.random()*cols.length)],roughness:1,metalness:0.05}));
+        r.scale.y=0.5; r.rotation.y=Math.random()*Math.PI; r.position.y=0.18*s; r.castShadow=r.receiveShadow=true;
+        const r2=new THREE.Mesh(new THREE.DodecahedronGeometry(0.3*s,0),r.material.clone());
+        r2.scale.y=0.55; r2.rotation.y=Math.random()*Math.PI; r2.position.set(0.5*s,0.1*s,0.3*s);
+        g.add(r); g.add(r2); this.scene.add(g);
+        this.colliders.push({x,z,r:0.55*s});
+    }
+
+    /* ─── VIENTO + POLVO ───────────────────────────────────── */
+    _buildWind() {
+        const WN=200, wPos=new Float32Array(WN*3);
+        this._windSpd=[];
+        for(let i=0;i<WN;i++){
+        wPos[i*3]=(Math.random()-0.5)*120; wPos[i*3+1]=Math.random()*3; wPos[i*3+2]=(Math.random()-0.5)*120;
+        this._windSpd.push(0.5+Math.random()*1.5);
+        }
+        const wGeo=new THREE.BufferGeometry();
+        wGeo.setAttribute('position',new THREE.BufferAttribute(wPos,3));
+        this._windPts=new THREE.Points(wGeo,new THREE.PointsMaterial({color:0xddccaa,size:0.12,sizeAttenuation:true,transparent:true,opacity:0.45,depthWrite:false}));
+        this.scene.add(this._windPts);
+
+        const DN=200, dPos=new Float32Array(DN*3);
+        for(let i=0;i<DN;i++){dPos[i*3]=(Math.random()-0.5)*100;dPos[i*3+1]=Math.random()*14;dPos[i*3+2]=(Math.random()-0.5)*100;}
+        const dGeo=new THREE.BufferGeometry();
+        dGeo.setAttribute('position',new THREE.BufferAttribute(dPos,3));
+        this._dustPts=new THREE.Points(dGeo,new THREE.PointsMaterial({color:0xc9963c,size:0.06,sizeAttenuation:true,transparent:true,opacity:0.4,depthWrite:false}));
+        this.scene.add(this._dustPts);
+    }
+
+    /* ─── PASTO ─────────────────────────────────────────────── */
+    _buildGrass() {
+        const spawnGlb = (model) => {
+        model.traverse(c => {
+            if(!c.isMesh) return;
+            c.castShadow=false; c.receiveShadow=true;
+            if(c.material){c.material.side=THREE.DoubleSide;c.material.alphaTest=0.2;}
+        });
+        let placed=0;
+
+        // Posiciones de las islas para evitar pasto en ellas
+            const islandPositions = [
+                { x: -55, z: -40, radius: 15 },
+                { x: 58, z: -38, radius: 15 },
+                { x: 5, z: -70, radius: 15 },
+                { x: -8, z: 68, radius: 18, path: { xMin: -12, xMax: 12, zMin: 48, zMax: 68 } // Camino
+                },
+            ];
+
+            const isNearIsland = (x, z) => {
+                for (const island of islandPositions) {
+                    if (Math.hypot(x - island.x, z - island.z) < island.radius) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+
+
+        for(let att=0;att<1800&&placed<GRASS_CFG.COUNT;att++){
+            const a=Math.random()*Math.PI*2, rad=10+Math.random()*60;
+            const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
+            let onTrack=false;
+            if(window._trackCurve){
+            for(let i=0;i<=60;i++){
+                const p=window._trackCurve.getPoint(i/60);
+                if(Math.hypot(p.x-x,p.z-z)<5){onTrack=true;break;}
+            }
+            }
+            if(!onTrack && !isNearIsland(x, z)){
+            const clone=model.clone();
+            clone.position.set(x,0,z); clone.rotation.y=Math.random()*Math.PI*2;
+            const sc=GRASS_CFG.MIN_SCALE+Math.random()*(GRASS_CFG.MAX_SCALE-GRASS_CFG.MIN_SCALE);
+            clone.scale.setScalar(sc); this.scene.add(clone); placed++;
+            }
+
+        }
+        console.log(`%c🌿 ${placed} mechones de pasto (GLB)`, 'color:#4a8c2a');
+        };
+
+        const fallback = () => {
+        const geo=new THREE.BufferGeometry();
+        const v=new Float32Array([-0.3,0,0.3,0.3,0,-0.3,0.3,0.8,-0.3,-0.3,0,0.3,0.3,0.8,-0.3,-0.3,0.8,0.3,-0.3,0,-0.3,0.3,0,0.3,0.3,0.8,0.3,-0.3,0,-0.3,0.3,0.8,0.3,-0.3,0.8,-0.3]);
+        const uv=new Float32Array([0,0,1,0,1,1,0,0,1,1,0,1,0,0,1,0,1,1,0,0,1,1,0,1]);
+        geo.setAttribute('position',new THREE.BufferAttribute(v,3));
+        geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+        geo.computeVertexNormals();
+        const cols=[0x2d6e1a,0x3a8c22,0x4aa830,0x5db83a,0x6ec848];
+        const pM=Math.floor(GRASS_CFG.COUNT/cols.length);
+        this._grassMeshes=cols.map(c=>{
+            const m=new THREE.InstancedMesh(geo,new THREE.MeshStandardMaterial({color:c,side:THREE.DoubleSide,alphaTest:0.1,roughness:1}),pM);
+            this.scene.add(m); return m;
+        });
+        const d=new THREE.Object3D();
+        this._grassMeshes.forEach(m=>{
+            for(let i=0;i<pM;i++){
+            const a=Math.random()*Math.PI*2, r=8+Math.pow(Math.random(),0.5)*GRASS_CFG.SPREAD;
+            const sc=0.6+Math.random()*1.0;
+            d.position.set(Math.cos(a)*r,0,Math.sin(a)*r);
+            d.rotation.y=Math.random()*Math.PI*2; d.scale.set(sc,sc*(0.9+Math.random()*0.4),sc);
+            d.updateMatrix(); m.setMatrixAt(i,d.matrix);
+            }
+            m.instanceMatrix.needsUpdate=true;
+        });
+        console.log('%c🌿 Pasto procedural', 'color:#4a8c2a');
+        };
+
+        const sc=document.createElement('script');
+        sc.src='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+        sc.onload=()=>new THREE.GLTFLoader().load(GRASS_CFG.GLB_PATH,g=>spawnGlb(g.scene),null,fallback);
+        sc.onerror=fallback;
+        document.head.appendChild(sc);
+    }
+
+    /* ─── UPDATE ────────────────────────────────────────────── */
+    update(dt, t) {
+        // Viento
+        const pos=this._windPts.geometry.attributes.position.array;
+        const tt=Date.now()*0.0002;
+        const wx=Math.cos(tt)*8, wz=Math.sin(tt*0.7)*4;
+        for(let i=0;i<200;i++){
+        const sp=this._windSpd[i];
+        pos[i*3]+=wx*sp*dt; if(pos[i*3]>60) pos[i*3]=-60; if(pos[i*3]<-60) pos[i*3]=60;
+        pos[i*3+1]+=0.3*sp*dt; if(pos[i*3+1]>4) pos[i*3+1]=0.1;
+        pos[i*3+2]+=wz*sp*dt; if(pos[i*3+2]>60) pos[i*3+2]=-60; if(pos[i*3+2]<-60) pos[i*3+2]=60;
+        }
+        this._windPts.geometry.attributes.position.needsUpdate=true;
+        this._dustPts.rotation.y+=dt*0.015;
+
+        if(this._grassMeshes) this._grassMeshes.forEach((m,i)=>{
+        m.rotation.x=Math.sin(t*0.9+i*0.3)*0.038;
+        m.rotation.z=Math.sin(t*0.7+i*0.2)*0.028;
+        });
+
+        // Árboles
+        this._trees.forEach(tree=>{
+        const ph=tree.userData.windPhase||0, sp=tree.userData.windSpeed||1, sc=tree.userData.treeScale||1;
+        tree.rotation.x=Math.sin(t*sp+ph)*0.018*sc;
+        tree.rotation.z=Math.cos(t*sp*0.7+ph)*0.012*sc;
+        const lp=tree.userData.leafPts, ld=tree.userData.leafData;
+        if(lp&&ld){
+            const p=lp.geometry.attributes.position;
+            ld.forEach((leaf,i)=>{
+            leaf.angle+=leaf.speed*dt;
+            p.setXYZ(i,Math.cos(leaf.angle)*leaf.radius,1.5*sc+Math.sin(t*0.8+leaf.yOff)*0.35*sc+Math.cos(leaf.angle*0.5)*0.2*sc,Math.sin(leaf.angle)*leaf.radius);
+            });
+            p.needsUpdate=true;
+            lp.material.opacity=0.65+Math.sin(t*1.2+ph)*0.2;
+        }
+        });
+    }
+    }
+
+Main.js
+            /* ═══════════════════════════════════════════════════════════
+        Main.js  —  Entrada del juego, estilo Bruno Simon
+        Orden: Renderer → Scene → Modules → Tick → UI
+        ═══════════════════════════════════════════════════════════ */
+
+        /* ══ 1. RENDERER ═══════════════════════════════════════════ */
+        const canvas   = document.getElementById('webgl-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.shadowMap.enabled  = true;
+        renderer.shadowMap.type     = THREE.PCFSoftShadowMap;
+        renderer.toneMapping        = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+
+        /* ══ 2. SCENE + CAMERA ════════════════════════════════════ */
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a0a2e);
+        scene.fog        = new THREE.FogExp2(0x2a0a3e, 0.008);  // fog más suave para el mundo grande
+
+        const threeCamera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 350);
+        threeCamera.position.set(0, 8, 15);
+        threeCamera.lookAt(0, 0, 0);
+
+        window.addEventListener('resize', () => {
+        threeCamera.aspect = innerWidth / innerHeight;
+        threeCamera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        });
+
+        /* ══ 3. MÓDULOS ════════════════════════════════════════════
+        Orden idéntico a Bruno Simon: Input → Audio → World → Vehicle → Camera → UI
+        ════════════════════════════════════════════════════════════ */
+        const input      = new Input();
+        const gameAudio  = new GameAudio();
+        const world      = new World(scene);
+        const vehicle    = new Vehicle(scene, world.colliders);
+
+
+        // 2. Crear ModalManager y conectar GameAudio
+        window._modalManager = new ModalManager();
+        window._modalManager.setAudio(gameAudio);  // ¡Importante!
+        const gameCamera = new GameCamera(threeCamera, canvas);
+
+        /* ══ 4. INTRO PARTÍCULAS ═══════════════════════════════════ */
+        (function buildIntroParticles() {
+        const c = document.getElementById('intro-particles');
+        if(!c) return;
+        for(let i = 0; i < 35; i++){
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const s = 2 + Math.random() * 5;
+            p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;bottom:${Math.random()*40}%;--dur:${4+Math.random()*6}s;--delay:${Math.random()*5}s;`;
+            c.appendChild(p);
+        }
+        })();
+
+        /* ══ 5. TICK LOOP ══════════════════════════════════════════
+        Orden de Bruno: pre-physics → world → camera → UI
+        ════════════════════════════════════════════════════════════ */
+        const clock  = new THREE.Clock();
+        let gameOn   = false;
+        let lastAction = false;
+
+        function tick() {
+        requestAnimationFrame(tick);
+        renderer.render(scene, threeCamera);
+        if(!gameOn) return;
+
+        const dt = Math.min(clock.getDelta(), 0.05);
+        const t  = Date.now() * 0.001;
+
+        // 1. Física del vehículo
+        vehicle.update(dt, t, input);
+
+        // 2. Cámara
+        gameCamera.update(dt, vehicle);
+
+        // 3. Mundo + islas (pasan input para detectar interacción)
+        const actionNow = input.action && !lastAction;   // flanco de subida
+        world.update(dt, t, vehicle.group.position, actionNow, lastAction);
+        lastAction = input.action;
+        }
+
+        /* ══ 6. BOTÓN INICIO ═══════════════════════════════════════ */
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            const intro = document.getElementById('intro-screen');
+            
+            // Iniciar música base a través de GameAudio
+            const jukebox = gameAudio.initJukebox();
+            await jukebox.startBaseMusic();
+            
+            gsap.to(intro, {
+                opacity: 0, duration: 0.7, ease: 'power2.inOut',
+                onComplete: () => {
+                    intro.style.display = 'none';
+                    document.getElementById('hud').classList.remove('hidden');
+                    gameOn = true;
+                    clock.start();
+                }
+            });
+        });
+
+        document.getElementById('replay-btn')?.addEventListener('click', () => location.reload());
+
+        tick();
+        console.log('%c💛 Para Ámbar — modular, estilo Bruno Simon', 'color:#ffd60a;font-size:1.2rem;font-weight:bold');
+
+Config.js
+        /* ═══════════════════════════════════════════════════════════
+    Config.js  —  Configuración global  —  Para Ámbar 💛
+
+    Valores de física traducidos EXACTAMENTE de Bruno Simon:
+    
+    Bruno (Rapier)          Nosotros (custom)
+    ─────────────────────────────────────────────────────
+    engineForceAmplitude:300  accel:180  (menos = arranque más suave)
+    topSpeed: 5 (Rapier u)    speed: 22  (nuestras unidades, ~4x mundo)
+    idleBrake: 0.06           idleBrake: 0.06  ← idéntico
+    reverseBrake: 0.4         reverseBrake: 0.4 ← idéntico
+    steeringAmplitude: 0.5rad steeringAmplitude en Vehicle.params
+    sideFriction: 3 (Rapier)  lateralDamping: 12 ← simula Rapier
+
+    ANTES el carro se iba de largo porque:
+    1. speed:110 era 5x demasiado rápido
+    2. No había fricción lateral (Rapier la daba gratis)
+    3. El idleBrake se aplicaba como Math.pow() en lugar de
+        brake * brakeAmplitude * dt como Bruno
+    ═══════════════════════════════════════════════════════════ */
+
+    const CFG = {
+    /* ── VEHÍCULO ──────────────────────────────────────────── */
+    speed:        22,     // topSpeed — Bruno usa 5 en Rapier; 22 = equivalente en nuestro espacio
+    accel:        180,    // engineForceAmplitude — Bruno usa 300; 180 = arranque más suave y controlable
+    idleBrake:    0.06,   // Bruno: 0.06 — idéntico, freno suave sin input
+    reverseBrake: 0.4,    // Bruno: 0.4 — freno fuerte al ir dirección contraria
+    steerLerp:    8,      // suavidad del volante visual
+
+    /* ── CÁMARA ────────────────────────────────────────────── */
+    camLerp:   0.09,
+    camOffset: { y: 8, z: 11 },
+
+    /* ── SALTO / GRAVEDAD ──────────────────────────────────── */
+    jumpForce: 10,
+    gravity:   38,
+    };
+
+    /* ─── CHECKPOINTS ──────────────────────────────────────────── */
+    const CHECKPOINTS = [
+    { id:'modal-1', label:'El Cofre',  icon:'🗝️', x:-14, z:-10, color:0xc9963c, emissive:0x6b4d10 },
+    { id:'modal-2', label:'La Radio',  icon:'📻', x: 16, z: -8, color:0xe8714a, emissive:0x7a2c0f },
+    { id:'modal-3', label:'El Faro',   icon:'🏮', x:  2, z:-24, color:0xa8d4a0, emissive:0x2a5c25 },
+    { id:'jukebox', label:'La Rocola', icon:'🎵', x: -6, z: 14, color:0xd4a8ff, emissive:0x4a1a8c, isJukebox:true },
+    ];
+    const TRIGGER_DIST = 6;    // más grande para la isla Rocola ampliada
+
+    const CARTA_TEXTO =
+    `Hay lugares en el mundo que no están en ningún mapa,
+    pero que existen porque tú los iluminaste.
+
+    Este pequeño rincón lo construí pensando en ti,
+    en tu forma de reír cuando algo te sorprende,
+    y en cómo todo se vuelve más bonito cuando estás cerca.
+
+    Gracias por ser mi lugar favorito.`;
+
+    const SONGS = [
+        { 
+            title: 'DAISIES', 
+            artist: 'Justin Bieber',
+            file: 'DAISIES.mp3',
+            cover: 'Daises.jpg',
+            startTime: 65, // 1:05 en segundos
+            color: '#f5e56b'
+        },
+        { 
+            title: 'Pegao', 
+            artist: 'Camilo',
+            file: 'Pegao.mp3',
+            cover: 'Pegao.jpg',
+            startTime: 18, // 0:18
+            color: '#ff9966'
+        },
+        { 
+            title: 'Fallin All In You', 
+            artist: 'Shawn Mendes',
+            file: 'Fallin All In You.mp3',
+            cover: 'Fallin All In You.jpg',
+            startTime: 60, // 1:00
+            color: '#ff6b6b'
+        },
+        { 
+            title: 'Chachacha', 
+            artist: 'Josean Log',
+            file: 'Chachacha.mp3',
+            cover: 'Chachacha.jpg',
+            startTime: 93, // 1:33
+            color: '#66cc99'
+        },
+        { 
+            title: 'The World Is Ugly', 
+            artist: 'My Chemical Romance',
+            file: 'The World Is Ugly.mp3',
+            cover: 'The World Is Ugly.png',
+            startTime: 133, // 2:13
+            color: '#aa88ff'
+        },
+        { 
+            title: 'Serotonina', 
+            artist: 'Humbe',
+            file: 'Serotonina.mp3',
+            cover: 'Serotonina.jpg',
+            startTime: 105, // 1:45
+            color: '#ff88aa'
+        },
+    ];
+
+    // Canción base (loop ambiental)
+    const BASE_SONG = {
+        title: 'Daises Guitar',
+        artist: 'Ambient',
+        file: 'Song Base/daises chill.mp3',
+        cover: 'Daises.jpg', // Usar misma carátula
+        loop: true,
+        volume: 0.3
+    };
+
+    const GRASS_CFG = {
+    GLB_PATH : 'models/grass/grass.glb',
+    COUNT    : 300,
+    MIN_SCALE: 0.8,
+    MAX_SCALE: 2.2,
+    SPREAD   : 40,
+    };    
+
+World.js
+        /* ═══════════════════════════════════════════════════════════
+    World/World.js  —  Orquestador del mundo
+
+    Estructura escalable:
+    World/
+    ├── World.js          ← este archivo (solo orquesta)
+    ├── Ground.js         ← suelo
+    ├── Track.js          ← pista
+    ├── Foliage.js        ← árboles, pasto, viento
+    └── Islands/
+        ├── IslandBase.js
+        ├── IslandCofre.js
+        ├── IslandRadio.js
+        ├── IslandFaro.js
+        └── IslandRocola.js
+
+    Para agregar una isla nueva:
+    1. Crear IslandNueva.js extendiendo IslandBase
+    2. Agregar el <script> en index.html
+    3. Instanciar en _buildIslands() con su config
+    ═══════════════════════════════════════════════════════════ */
+
+    class World {
+    constructor(scene) {
+        this.scene     = scene;
+        this.colliders = [];
+
+        this._buildLighting();
+        this.ground  = new Ground(scene);
+        this.track   = new Track(scene);
+        this.foliage = new Foliage(scene, this.colliders);
+        this._buildIslands();
+
+        // EXPONER ISLAS PARA EL VEHÍCULO
+        window._islands = this.islands;
+    }
+
+    /* ─── ILUMINACIÓN ──────────────────────────────────────── */
+    _buildLighting() {
+        const s = this.scene;
+        s.add(new THREE.HemisphereLight(0xff7040, 0x1a0530, 1.3));
+
+        this.sun = new THREE.DirectionalLight(0xffa060, 3.2);
+        this.sun.position.set(40, 22, 15);
+        this.sun.castShadow = true;
+        this.sun.shadow.mapSize.setScalar(2048);
+        this.sun.shadow.camera.left   = -120;
+        this.sun.shadow.camera.right  =  120;
+        this.sun.shadow.camera.bottom = -120;
+        this.sun.shadow.camera.top    =  120;
+        this.sun.shadow.camera.far    = 250;
+        this.sun.shadow.bias = -0.0008;
+        s.add(this.sun);
+
+        const fillA = new THREE.DirectionalLight(0x4010aa, 0.6);
+        fillA.position.set(-30, 10, -20);
+        s.add(fillA);
+
+        const fillB = new THREE.PointLight(0xff5020, 0.9, 200);
+        fillB.position.set(0, -2, 0);
+        s.add(fillB);
+    }
+
+    /* ─── ISLAS ─────────────────────────────────────────────── */
+    _buildIslands() {
+        this.islands = [];
+
+        const islandConfigs = [
+        {
+            Class: IslandCofre,
+            cfg: { id:'modal-1', label:'El Cofre', icon:'🗝️', x:-55, z:-40, color:0xc9963c, emissive:0x6b4d10 }
+        },
+        {
+            Class: IslandRadio,
+            cfg: { id:'modal-2', label:'La Radio', icon:'📻', x:58, z:-38, color:0xe8714a, emissive:0x7a2c0f }
+        },
+        {
+            Class: IslandFaro,
+            cfg: { id:'modal-3', label:'El Faro', icon:'🏮', x:5, z:-70, color:0xa8d4a0, emissive:0x2a5c25 }
+        },
+        {
+            Class: IslandRocola,
+            cfg: { id:'jukebox', label:'La Rocola', icon:'🎵', x:-8, z:68, color:0xd4a8ff, emissive:0x4a1a8c, isJukebox:true }
+        },
+        // Agrega más islas aquí — solo copiar un bloque y crear el .js
+        ];
+
+        islandConfigs.forEach(({ Class, cfg }) => {
+        this.islands.push(new Class(this.scene, this.colliders, cfg));
+        });
+
+        console.log(`%c🏝️ ${this.islands.length} islas listas`, 'color:#d4a8ff;font-weight:bold');
+    }
+
+    /* ─── UPDATE ────────────────────────────────────────────── */
+    update(dt, t, carPos, input, lastAction) {
+        this.foliage.update(dt, t);
+
+        let anyInRange = false;
+        this.islands.forEach(island => {
+        const inRange = island.update(t, carPos, input, lastAction);
+        if(inRange) anyInRange = true;
+        });
+
+        // Delegar hint de proximidad al ModalManager
+        if(window._modalManager) window._modalManager.update(anyInRange);
+
+        const skyH = 0.78 + Math.sin(t * 0.04) * 0.06;
+        this.scene.background.setHSL(skyH, 0.65 + Math.sin(t*0.07)*0.1, 0.07 + Math.sin(t*0.05)*0.02);
+    }
+
+    /* ─── Isla más cercana al carro ─────────────────────────── */
+    getClosestIsland(carPos) {
+        const car2D = new THREE.Vector2(carPos.x, carPos.z);
+        let closest = null, minD = Infinity;
+        this.islands.forEach(island => {
+        const d = car2D.distanceTo(new THREE.Vector2(island.cfg.x, island.cfg.z));
+        if(d < minD){ minD = d; closest = island; }
+        });
+        return minD < TRIGGER_DIST ? closest : null;
+    }
+    }
+
+Checkpoints.js
+        /* ═══════════════════════════════════════════════════════════
+    World/Checkpoints.js  —  Checkpoints, modales, rocola
+    Equivalente al Areas.js + Modals.js de Bruno Simon
+    ═══════════════════════════════════════════════════════════ */
+
+    class Checkpoints {
+    constructor(scene) {
+        this.scene      = scene;
+        this.objects    = [];
+        this.discovered = 0;
+        this.currentModal = null;
+        this.jukeboxOpen  = false;
+        this.currentSong  = 0;
+        this._twTimer     = null;
+
+        this._discEl = document.getElementById('disc-count');
+        this._hintEl = document.getElementById('proximity-hint');
+
+        this._buildCheckpoints();
+        this._setupModalListeners();
+    }
+
+    /* ─── CONSTRUIR ──────────────────────────────────────────── */
+    _buildCheckpoints() {
+        CHECKPOINTS.forEach(cfg => {
+        const g = new THREE.Group();
+        g.position.set(cfg.x, 0, cfg.z);
+        this.scene.add(g);
+
+        if (cfg.isJukebox) {
+            this._buildJukebox(g, cfg.color);
+            this.objects.push({ cfg, cube:null, mat:null, triggered:false, wasInRange:false, isJukebox:true });
+            return;
+        }
+
+        // Base
+        const base=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.7,0.3,16),
+            new THREE.MeshStandardMaterial({color:0x2e1608,roughness:0.8}));
+        base.position.y=0.15; base.castShadow=base.receiveShadow=true; g.add(base);
+        // Columna
+        const col=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.2,2.8,10),
+            new THREE.MeshStandardMaterial({color:0x3d2010,roughness:0.7}));
+        col.position.y=1.7; col.castShadow=true; g.add(col);
+        // Cubo flotante
+        const mat=new THREE.MeshStandardMaterial({color:cfg.color,emissive:cfg.emissive,emissiveIntensity:0.8,roughness:0.2,metalness:0.4});
+        const cube=new THREE.Mesh(new THREE.BoxGeometry(1.1,1.1,1.1),mat);
+        cube.position.y=3.6; cube.castShadow=true; g.add(cube);
+        // Luz
+        const pt=new THREE.PointLight(cfg.color,2.2,16); pt.position.y=3.8; g.add(pt);
+        // Label
+        g.add(this._makeLabel(cfg.icon+' '+cfg.label, 0,5.4));
+
+        this.objects.push({cfg,cube,mat,triggered:false,wasInRange:false,isJukebox:false});
+        });
+    }
+
+    _makeLabel(text, x=0, y=0) {
+        const cv=document.createElement('canvas'); cv.width=512; cv.height=128;
+        const ctx=cv.getContext('2d');
+        ctx.fillStyle='rgba(20,10,4,0.8)';
+        ctx.beginPath(); ctx.roundRect(8,8,496,112,20); ctx.fill();
+        ctx.fillStyle='#f5e8d0'; ctx.font='bold 44px serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(text,256,64);
+        const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthTest:false}));
+        sp.scale.set(4.5,1.1,1); sp.position.set(x,y,0);
+        return sp;
+    }
+
+    _buildJukebox(parent, color) {
+        const mb=new THREE.MeshStandardMaterial({color:0x1a0a2e,roughness:0.3,metalness:0.6});
+        const ma=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:0.6,roughness:0.2,metalness:0.5});
+        const mg=new THREE.MeshStandardMaterial({color:0x88aaff,roughness:0,metalness:1,transparent:true,opacity:0.5});
+
+        const body=new THREE.Mesh(new THREE.BoxGeometry(1.6,2.4,0.9),mb); body.position.y=1.2; body.castShadow=true; parent.add(body);
+        const top=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,0.9,16,1,false,0,Math.PI),mb);
+        top.position.set(0,2.4,0); top.rotation.z=Math.PI/2; top.rotation.y=Math.PI/2; parent.add(top);
+        const screen=new THREE.Mesh(new THREE.BoxGeometry(1.1,0.9,0.05),mg); screen.position.set(0,1.6,0.48); parent.add(screen);
+        [-0.5,0,0.5].forEach(x=>{
+        const s=new THREE.Mesh(new THREE.BoxGeometry(0.08,2.2,0.02),ma); s.position.set(x,1.2,0.46); parent.add(s);
+        });
+        [[-0.3,0.7],[0,0.7],[0.3,0.7]].forEach(([bx,by])=>{
+        const btn=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.06,10),
+            new THREE.MeshStandardMaterial({color:0xff4466,emissive:0x880022,emissiveIntensity:0.8}));
+        btn.position.set(bx,by,0.48); btn.rotation.x=Math.PI/2; parent.add(btn);
+        });
+        const pt=new THREE.PointLight(color,3,18); pt.position.set(0,2,1); parent.add(pt);
+        window._jukeboxLight=pt;
+        parent.add(this._makeLabel('🎵 La Rocola',0,4));
+    }
+
+    /* ─── MODALES ────────────────────────────────────────────── */
+    _setupModalListeners() {
+        document.querySelectorAll('.modal-close').forEach(b=>b.addEventListener('click',()=>this.closeModal(b.dataset.modal)));
+        document.querySelectorAll('.modal-backdrop').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)this.closeModal(el.id);}));
+        window.addEventListener('keydown',e=>{
+        if(e.key==='Escape'&&this.currentModal) this.closeModal(this.currentModal);
+        if(this.jukeboxOpen){if(e.key==='ArrowLeft')this._changeSong(-1);if(e.key==='ArrowRight')this._changeSong(+1);}
+        });
+        document.addEventListener('click',e=>{
+        if(e.target.id==='jukebox-prev')this._changeSong(-1);
+        if(e.target.id==='jukebox-next')this._changeSong(+1);
+        });
+    }
+
+    openModal(id) {
+        if(this.currentModal===id) return;
+        if(this.currentModal) this.closeModal(this.currentModal);
+        this.currentModal=id;
+        const el=document.getElementById(id); if(!el) return;
+        el.classList.add('open'); el.setAttribute('aria-hidden','false');
+        gameAudio.open();
+        if(id==='modal-3') this._typewrite();
+        if(id==='jukebox') this._openJukebox();
+    }
+
+    closeModal(id) {
+        const el=document.getElementById(id); if(!el) return;
+        gsap.to(el,{opacity:0,duration:0.25,ease:'power2.in',onComplete:()=>{
+        el.classList.remove('open'); el.setAttribute('aria-hidden','true');
+        gsap.set(el,{clearProps:'opacity'});
+        }});
+        if(this.currentModal===id) this.currentModal=null;
+        if(id==='jukebox'){gameAudio.stopSong();this.jukeboxOpen=false;}
+    }
+
+    _openJukebox() {
+        this.jukeboxOpen=true; this._updateJukeboxUI(); gameAudio.startSong(this.currentSong);
+    }
+
+    _changeSong(dir) {
+        this.currentSong=(this.currentSong+dir+SONGS.length)%SONGS.length;
+        this._updateJukeboxUI(); gameAudio.startSong(this.currentSong);
+        gameAudio.tone(440+this.currentSong*110,0.15,'sine',0.1);
+    }
+
+    _updateJukeboxUI() {
+        const n=document.getElementById('jukebox-song-name'); if(n) n.textContent=SONGS[this.currentSong].title;
+        document.querySelectorAll('.jukebox-dot').forEach((d,i)=>{
+        d.classList.toggle('active',i===this.currentSong);
+        d.style.background=i===this.currentSong?SONGS[this.currentSong].color:'';
+        });
+    }
+
+    _typewrite() {
+        const el=document.getElementById('typewriter-out'); if(!el) return;
+        el.textContent=''; el.classList.remove('done'); let i=0; clearInterval(this._twTimer);
+        this._twTimer=setInterval(()=>{
+        if(i<CARTA_TEXTO.length) el.textContent+=CARTA_TEXTO[i++];
+        else{clearInterval(this._twTimer);el.classList.add('done');}
+        },36);
+    }
+
+    _finalScreen() {
+        setTimeout(()=>{
+        document.getElementById('final-screen').classList.remove('hidden');
+        const cont=document.getElementById('final-hearts');
+        ['💛','🌻','💫','✨','🌼','💕'].forEach(em=>{
+            for(let j=0;j<4;j++){
+            const h=document.createElement('span'); h.className='heart-float'; h.textContent=em;
+            h.style.setProperty('--l',Math.random()*100+'%');
+            h.style.setProperty('--d',(3+Math.random()*5)+'s');
+            h.style.setProperty('--del',Math.random()*3+'s');
+            cont.appendChild(h);
+            }
+        });
+        },600);
+    }
+
+    /* ─── UPDATE ─────────────────────────────────────────────── */
+    update(t, carPos, input, lastAction) {
+        const car2D = new THREE.Vector2(carPos.x, carPos.z);
+        let closestCp=null, minD=Infinity;
+
+        this.objects.forEach(cp=>{
+        // Animar cubo flotante
+        if(cp.cube){
+            cp.cube.position.y=3.6+Math.sin(t*1.8+cp.cfg.x)*0.3;
+            cp.cube.rotation.y+=0.009;
+            cp.mat.emissiveIntensity=0.5+Math.sin(t*2+cp.cfg.z)*0.45;
+        }
+        if(cp.triggered&&!cp.isJukebox) return;
+        const d=car2D.distanceTo(new THREE.Vector2(cp.cfg.x,cp.cfg.z));
+        if(d<TRIGGER_DIST){
+            if(!cp.wasInRange){cp.wasInRange=true;gameAudio.proximity();}
+            if(d<minD){minD=d;closestCp=cp;}
+        } else {cp.wasInRange=false;}
+        });
+
+        if(closestCp&&!this.currentModal) this._hintEl.classList.remove('hidden');
+        else                               this._hintEl.classList.add('hidden');
+
+        if(input&&!lastAction&&closestCp&&!this.currentModal){
+        this.openModal(closestCp.cfg.id);
+        if(!closestCp.triggered&&!closestCp.isJukebox){
+            closestCp.triggered=true;
+            this.discovered++;
+            this._discEl.textContent=this.discovered;
+            if(closestCp.mat) gsap.to(closestCp.mat,{emissiveIntensity:3,duration:0.25,yoyo:true,repeat:4});
+            if(this.discovered===3) this._finalScreen();
+        }
+        }
+
+        return closestCp; // devolver para que main.js sepa
+    }
+    } 
+
+ModalManager.js
+        /* ═══════════════════════════════════════════════════════════
+        Game/ModalManager.js  —  Maneja modales, rocola, carta
+        Reemplaza Checkpoints.js. La detección de proximidad
+        ya vive en cada IslandBase; este módulo solo maneja UI.
+        ═══════════════════════════════════════════════════════════ */
+
+        class ModalManager {
+        constructor() {
+            this.currentModal = null;
+            this.jukeboxOpen  = false;
+            this.currentSong  = 0;
+            this.discovered   = 0;
+            this._twTimer     = null;
+
+            this._discEl = document.getElementById('disc-count');
+            this._hintEl = document.getElementById('proximity-hint');
+
+            this._setupListeners();
+
+            // Exponer funciones globales que IslandBase llama
+            window.openModal         = (id) => this.openModal(id);
+            window.onIslandDiscovered = (id) => this._onDiscovered(id);
+
+            this.jukebox = null;
+            this.audio = null; // Referencia a GameAudio
+
+
+            console.log('%c📋 ModalManager listo', 'color:#ffd60a');
+        }
+
+            // Método para conectar con GameAudio
+        setAudio(audioInstance) {
+                this.audio = audioInstance;
+            }
+
+        /* ─── LISTENERS ─────────────────────────────────────────── */
+        _setupListeners() {
+            // Cerrar con botón ✕
+            document.querySelectorAll('.modal-close').forEach(b => {
+            b.addEventListener('click', () => this.closeModal(b.dataset.modal));
+            });
+
+            // Cerrar al click en backdrop
+            document.querySelectorAll('.modal-backdrop').forEach(el => {
+            el.addEventListener('click', e => {
+                if(e.target === el) this.closeModal(el.id);
+            });
+            });
+
+            // Teclado — ESC cierra, flechas cambian canción en jukebox
+            window.addEventListener('keydown', e => {
+            if(e.key === 'Escape' && this.currentModal)
+                this.closeModal(this.currentModal);
+            if(this.jukeboxOpen) {
+                if(e.key === 'ArrowLeft')  this._changeSong(-1);
+                if(e.key === 'ArrowRight') this._changeSong(+1);
+            }
+            });
+
+            // Botones de jukebox
+            document.addEventListener('click', e => {
+            if(e.target.id === 'jukebox-prev') this._changeSong(-1);
+            if(e.target.id === 'jukebox-next') this._changeSong(+1);
+            });
+        }
+
+        /* ─── ABRIR / CERRAR MODAL ──────────────────────────────── */
+        openModal(id) {
+            if (this.currentModal === id) return;
+                if (this.currentModal) this.closeModal(this.currentModal);
+                
+                this.currentModal = id;
+                const el = document.getElementById(id);
+                if (!el) return;
+                
+                el.classList.add('open');
+                el.setAttribute('aria-hidden', 'false');
+                
+                // Usar GameAudio para el sonido de abrir
+                if (this.audio) this.audio.open();
+                
+                if (id === 'modal-3') this._typewrite();
+                
+                if (id === 'jukebox') {
+                    this._openJukebox();
+                }
+
+        }
+
+        _openJukebox() {
+                this.jukeboxOpen = true;
+                
+                // Inicializar jukebox a través de GameAudio si no existe
+                if (this.audio && !this.jukebox) {
+                    this.jukebox = this.audio.initJukebox();
+                }
+                
+                this._updateJukeboxUI();
+                
+                // Iniciar primera canción si no está sonando
+                if (this.jukebox && !this.jukebox.isPlaying) {
+                    this.jukebox.playSong(0, SONGS[0].startTime);
+                }
+            }
+
+        closeModal(id) {
+            const el = document.getElementById(id);
+            if(!el) return;
+
+            if(typeof gsap !== 'undefined') {
+            gsap.to(el, { opacity:0, duration:0.25, ease:'power2.in', onComplete:() => {
+                el.classList.remove('open');
+                el.setAttribute('aria-hidden', 'true');
+                gsap.set(el, { clearProps:'opacity' });
+                if (id === 'jukebox' && this.jukebox) {
+                            this.jukebox.stopCurrentSong(true); // true = return to base
+                        }
+            }});
+            } else {
+            el.classList.remove('open');
+            el.setAttribute('aria-hidden', 'true');
+            }
+
+            if(this.currentModal === id) this.currentModal = null;
+            if(id === 'jukebox') {
+            if(typeof gameAudio !== 'undefined') gameAudio.stopSong();
+            this.jukeboxOpen = false;
+            }
+        }
+
+        /* ─── DESCUBRIMIENTO DE ISLAS ───────────────────────────── */
+        _onDiscovered(id) {
+            this.discovered++;
+            if(this._discEl) this._discEl.textContent = this.discovered;
+
+            // 3 islas normales descubiertas = pantalla final
+            if(this.discovered >= 3) this._finalScreen();
+        }
+
+        /* ─── HINT DE PROXIMIDAD ─────────────────────────────────── */
+        showHint(visible) {
+            if(!this._hintEl) return;
+            if(visible) this._hintEl.classList.remove('hidden');
+            else        this._hintEl.classList.add('hidden');
+        }
+
+        /* ─── JUKEBOX ────────────────────────────────────────────── */
+        _openJukebox() {
+            this.jukeboxOpen = true;
+            this._updateJukeboxUI();
+            if(typeof gameAudio !== 'undefined') gameAudio.startSong(this.currentSong);
+            this._showJukeboxInterface();
+        }
+
+        _showJukeboxInterface() {
+                // Mostrar carátula de la canción base por defecto
+                const coverImg = document.getElementById('jukebox-cover');
+                const titleEl = document.getElementById('jukebox-song-title');
+                const artistEl = document.getElementById('jukebox-artist');
+                
+                if (coverImg) coverImg.src = `media/Audio/Album/${BASE_SONG.cover}`;
+                if (titleEl) titleEl.textContent = BASE_SONG.title;
+                if (artistEl) artistEl.textContent = BASE_SONG.artist;
+            }
+
+        _changeSong(dir) {
+            const total = typeof SONGS !== 'undefined' ? SONGS.length : 4;
+            this.currentSong = (this.currentSong + dir + total) % total;
+            this._updateJukeboxUI();
+            if (this.jukebox) {
+                    this.jukebox.playSong(this.currentSong, SONGS[this.currentSong].startTime);
+                }
+            if(typeof gameAudio !== 'undefined') {
+            gameAudio.startSong(this.currentSong);
+            gameAudio.tone(440 + this.currentSong * 110, 0.15, 'sine', 0.1);
+            }
+        }
+
+        _updateJukeboxUI() {
+            const n = document.getElementById('jukebox-song-name');
+            if(n && typeof SONGS !== 'undefined') n.textContent = SONGS[this.currentSong].title;
+
+            document.querySelectorAll('.jukebox-dot').forEach((d, i) => {
+            const active = i === this.currentSong;
+            d.classList.toggle('active', active);
+            d.style.background = active && typeof SONGS !== 'undefined'
+                ? SONGS[this.currentSong].color : '';
+            });
+        }
+
+        /* ─── TYPEWRITER (Carta del Faro) ───────────────────────── */
+        _typewrite() {
+            const el = document.getElementById('typewriter-out');
+            if(!el || typeof CARTA_TEXTO === 'undefined') return;
+            el.textContent = '';
+            el.classList.remove('done');
+            let i = 0;
+            clearInterval(this._twTimer);
+            this._twTimer = setInterval(() => {
+            if(i < CARTA_TEXTO.length) el.textContent += CARTA_TEXTO[i++];
+            else { clearInterval(this._twTimer); el.classList.add('done'); }
+            }, 36);
+        }
+
+        /* ─── PANTALLA FINAL ────────────────────────────────────── */
+        _finalScreen() {
+            setTimeout(() => {
+            const fs = document.getElementById('final-screen');
+            if(!fs) return;
+            fs.classList.remove('hidden');
+            const cont = document.getElementById('final-hearts');
+            if(!cont) return;
+            ['💛','🌻','💫','✨','🌼','💕'].forEach(em => {
+                for(let j = 0; j < 4; j++){
+                const h = document.createElement('span');
+                h.className = 'heart-float';
+                h.textContent = em;
+                h.style.setProperty('--l',   Math.random() * 100 + '%');
+                h.style.setProperty('--d',   (3 + Math.random() * 5) + 's');
+                h.style.setProperty('--del', Math.random() * 3 + 's');
+                cont.appendChild(h);
+                }
+            });
+            }, 600);
+        }
+
+        /* ─── UPDATE — llamado desde el tick loop ───────────────── */
+        // Recibe si ALGUNA isla está en rango (lo calcula World)
+        update(anyIslandInRange) {
+            this.showHint(anyIslandInRange && !this.currentModal);
+        }
+        }
+
+Jukebox.js
+
+    /* ═══════════════════════════════════════════════════════════
+    Game/Jukebox.js  —  Rocola con audio real y carátulas
+    ═══════════════════════════════════════════════════════════ */
+
+    class Jukebox {
+        constructor(audioContext) {
+            this.audioContext = audioContext;  // Usar el que recibimos
+            this.currentSource = null;
+            this.baseSource = null;
+            this.currentSongIndex = 0;
+            this.isPlaying = false;
+            this.isBasePlaying = false;
+            this.progressInterval = null;
+            this.initialized = false;
+            this.gainNode = null;
+            this.baseGainNode = null; // Control independiente para base
+
+
+            // Crear nodo de ganancia para controlar volumen
+            if (this.audioContext) {
+                this.gainNode = this.audioContext.createGain();
+                this.gainNode.connect(this.audioContext.destination);
+                
+                this.baseGainNode = this.audioContext.createGain();
+                this.baseGainNode.connect(this.audioContext.destination);
+            }
+        }
+
+        async startBaseMusic() {
+            if (this.initialized || !this.audioContext) return;
+            this.initialized = true;
+            
+            try {
+                if (this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+                await this._loadBaseSong();
+            } catch (error) {
+                console.error('Error iniciando música base:', error);
+            }
+        }
+
+        async _loadBaseSong() {
+            try {
+                const response = await fetch(`media/Audio/${BASE_SONG.file}`);
+                const arrayBuffer = await response.arrayBuffer();
+                
+                if (!this.audioContext) return;
+                
+                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                
+                this.baseSource = this.audioContext.createBufferSource();
+                this.baseSource.buffer = audioBuffer;
+                this.baseSource.loop = true;
+                
+                this.baseSource.connect(this.baseGainNode);
+                this.baseGainNode.gain.value = BASE_SONG.volume;
+                
+                this.baseSource.start(0);
+                this.isBasePlaying = true;
+                console.log('✅ Canción base sonando');
+                
+            } catch (error) {
+                console.error('Error cargando canción base:', error);
+            }
+        }
+
+        
+
+        async playSong(index, startTime = 0) {
+            if (!this.audioContext) return;
+            
+            // DETENER TODO antes de reproducir nueva canción
+            this._stopAllMusic();
+            
+            const song = SONGS[index];
+            this.currentSongIndex = index;
+            
+            try {
+                const response = await fetch(`media/Audio/${song.file}`);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                
+                this.currentSource = this.audioContext.createBufferSource();
+                this.currentSource.buffer = audioBuffer;
+                this.currentSource.loop = true;
+                
+                this.currentSource.connect(this.gainNode);
+                this.gainNode.gain.value = 0.8;
+                
+                // Iniciar en el tiempo específico
+                this.currentSource.start(0, startTime);
+                this.isPlaying = true;
+                
+                // Actualizar UI SOLO si los elementos existen
+                this._safeUpdateUI(song);
+                
+                // Iniciar tracking de progreso
+                this._startProgressTracking(song, startTime);
+                
+            } catch (error) {
+                console.error('Error cargando canción:', error);
+            }
+        }
+
+        _stopAllMusic() {
+            // Detener canción actual si existe
+            if (this.currentSource) {
+                try {
+                    this.currentSource.stop();
+                } catch (e) {}
+                this.currentSource = null;
+            }
+            
+            // Silenciar base completamente
+            if (this.baseGainNode) {
+                this.baseGainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+            }
+            
+            this.isPlaying = false;
+            clearInterval(this.progressInterval);
+        }
+
+
+
+        stopCurrentSong(returnToBase = true) {
+            if (this.currentSource) {
+                try {
+                    this.currentSource.stop();
+                } catch (e) {}
+                this.currentSource = null;
+                this.isPlaying = false;
+                clearInterval(this.progressInterval);
+            }
+            
+            // Restaurar volumen base si se solicita
+            if (returnToBase && this.baseGainNode) {
+                this.baseGainNode.gain.setValueAtTime(BASE_SONG.volume, this.audioContext.currentTime);
+                this.isBasePlaying = true;
+            }
+            
+            // Actualizar UI SOLO si existe
+            this._safeResetUI();
+        }
+
+        _safeUpdateUI(song) {
+            const coverImg = document.getElementById('jukebox-cover');
+            const titleEl = document.getElementById('jukebox-song-title');
+            const artistEl = document.getElementById('jukebox-artist');
+            const playBtn = document.getElementById('jukebox-play');
+            
+            if (coverImg) coverImg.src = `media/Audio/Album/${song.cover}`;
+            if (titleEl) titleEl.textContent = song.title;
+            if (artistEl) artistEl.textContent = song.artist;
+            if (playBtn) playBtn.innerHTML = '⏸ Pausa';
+        }
+
+        _safeResetUI() {
+            const progressFill = document.getElementById('jukebox-progress');
+            const currentTime = document.getElementById('jukebox-current-time');
+            const playBtn = document.getElementById('jukebox-play');
+            
+            if (progressFill) progressFill.style.width = '0%';
+            if (currentTime) currentTime.textContent = '0:00';
+            if (playBtn) playBtn.innerHTML = '▶ Play';
+        }
+
+        _startProgressTracking(song, startTime) {
+            // Limpiar intervalo anterior
+            clearInterval(this.progressInterval);
+            
+            const startSeconds = startTime;
+            let currentSeconds = startSeconds;
+            const totalSeconds = 180; // TODO: obtener duración real
+            
+            const progressFill = document.getElementById('jukebox-progress');
+            const currentTimeEl = document.getElementById('jukebox-current-time');
+            const totalTimeEl = document.getElementById('jukebox-total-time');
+            
+            // VERIFICAR que los elementos existen ANTES de usarlos
+            if (!progressFill || !currentTimeEl || !totalTimeEl) {
+                console.warn('Elementos de UI de jukebox no encontrados');
+                return;
+            }
+            
+            totalTimeEl.textContent = this._formatTime(totalSeconds);
+            
+            this.progressInterval = setInterval(() => {
+                currentSeconds += 0.1;
+                if (currentSeconds >= totalSeconds) {
+                    currentSeconds = 0;
+                }
+                
+                const percent = (currentSeconds / totalSeconds) * 100;
+                progressFill.style.width = `${percent}%`;
+                currentTimeEl.textContent = this._formatTime(currentSeconds);
+                
+            }, 100);
+        }
+
+        _formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        _formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        _updateCover(song) {
+            const coverImg = document.getElementById('jukebox-cover');
+            if (coverImg) {
+                coverImg.src = `media/Audio/Album/${song.cover}`;
+                coverImg.alt = song.title;
+            }
+        }
+
+        _updateSongInfo(song) {
+            const titleEl = document.getElementById('jukebox-song-title');
+            const artistEl = document.getElementById('jukebox-artist');
+            
+            if (titleEl) titleEl.textContent = song.title;
+            if (artistEl) artistEl.textContent = song.artist;
+        }
+
+        _setupUI() {
+            // Crear elementos UI si no existen
+            if (!document.getElementById('jukebox-controls')) {
+                this._createJukeboxUI();
+            }
+            
+            // Botones de navegación
+            document.getElementById('jukebox-prev')?.addEventListener('click', () => {
+                const newIndex = (this.currentSongIndex - 1 + SONGS.length) % SONGS.length;
+                this.playSong(newIndex, SONGS[newIndex].startTime);
+            });
+            
+            document.getElementById('jukebox-next')?.addEventListener('click', () => {
+                const newIndex = (this.currentSongIndex + 1) % SONGS.length;
+                this.playSong(newIndex, SONGS[newIndex].startTime);
+            });
+            
+            // Control de reproducción
+            document.getElementById('jukebox-play')?.addEventListener('click', () => {
+                if (this.isPlaying) {
+                    this.stopCurrentSong();
+                } else {
+                    this.playSong(this.currentSongIndex, SONGS[this.currentSongIndex].startTime);
+                }
+            });
+        }
+
+        _createJukeboxUI() {
+            const modal = document.getElementById('jukebox');
+            if (!modal) return;
+            
+            const panel = modal.querySelector('.jukebox-panel');
+            
+            // Agregar carátula
+            const coverDiv = document.createElement('div');
+            coverDiv.className = 'jukebox-cover-container';
+            coverDiv.innerHTML = `
+                <img id="jukebox-cover" class="jukebox-cover" src="media/Audio/Album/Daises.jpg" alt="Cover">
+                <div class="jukebox-info">
+                    <h3 id="jukebox-song-title">DAISIES</h3>
+                    <p id="jukebox-artist">Black Pumas</p>
+                </div>
+            `;
+            
+            // Barra de progreso
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'jukebox-progress-container';
+            progressDiv.innerHTML = `
+                <div class="jukebox-time current" id="jukebox-current-time">1:05</div>
+                <div class="jukebox-progress-bar">
+                    <div class="jukebox-progress-fill" id="jukebox-progress" style="width: 0%"></div>
+                </div>
+                <div class="jukebox-time total" id="jukebox-total-time">3:00</div>
+            `;
+            
+            // Botón de play/pause
+            const playBtn = document.createElement('button');
+            playBtn.id = 'jukebox-play';
+            playBtn.className = 'jukebox-btn jukebox-btn--main';
+            playBtn.innerHTML = '▶ Play';
+            
+            // Reorganizar controles
+            const controlsDiv = modal.querySelector('.jukebox-controls');
+            if (controlsDiv) {
+                controlsDiv.prepend(playBtn);
+            }
+            
+            // Insertar en el panel
+            const displayDiv = modal.querySelector('.jukebox-display');
+            if (displayDiv) {
+                displayDiv.after(coverDiv);
+                coverDiv.after(progressDiv);
+            }
+            
+            // Agregar estilos
+            this._addStyles();
+        }
+
+        _addStyles() {
+            const style = document.createElement('style');
+            style.textContent = `
+                .jukebox-cover-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    margin: 20px 0;
+                    padding: 15px;
+                    background: rgba(0,0,0,0.3);
+                    border-radius: 12px;
+                }
+                
+                .jukebox-cover {
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 8px;
+                    object-fit: cover;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+                }
+                
+                .jukebox-info {
+                    flex: 1;
+                }
+                
+                .jukebox-info h3 {
+                    margin: 0;
+                    font-size: 1.2rem;
+                    color: #fff;
+                }
+                
+                .jukebox-info p {
+                    margin: 5px 0 0;
+                    font-size: 0.9rem;
+                    color: #d4a8ff;
+                }
+                
+                .jukebox-progress-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin: 20px 0;
+                }
+                
+                .jukebox-progress-bar {
+                    flex: 1;
+                    height: 6px;
+                    background: rgba(255,255,255,0.2);
+                    border-radius: 3px;
+                    cursor: pointer;
+                    position: relative;
+                }
+                
+                .jukebox-progress-fill {
+                    height: 100%;
+                    background: #d4a8ff;
+                    border-radius: 3px;
+                    transition: width 0.1s linear;
+                }
+                
+                .jukebox-time {
+                    font-family: monospace;
+                    font-size: 0.9rem;
+                    color: #d4a8ff;
+                    min-width: 45px;
+                }
+                
+                .jukebox-time.total {
+                    text-align: right;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+
+
+
+
+
+
+
+
+Bien no lo arreglaste la verdad pero bueno ... nos centraremos en la ultima Isla 
+
+Olvidemos eso... ya eso luego lo corrijo...
+
+
+
+Vamos a centrarnos en la ultima Isla ... la ultima isla es la isla del cofre .... Esta Isla va ser con la tematica de Los Vengadores juntado con Camaras (por que esta isla se trata de momentos con ella) pero quiero unirla con la tematica de los vengadores 
+PAra esta isla te he dejado los siguientes modelos glb
+PS C:\Users\Rodrigo\Dropbox\Escuela\Amb> tree /f
+Listado de rutas de carpetas para el volumen Acer
+El número de serie del volumen es 5ED4-26EE
+C:.
+│   index.html
+│   prompts
+│
+├───assets
+│   │   styles.css
+│   │
+│   └───js
+│       │   Config.js
+│       │   DRACOLoader.js
+│       │   GLTFLoader.js
+│       │   Main.js
+│       │
+│       ├───Game
+│       │       Audio.js
+│       │       Camera.js
+│       │       Input.js
+│       │       Jukebox.js
+│       │       ModalManager.js
+│       │
+│       ├───Physics
+│       │       Vehicle.js
+│       │
+│       └───World
+│           │   Checkpoints.js
+│           │   Foliage.js
+│           │   Ground.js
+│           │   Track.js
+│           │   World.js
+│           │
+│           └───Islands
+│                   IslandBase.js
+│                   IslandCofre.js
+│                   IslandFaro.js
+│                   IslandMirador.js
+│                   IslandRocola.js
+│
+├───media
+│   └───Audio
+│       │   Chachacha.mp3
+│       │   DAISIES.mp3
+│       │   Fallin All In You.mp3
+│       │   Pegao.mp3
+│       │   Serotonina.mp3
+│       │   The World Is Ugly.mp3
+│       │
+│       ├───Album
+│       │       Chachacha.jpg
+│       │       Daises.jpg
+│       │       Fallin All In You.jpg
+│       │       Pegao.jpg
+│       │       Serotonina.jpg
+│       │       The World Is Ugly.png
+│       │
+│       └───Song Base
+│               daises chill.mp3
+│
+└───models
+    ├───arbol con musgo
+    │       arbol__con_musgo.glb
+    │
+    ├───Bancos
+    │       benches-compressed.glb
+    │       benches.glb
+    │
+    ├───Car
+    │       Car.glb
+    │
+    ├───christmas
+    │       christmasGiftReferences-compressed.glb
+    │       christmasGiftReferences.glb
+    │       christmasGiftVisual-compressed.glb
+    │       christmasGiftVisual.glb
+    │       christmasTreePhysical-compressed.glb
+    │       christmasTreePhysical.glb
+    │       christmasTreeVisual-compressed.glb
+    │       christmasTreeVisual.glb
+    │
+    ├───Esfera Blanca
+    │       Esfera blanca.glb
+    │
+    ├───Esfera roja
+    │       esfera roja.glb
+    │
+    ├───Farolas sin el poste
+    │       lanterns-compressed.glb
+    │       lanterns.glb
+    │
+    ├───Frasco Estrellas
+    │       frasco_con_estrellas.glb
+    │
+    ├───Galaxy
+    │       galaxy.glb
+    │       galaxy2.glb
+    │
+    ├───grass
+    │   │   grass.glb
+    │   │   grass2.glb
+    │   │   grass3.glb
+    │   │   license.txt
+    │   │   scene.bin
+    │   │   scene.gltf
+    │   │
+    │   └───textures
+    │           material_0_diffuse.png
+    │           material_0_emissive.png
+    │           material_0_occlusion.png
+    │           material_0_specularGlossiness.png
+    │
+    ├───Luna
+    │       luna.glb
+    │
+    ├───oakTrees
+    │       ArbolTorcido.glb
+    │       oakTreesVisual.glb
+    │
+    ├───Otra galaxia pero si esta grande aguas
+    │       Particulas de galaxia.glb
+    │
+    ├───Para IslaCofre Marvel
+    │       avengers_logo_de_end_game.glb
+    │       Casco de Antman.glb
+    │       Hulk Buster Armor.glb
+    │       iron_man_heart.glb
+    │       iron_man_helmet.glb
+    │       Mesa con artefactos para galaxia.glb  --> son los de guardianes de la galaxia asi que ponlos
+    │       Mjolnir de Thor.glb
+    │       Mojolnir2.glb
+    │       Shield Captain America.glb
+    │       spiderman_logo.glb
+    │
+    ├───Perro Estatua
+    │       sudo.glb
+    │
+    └───playground
+            playgroundPhysical-compressed.glb
+            playgroundPhysical.glb
+            playgroundVisual-compressed.glb
+
+
+
+A ver lo que quiero en esta isla es que al centro esté este glb Hulk Buster Armor.glb por que 
+esta grande Entonces aja quiero que la isla la hagas mas grande tambien, para que puedan caber todos lo elementos .glb, aqui si necesito que pongas todos,
+Yo me imagino como si estuvieran tirados ahi en la isla, por que pues es una isla representativa de avengers, el cofre igual adaptalo a la tematica de Avengers infinity war 
+
+
+Otra cosa... en la funcionalidad... presiono key E y se abre "El Cofre
+de Recuerdos
+Cada imagen guarda un momento que me cambió para siempre."  mejor que diga "El Cofre
+de Recuerdos
+Cada Imagen Guarda Un Momento Especial Contigo"
+
+Y que a cada imagen pueda darle click y esa imagen se haga mas amplia en el centro, y que venga con una mini leyenda abajo y tenga igual una opcion de cerrar para que pueda seguir con las demas fotos... si me doy a entender 
+
+Por las fotos namas dejame un espacio para que yo cambie las urls y al rato meto una carpeta con todas las imagenes... por eso ntp... 
+
+
+Aver si por ahi podrias hacer Tu la estatua de una camara... asi como le hiciste con las bocinas y la rocola de que tu hiciste el diseño, asi quiero una camara que por ahi ande, para representar las fotos
+o no se como se te venga la creatividad de juntar esta tematica de los vengadores con camaras y fotos y momentos con ella 
+
+
+
+Otra cosa yo descargue todos estos elementos de...https://sketchfab.com/.... pero algunos modelos no me dejaba descargarlos, pero me aparecia un iconito de código, entonces mira no se si ese código te sirva para meter esos modelos 3D que encontre... sisi usalos y ponlos, y si no pues no pasa nada y no los metas ....
+
+mini deadpool
+<div class="sketchfab-embed-wrapper"> <iframe title="Art Toy DeadPool" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/e023edda904f421584823ee0b65a2423/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/art-toy-deadpool-e023edda904f421584823ee0b65a2423?utm_medium=embed&utm_campaign=share-popup&utm_content=e023edda904f421584823ee0b65a2423" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Art Toy DeadPool </a> by <a href="https://sketchfab.com/nymuh?utm_medium=embed&utm_campaign=share-popup&utm_content=e023edda904f421584823ee0b65a2423" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> nymuh </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=e023edda904f421584823ee0b65a2423" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
+
+
+reactor ark de iron man 
+<div class="sketchfab-embed-wrapper"> <iframe title="Arc Reactor Mk 1 ( Iron man )" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/4164df7d99c3480eba7bf7c05261e764/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/arc-reactor-mk-1-iron-man-4164df7d99c3480eba7bf7c05261e764?utm_medium=embed&utm_campaign=share-popup&utm_content=4164df7d99c3480eba7bf7c05261e764" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Arc Reactor Mk 1 ( Iron man ) </a> by <a href="https://sketchfab.com/igi44?utm_medium=embed&utm_campaign=share-popup&utm_content=4164df7d99c3480eba7bf7c05261e764" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Lt-47 </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=4164df7d99c3480eba7bf7c05261e764" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
+
+Arma de thanos
+<div class="sketchfab-embed-wrapper"> <iframe title="Thanos Infinity Sword [Avengers Endgame] Movie V" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/4bf027f5b458449cbfdd7fb3b97bb133/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/thanos-infinity-sword-avengers-endgame-movie-v-4bf027f5b458449cbfdd7fb3b97bb133?utm_medium=embed&utm_campaign=share-popup&utm_content=4bf027f5b458449cbfdd7fb3b97bb133" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Thanos Infinity Sword [Avengers Endgame] Movie V </a> by <a href="https://sketchfab.com/dark-minaz?utm_medium=embed&utm_campaign=share-popup&utm_content=4bf027f5b458449cbfdd7fb3b97bb133" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> dark-minaz </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=4bf027f5b458449cbfdd7fb3b97bb133" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>
+
+Arañita de blck widow 
+<div class="sketchfab-embed-wrapper"> <iframe title="Black Widow" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/b985c8275c8e4d7b8a8940e416932fb0/embed"> </iframe> <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> <a href="https://sketchfab.com/3d-models/black-widow-b985c8275c8e4d7b8a8940e416932fb0?utm_medium=embed&utm_campaign=share-popup&utm_content=b985c8275c8e4d7b8a8940e416932fb0" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Black Widow </a> by <a href="https://sketchfab.com/YanaMelnyk?utm_medium=embed&utm_campaign=share-popup&utm_content=b985c8275c8e4d7b8a8940e416932fb0" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> Yana Melnyk </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=b985c8275c8e4d7b8a8940e416932fb0" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a></p></div>

@@ -1,0 +1,472 @@
+/* ═══════════════════════════════════════════════════════════
+   World/Foliage.js  —  Árboles, rocas, pasto, viento, polvo
+   VERSIÓN UNIFICADA - TODO IGUAL, solo se añaden GLB
+   ═══════════════════════════════════════════════════════════ */
+
+class Foliage {
+  constructor(scene, colliders) {
+    this.scene     = scene;
+    this.colliders = colliders;
+    this._trees    = [];
+
+    this._buildTrees();      // ← TUS ÁRBOLES PROCEDURALES (igual)
+    this._buildWind();       // ← TU VIENTO (200 partículas, igual)
+    this._buildGrass();      // ← TU PASTO (el que ya tenías)
+    this._loadNatureGLB();   // ← NUEVO: carga robles y farolas SIN DUPLICAR PASTO
+  }
+
+_getGroundHeight(x, z) {
+  // Valor por defecto
+  let groundY = 0;
+  
+  // Verificar colliders de islas (tienen altura)
+  if (window._groundColliders) {
+    for (const col of window._groundColliders) {
+      const dx = x - col.x;
+      const dz = z - col.z;
+      const dist = Math.sqrt(dx*dx + dz*dz);
+      if (dist < col.r) {
+        groundY = col.y;
+        break;
+      }
+    }
+  }
+  
+  return groundY;
+}
+
+
+  /* ─── TUS ÁRBOLES + ROCAS (EXACTAMENTE IGUAL) ─────────── */
+  _buildTrees() {
+    // TU CÓDIGO ORIGINAL - sin ningún cambio
+    const isOnTrack = (x, z, margin=5) => {
+      if(!window._trackCurve) return false;
+      for(let i=0;i<=100;i++){
+        const p=window._trackCurve.getPoint(i/100);
+        if(Math.hypot(p.x-x,p.z-z)<margin) return true;
+      }
+      return false;
+    };
+    
+    const islandPositions = [
+        { x: -55, z: -40, radius: 16 },
+        { x: 58, z: -38, radius: 16 },
+        { x: 5, z: -70, radius: 16 },
+        { x: -8, z: 68, radius: 18,
+        path: { x1: -10, x2: 10, z1: 48, z2: 68 }},
+    ];
+
+    const isNearIsland = (x, z) => {
+        for (const island of islandPositions) {
+            if (Math.hypot(x - island.x, z - island.z) < island.radius) return true;
+            if (island.path) {
+              if (x > island.path.x1 && x < island.path.x2 && 
+                  z > island.path.z1 && z < island.path.z2) return true;
+            }
+        }
+        return false;
+    };
+
+    const getPos = (margin=5, tries=200) => {
+      for(let i=0;i<tries;i++){
+        const a=Math.random()*Math.PI*2, rad=14+Math.random()*55;
+        const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
+        if (!isOnTrack(x, z, margin) && !isNearIsland(x, z)) {
+          return { x, z, valid: true };
+        }
+      }
+      return { x: 999, z: 999, valid: false };
+    };
+
+    for(let i=0;i<40;i++){const p=getPos(5); if(p.valid) this._makeTree(p.x,p.z,0.8+Math.random()*0.8);}
+    for(let i=0;i<16;i++){const p=getPos(5.5); if(p.valid) this._makeRock(p.x,p.z,0.7+Math.random()*0.8);}
+  }
+
+  _makeTree(x, z, s=1, type=-1) {
+    // TU CÓDIGO ORIGINAL COMPLETO
+    const kind = type>=0 ? type : Math.floor(Math.random()*4);
+    const g    = new THREE.Group();
+    g.position.set(x,0,z);
+    g.userData.windPhase = Math.random()*Math.PI*2;
+    g.userData.windSpeed = 0.6+Math.random()*0.8;
+    g.userData.treeScale = s;
+
+    const trunkColor=[0x5c2e08,0x3a2208,0x6b2a10,0x4a3010][kind];
+    const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.14*s,0.22*s,(1.4+kind*0.3)*s,7),
+      new THREE.MeshStandardMaterial({color:trunkColor,roughness:0.95}));
+    trunk.position.y=(0.7+kind*0.15)*s; trunk.castShadow=true; g.add(trunk);
+
+    const treeDefs=[
+      ()=>{
+        const cols=[0xdd6611,0xe07720,0xcc5500,0xf08830];
+        [{ry:2.1,rs:1.4,dx:0,dz:0},{ry:2.6,rs:1.0,dx:0.8,dz:0.3},{ry:2.4,rs:0.9,dx:-0.7,dz:0.2},{ry:3.1,rs:0.75,dx:0.1,dz:-0.5}]
+        .forEach(({ry,rs,dx,dz},i)=>{
+          const l=new THREE.Mesh(new THREE.SphereGeometry(rs*s,7,5),new THREE.MeshStandardMaterial({color:cols[i],roughness:0.8,emissive:cols[i],emissiveIntensity:0.05}));
+          l.position.set(dx*s,ry*s,dz*s); l.castShadow=true; g.add(l);
+        });
+      },
+      ()=>{
+        [[0,1.5,1.6],[0,2.8,1.2],[0,3.8,0.85]].forEach(([dx,ry,rs])=>{
+          const c=new THREE.Mesh(new THREE.ConeGeometry(rs*s,2.0*s,7),new THREE.MeshStandardMaterial({color:0x224422,roughness:0.85,emissive:0x112211,emissiveIntensity:0.08}));
+          c.position.set(dx*s,ry*s,0); c.castShadow=true; g.add(c);
+        });
+      },
+      ()=>{
+        const cols=[0xff44aa,0xcc2288,0xff66cc,0xee3399];
+        [{ry:1.8,rs:1.6,dx:0,dz:0},{ry:2.2,rs:1.1,dx:0.9,dz:0},{ry:2.2,rs:1.1,dx:-0.9,dz:0},{ry:2.5,rs:0.9,dx:0,dz:0.8}]
+        .forEach(({ry,rs,dx,dz},i)=>{
+          const l=new THREE.Mesh(new THREE.SphereGeometry(rs*s,6,5),new THREE.MeshStandardMaterial({color:cols[i],roughness:0.75,emissive:cols[i],emissiveIntensity:0.08}));
+          l.position.set(dx*s,ry*s,dz*s); l.castShadow=true; g.add(l);
+        });
+      },
+      ()=>{
+        const cols=[0xddaa00,0xffcc22,0xcc9900,0xeebb11];
+        [{ry:2.0,rw:2.4,rh:1.8,dx:0,dz:0},{ry:3.2,rw:1.8,rh:1.4,dx:0.3,dz:0.2},{ry:2.6,rw:1.4,rh:1.2,dx:-0.5,dz:0.3}]
+        .forEach(({ry,rw,rh,dx,dz},i)=>{
+          const l=new THREE.Mesh(new THREE.BoxGeometry(rw*s,rh*s,rw*s*0.85),new THREE.MeshStandardMaterial({color:cols[i],roughness:0.8,emissive:cols[i],emissiveIntensity:0.06}));
+          l.position.set(dx*s,ry*s,dz*s); l.rotation.y=Math.random()*Math.PI; l.castShadow=true; g.add(l);
+        });
+      },
+    ];
+    treeDefs[kind]();
+
+    const LN=18; // ← 18 partículas, como antes
+    const lPos=new Float32Array(LN*3), lData=[];
+    for(let i=0;i<LN;i++){
+      const a=Math.random()*Math.PI*2, r=0.5+Math.random()*1.8*s;
+      lPos[i*3]=Math.cos(a)*r; lPos[i*3+1]=1.5*s+Math.random()*2.5*s; lPos[i*3+2]=Math.sin(a)*r;
+      lData.push({angle:a,radius:r,speed:0.3+Math.random()*0.5,yOff:Math.random()*Math.PI*2});
+    }
+    const lGeo=new THREE.BufferGeometry();
+    lGeo.setAttribute('position',new THREE.BufferAttribute(lPos,3));
+    const leafColSets=[[0xffaa44,0xff8822,0xffcc66,0xff6633],[0x44ff88,0x22dd66,0x55ee99,0x33cc77],[0xff88cc,0xff44aa,0xffaadd,0xee3399],[0xffdd22,0xffbb00,0xffee55,0xddaa00]];
+    const lPts=new THREE.Points(lGeo,new THREE.PointsMaterial({
+      color:leafColSets[kind][Math.floor(Math.random()*4)],
+      size:0.18*s, sizeAttenuation:true, transparent:true, opacity:0.85, depthWrite:false,
+    }));
+    g.add(lPts);
+    g.userData.leafPts=lPts; g.userData.leafData=lData;
+
+    this.scene.add(g);
+    this._trees.push(g);
+    this.colliders.push({x,z,r:(kind===1?0.3:0.5)*s});
+    return g;
+  }
+
+  _makeRock(x, z, s=1) {
+    // TU CÓDIGO ORIGINAL
+    const g=new THREE.Group(); g.position.set(x,0,z);
+    const cols=[0x7a6a55,0x6a5a8a,0x8a7060,0x5a6a7a];
+    const r=new THREE.Mesh(new THREE.DodecahedronGeometry(0.6*s,0),
+      new THREE.MeshStandardMaterial({color:cols[Math.floor(Math.random()*cols.length)],roughness:1,metalness:0.05}));
+    r.scale.y=0.5; r.rotation.y=Math.random()*Math.PI; r.position.y=0.18*s; r.castShadow=r.receiveShadow=true;
+    const r2=new THREE.Mesh(new THREE.DodecahedronGeometry(0.3*s,0),r.material.clone());
+    r2.scale.y=0.55; r2.rotation.y=Math.random()*Math.PI; r2.position.set(0.5*s,0.1*s,0.3*s);
+    g.add(r); g.add(r2); this.scene.add(g);
+    this.colliders.push({x,z,r:0.55*s});
+  }
+
+  /* ─── VIENTO + POLVO (exactamente como antes) ─────────── */
+  _buildWind() {
+    const WN=200; // ← 200 partículas, como antes
+    const wPos=new Float32Array(WN*3);
+    this._windSpd=[];
+    for(let i=0;i<WN;i++){
+      wPos[i*3]=(Math.random()-0.5)*120;
+      wPos[i*3+1]=Math.random()*3;
+      wPos[i*3+2]=(Math.random()-0.5)*120;
+      this._windSpd.push(0.5+Math.random()*1.5);
+    }
+    const wGeo=new THREE.BufferGeometry();
+    wGeo.setAttribute('position',new THREE.BufferAttribute(wPos,3));
+    this._windPts=new THREE.Points(wGeo,new THREE.PointsMaterial({color:0xddccaa,size:0.12,sizeAttenuation:true,transparent:true,opacity:0.45,depthWrite:false}));
+    this.scene.add(this._windPts);
+
+    const DN=300; // ← 200 partículas, como antes
+    const dPos=new Float32Array(DN*3);
+    for(let i=0;i<DN;i++){
+      dPos[i*3]=(Math.random()-0.5)*100;
+      dPos[i*3+1]=Math.random()*14;
+      dPos[i*3+2]=(Math.random()-0.5)*100;
+    }
+    const dGeo=new THREE.BufferGeometry();
+    dGeo.setAttribute('position',new THREE.BufferAttribute(dPos,3));
+    this._dustPts=new THREE.Points(dGeo,new THREE.PointsMaterial({color:0xc9963c,size:0.06,sizeAttenuation:true,transparent:true,opacity:0.4,depthWrite:false}));
+    this.scene.add(this._dustPts);
+  }
+
+  /* ─── PASTO (el que ya tenías) ────────────────────────── */
+  _buildGrass() {
+    // TU CÓDIGO ORIGINAL - sin cambios
+    const spawnGlb = (model) => {
+      model.traverse(c => {
+        if(!c.isMesh) return;
+        c.castShadow=false; c.receiveShadow=true;
+        if(c.material){c.material.side=THREE.DoubleSide;c.material.alphaTest=0.2;}
+      });
+      let placed=0;
+
+      const islandPositions = [
+        { x: -55, z: -40, radius: 15 },
+        { x: 58, z: -38, radius: 15 },
+        { x: 5, z: -70, radius: 15 },
+        { x: -8, z: 68, radius: 18, path: { xMin: -12, xMax: 12, zMin: 48, zMax: 68 } },
+      ];
+
+      const isNearIsland = (x, z) => {
+        for (const island of islandPositions) {
+          if (Math.hypot(x - island.x, z - island.z) < island.radius) return true;
+        }
+        return false;
+      };
+
+      for(let att=0; att<1800 && placed<GRASS_CFG.COUNT; att++){
+        const a=Math.random()*Math.PI*2, rad=10+Math.random()*60;
+        const x=Math.cos(a)*rad, z=Math.sin(a)*rad;
+        let onTrack=false;
+        if(window._trackCurve){
+          for(let i=0;i<=60;i++){
+            const p=window._trackCurve.getPoint(i/60);
+            if(Math.hypot(p.x-x,p.z-z)<5){onTrack=true;break;}
+          }
+        }
+        if(!onTrack && !isNearIsland(x, z)){
+          const clone=model.clone();
+          clone.position.set(x,0,z); clone.rotation.y=Math.random()*Math.PI*2;
+          const sc=GRASS_CFG.MIN_SCALE+Math.random()*(GRASS_CFG.MAX_SCALE-GRASS_CFG.MIN_SCALE);
+          clone.scale.setScalar(sc); this.scene.add(clone); placed++;
+        }
+      }
+      console.log(`%c🌿 ${placed} mechones de pasto`, 'color:#4a8c2a');
+    };
+
+    const fallback = () => {
+      // TU FALLBACK ORIGINAL
+      const geo=new THREE.BufferGeometry();
+      const v=new Float32Array([-0.3,0,0.3,0.3,0,-0.3,0.3,0.8,-0.3,-0.3,0,0.3,0.3,0.8,-0.3,-0.3,0.8,0.3,-0.3,0,-0.3,0.3,0,0.3,0.3,0.8,0.3,-0.3,0,-0.3,0.3,0.8,0.3,-0.3,0.8,-0.3]);
+      const uv=new Float32Array([0,0,1,0,1,1,0,0,1,1,0,1,0,0,1,0,1,1,0,0,1,1,0,1]);
+      geo.setAttribute('position',new THREE.BufferAttribute(v,3));
+      geo.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+      geo.computeVertexNormals();
+      const cols=[0x2d6e1a,0x3a8c22,0x4aa830,0x5db83a,0x6ec848];
+      const pM=Math.floor(GRASS_CFG.COUNT/cols.length);
+      this._grassMeshes=cols.map(c=>{
+        const m=new THREE.InstancedMesh(geo,new THREE.MeshStandardMaterial({color:c,side:THREE.DoubleSide,alphaTest:0.1,roughness:1}),pM);
+        this.scene.add(m); return m;
+      });
+      const d=new THREE.Object3D();
+      this._grassMeshes.forEach(m=>{
+        for(let i=0;i<pM;i++){
+          const a=Math.random()*Math.PI*2, r=8+Math.pow(Math.random(),0.5)*GRASS_CFG.SPREAD;
+          const sc=0.6+Math.random()*1.0;
+          d.position.set(Math.cos(a)*r,0,Math.sin(a)*r);
+          d.rotation.y=Math.random()*Math.PI*2; d.scale.set(sc,sc*(0.9+Math.random()*0.4),sc);
+          d.updateMatrix(); m.setMatrixAt(i,d.matrix);
+        }
+        m.instanceMatrix.needsUpdate=true;
+      });
+      console.log('%c🌿 Pasto procedural', 'color:#4a8c2a');
+    };
+
+    const sc=document.createElement('script');
+    sc.src='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+    sc.onload=()=>new THREE.GLTFLoader().load(GRASS_CFG.GLB_PATH, g=>spawnGlb(g.scene), null, fallback);
+    sc.onerror=fallback;
+    document.head.appendChild(sc);
+  }
+
+  /* ─── NUEVO: CARGAR GLB DE NATURALEZA (sin afectar nada) ─ */
+  _loadNatureGLB() {
+    const loader = new THREE.GLTFLoader();
+    
+    // Configurar DRACO
+    if (THREE.DRACOLoader) {
+      try {
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+        loader.setDRACOLoader(dracoLoader);
+      } catch (e) {}
+    }
+
+    // ROBLES (15 árboles)
+    for(let i = 0; i < 15; i++) {
+      setTimeout(() => {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 20 + Math.random() * 50;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        
+        // Verificar posición
+        if (this._isValidPosition(x, z)) {
+          loader.load('models/oakTrees/oakTreesVisual.glb', (gltf) => {
+            const model = gltf.scene;
+            const scale = 1.0 + Math.random() * 0.8;
+            
+            model.position.set(x, 0, z);
+            model.scale.setScalar(scale);
+            model.rotation.y = Math.random() * Math.PI * 2;
+            
+            model.traverse(node => {
+              if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+              }
+            });
+            
+            this.scene.add(model);
+            this.colliders.push({ x, z, r: 1.2 * scale, type: 'oakTree' });
+          }, undefined, () => {});
+        }
+      }, i * 100);
+    }
+
+    // FAROLAS (1 farolas)
+    // FAROLAS - Control total
+const lanternConfig = {
+  count: 2,              // <-- Total en todo el mapa
+  minRadius: 15,         // <-- Más lejos del centro
+  maxRadius: 60,
+  minScale: 0.6,
+  maxScale: 0.8,
+  checkHeight: true,     // <-- Verificar altura del suelo
+  avoidRadius: 12        // <-- Separación entre farolas
+};
+
+// Array para llevar registro de posiciones de farolas
+this._lanternPositions = [];
+
+for(let i = 0; i < lanternConfig.count; i++) {
+  // Intentar varias veces encontrar una buena posición
+  let placed = false;
+  let attempts = 0;
+  const maxAttempts = 50;
+  
+  while (!placed && attempts < maxAttempts) {
+    attempts++;
+    
+    const angle = Math.random() * Math.PI * 2;
+    const radius = lanternConfig.minRadius + Math.random() * (lanternConfig.maxRadius - lanternConfig.minRadius);
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    
+    // Verificar posición base
+    if (!this._isValidPosition(x, z, lanternConfig.avoidRadius)) continue;
+    
+    // Verificar que no esté muy cerca de otra farola
+    let tooClose = false;
+    for (const pos of this._lanternPositions) {
+      if (Math.hypot(x - pos.x, z - pos.z) < lanternConfig.avoidRadius) {
+        tooClose = true;
+        break;
+      }
+    }
+    if (tooClose) continue;
+    
+    // Verificar altura del suelo (evitar que floten)
+    if (lanternConfig.checkHeight) {
+      const groundY = this._getGroundHeight(x, z);
+      // Si el suelo está muy por encima de 0, está en una isla elevada
+      if (Math.abs(groundY) > 0.5) continue;
+    }
+    
+    // ¡Posición válida!
+    this._lanternPositions.push({ x, z });
+    placed = true;
+    
+    // Cargar farola con delay
+    setTimeout(() => {
+      loader.load('models/Farolas sin el poste/lanterns.glb', (gltf) => {
+        const model = gltf.scene;
+        const scale = lanternConfig.minScale + Math.random() * (lanternConfig.maxScale - lanternConfig.minScale);
+        
+        model.position.set(x, 0, z);  // Y=0 porque el suelo está a 0
+        model.scale.setScalar(scale);
+        model.rotation.y = Math.random() * Math.PI * 2;
+        
+        model.traverse(node => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+          }
+        });
+        
+        this.scene.add(model);
+        
+        // Luz a altura correcta
+        const light = new THREE.PointLight(0xffaa33, 0.6, 6); // <-- Menos intensa
+        light.position.set(x, 1.2, z);  // Altura fija sobre el suelo
+        this.scene.add(light);
+        
+      }, undefined, () => {});
+    }, i * 100 + 500);
+  }
+}
+  }
+
+  _isValidPosition(x, z) {
+    // Evitar islas
+    const islands = [
+      { x: -55, z: -40, r: 22 },
+      { x: 58, z: -38, r: 22 },
+      { x: 5, z: -70, r: 22 },
+      { x: -8, z: 68, r: 25 },
+    ];
+    
+    for (const isla of islands) {
+      if (Math.hypot(x - isla.x, z - isla.z) < isla.r) return false;
+    }
+    
+    // Evitar letras
+    if (x > -15 && x < 18 && z > -10 && z < 10) return false;
+    
+    // Evitar pista
+    if (window._trackCurve) {
+      for (let i = 0; i <= 50; i+=5) {
+        const p = window._trackCurve.getPoint(i / 50);
+        if (Math.hypot(p.x - x, p.z - z) < 8) return false;
+      }
+    }
+    
+    return true;
+  }
+
+  /* ─── UPDATE (exactamente como antes) ─────────────────── */
+  update(dt, t) {
+    // VIENTO - IGUAL QUE ANTES
+    const pos=this._windPts.geometry.attributes.position.array;
+    const tt=Date.now()*0.0002;
+    const wx=Math.cos(tt)*8, wz=Math.sin(tt*0.7)*4;
+    for(let i=0;i<200;i++){
+      const sp=this._windSpd[i];
+      pos[i*3]+=wx*sp*dt; if(pos[i*3]>60) pos[i*3]=-60; if(pos[i*3]<-60) pos[i*3]=60;
+      pos[i*3+1]+=0.3*sp*dt; if(pos[i*3+1]>4) pos[i*3+1]=0.1;
+      pos[i*3+2]+=wz*sp*dt; if(pos[i*3+2]>60) pos[i*3+2]=-60; if(pos[i*3+2]<-60) pos[i*3+2]=60;
+    }
+    this._windPts.geometry.attributes.position.needsUpdate=true;
+    
+    this._dustPts.rotation.y+=dt*0.015;
+
+    // PASTO - IGUAL
+    if(this._grassMeshes) this._grassMeshes.forEach((m,i)=>{
+      m.rotation.x=Math.sin(t*0.9+i*0.3)*0.038;
+      m.rotation.z=Math.sin(t*0.7+i*0.2)*0.028;
+    });
+
+    // ÁRBOLES - IGUAL
+    this._trees.forEach(tree=>{
+      const ph=tree.userData.windPhase||0, sp=tree.userData.windSpeed||1, sc=tree.userData.treeScale||1;
+      tree.rotation.x=Math.sin(t*sp+ph)*0.018*sc;
+      tree.rotation.z=Math.cos(t*sp*0.7+ph)*0.012*sc;
+      const lp=tree.userData.leafPts, ld=tree.userData.leafData;
+      if(lp&&ld){
+        const p=lp.geometry.attributes.position;
+        ld.forEach((leaf,i)=>{
+          leaf.angle+=leaf.speed*dt;
+          p.setXYZ(i,Math.cos(leaf.angle)*leaf.radius,1.5*sc+Math.sin(t*0.8+leaf.yOff)*0.35*sc+Math.cos(leaf.angle*0.5)*0.2*sc,Math.sin(leaf.angle)*leaf.radius);
+        });
+        p.needsUpdate=true;
+        lp.material.opacity=0.65+Math.sin(t*1.2+ph)*0.2;
+      }
+    });
+  }
+}
