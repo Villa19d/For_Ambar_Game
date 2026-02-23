@@ -81,6 +81,7 @@ class Vehicle {
     this._updateVertical(dt, input);
     this._updateLateralFriction(dt);
     this._updateCollisions();
+    this._checkBounds();
     this._updatePostPhysics(dt, t, input);
   }
 
@@ -251,6 +252,41 @@ _updateCollisions() {
     });
     setTimeout(() => { this.stuck.active = false; this.stuck.savedItems = []; }, 1800);
   }
+
+
+  /* ── Límites del mundo ── */
+_checkBounds() {
+  const pos = this.group.position;
+  const LIMIT = 120; // Radio máximo desde el centro (ajustable)
+  
+  // Calcular distancia desde el centro (0,0)
+  const distance = Math.sqrt(pos.x*pos.x + pos.z*pos.z);
+  
+  if (distance > LIMIT) {
+    // Dirección desde el centro hacia el carro
+    const angle = Math.atan2(pos.z, pos.x);
+    // Posición en el borde
+    pos.x = Math.cos(angle) * LIMIT;
+    pos.z = Math.sin(angle) * LIMIT;
+    
+    // Rebote: invertir velocidad radial
+    const radialVel = this.vel.x * Math.cos(angle) + this.vel.z * Math.sin(angle);
+    if (radialVel > 0) {
+      this.vel.x -= 2 * radialVel * Math.cos(angle);
+      this.vel.z -= 2 * radialVel * Math.sin(angle);
+      this.vel.multiplyScalar(0.5); // Pérdida de energía
+    }
+    
+    // Feedback visual
+    this.group.scale.set(1.1, 0.9, 1.1);
+    setTimeout(() => this.group.scale.set(1,1,1), 150);
+    
+    // Sonido de impacto
+    if (typeof gameAudio !== 'undefined') {
+      gameAudio.collision(0.8);
+    }
+  }
+}
 
 _getGroundY(x, z, carY) {
   this._rayOrigin.set(x, carY + 2, z);
