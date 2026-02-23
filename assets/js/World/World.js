@@ -58,36 +58,40 @@ class World {
     s.add(fillB);
   }
 
-  /* ─── ISLAS ─────────────────────────────────────────────── */
-  _buildIslands() {
-    this.islands = [];
+/* ─── ISLAS ─────────────────────────────────────────────── */
+_buildIslands() {
+  this.islands = [];
 
-    const islandConfigs = [
-      {
-        Class: IslandCofre,
-        cfg: { id:'modal-1', label:'El Cofre', icon:'🗝️', x:-55, z:-40, color:0xc9963c, emissive:0x6b4d10 }
-      },
-      {
-        Class: IslandMirador,
-        cfg: { id:'modal-2', label:'El Mirador', icon:'🌠', x:58, z:-38, color:0x6699ff, emissive:0x1a2a6c }
-      },
-      {
-        Class: IslandFaro,
-        cfg: { id:'modal-3', label:'El Faro', icon:'🏮', x:5, z:-70, color:0xa8d4a0, emissive:0x2a5c25 }
-      },
-      {
-        Class: IslandRocola,
-        cfg: { id:'jukebox', label:'La Rocola', icon:'🎵', x:-8, z:68, color:0xd4a8ff, emissive:0x4a1a8c, isJukebox:true }
-      },
-      // Agrega más islas aquí — solo copiar un bloque y crear el .js
-    ];
+  const islandConfigs = [
+    {
+      Class: IslandCofre,
+      cfg: { id:'modal-1', label:'El Cofre', icon:'🗝️', x:-55, z:-40, color:0xc9963c, emissive:0x6b4d10 }
+    },
+    {
+      Class: IslandMirador,
+      cfg: { id:'modal-2', label:'El Mirador', icon:'🌠', x:58, z:-38, color:0x6699ff, emissive:0x1a2a6c }
+    },
+    {
+      Class: IslandFaro,
+      cfg: { id:'modal-3', label:'El Faro', icon:'🏮', x:5, z:-70, color:0xa8d4a0, emissive:0x2a5c25 }
+    },
+    {
+      Class: IslandRocola,
+      cfg: { id:'jukebox', label:'La Rocola', icon:'🎵', x:-8, z:68, color:0xd4a8ff, emissive:0x4a1a8c, isJukebox:true }
+    },
+    // ── NUEVA ISLA DE LETRAS ──
+    {
+      Class: IslandLetras,
+      cfg: { id:'letras', label:'Para Ámbar', icon:'💛', x:0, z:0, color:0xffffff, emissive:0x444444 }
+    }
+  ];
 
-    islandConfigs.forEach(({ Class, cfg }) => {
-      this.islands.push(new Class(this.scene, this.colliders, cfg));
-    });
+  islandConfigs.forEach(({ Class, cfg }) => {
+    this.islands.push(new Class(this.scene, this.colliders, cfg));
+  });
 
-    console.log(`%c🏝️ ${this.islands.length} islas listas`, 'color:#d4a8ff;font-weight:bold');
-  }
+  console.log(`%c🏝️ ${this.islands.length} islas listas`, 'color:#d4a8ff;font-weight:bold');
+}
 
   /* ─── UPDATE ────────────────────────────────────────────── */
   update(dt, t, carPos, input, lastAction) {

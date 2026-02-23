@@ -37,6 +37,9 @@ const gameAudio  = new GameAudio();
 const world      = new World(scene);
 const vehicle    = new Vehicle(scene, world.colliders);
 
+// ── MOVER EL CARRO MÁS ATRÁS (para que no spawnee entre las letras) ──
+vehicle.group.position.set(0, 0.5, 10); // 15 unidades hacia atrás (Z positivo)
+
 
 // 2. Crear ModalManager y conectar GameAudio
 window._modalManager = new ModalManager();
