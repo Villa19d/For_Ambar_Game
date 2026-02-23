@@ -2,31 +2,43 @@
    Main.js  —  Entrada del juego con LOADER
    ═══════════════════════════════════════════════════════════ */
 
-   // ── PARCHAR RUTAS PARA GITHUB PAGES ──
+// ── PARCHAR RUTAS PARA GITHUB PAGES (VERSIÓN MEJORADA) ──
 (function patchGLBPaths() {
-  const BASE_URL = 'https://raw.githubusercontent.com/Villa19d/For_Ambar_Game/main/';
+  // Usar jsDelivr que tiene mejor caché
+  const BASE_URL = 'https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@main/';
   
-  // Guardar referencia al GLTFLoader original
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
   
-  // Sobrescribir el método load
   THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
-    // Solo parchear archivos .glb que no vengan ya completos
+    // Solo parchear archivos .glb
     if (url.includes('.glb') && !url.includes('http')) {
-      // Eliminar 'models/' del inicio si existe
-      const cleanPath = url.replace(/^(\.\/|models\/)/, '');
+      // Limpiar la ruta
+      let cleanPath = url.replace(/^(\.\/|models\/)/, '');
       // Codificar espacios
-      const encodedPath = cleanPath.replace(/ /g, '%20');
-      const newUrl = BASE_URL + 'models/' + encodedPath;
+      cleanPath = cleanPath.replace(/ /g, '%20');
+      
+      // Construir URL completa
+      const newUrl = BASE_URL + 'models/' + cleanPath;
       
       console.log(`%c🔄 GLB redirigido: ${url} → ${newUrl}`, 'color:#88ccff');
+      
+      // Hacer fetch manual para verificar
+      fetch(newUrl, { method: 'HEAD' })
+        .then(res => {
+          if (!res.ok) {
+            console.warn(`⚠️ URL no accesible: ${newUrl} (${res.status})`);
+          } else {
+            console.log(`✅ URL OK: ${newUrl} (${res.status})`);
+          }
+        })
+        .catch(err => console.warn(`❌ Error verificando ${newUrl}:`, err));
       
       return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
     }
     return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
   };
   
-  console.log('%c🔧 Parche de rutas GLB activado para GitHub Pages', 'color:#ffaa00');
+  console.log('%c🔧 Parche de rutas GLB activado para GitHub Pages (jsDelivr)', 'color:#ffaa00');
 })();
 
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
