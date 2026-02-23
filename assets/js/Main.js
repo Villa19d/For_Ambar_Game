@@ -2,28 +2,29 @@
    Main.js  —  Entrada del juego con LOADER
    ═══════════════════════════════════════════════════════════ */
 
+// ── PARCHAR RUTAS PARA USAR EL ZIP DE MODELOS (CORREGIDO) ──
 (function patchGLBPaths() {
   const BASE_URL = 'https://github.com/Villa19d/For_Ambar_Game/releases/download/v1.0-modelos/models.zip';
-  
+  //                                falta la barra? no, está bien aquí 👆
+
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
-  
+
   THREE.GLTFLoader.prototype.load = function(url, onLoad, onProgress, onError) {
     if (url.includes('.glb') && !url.includes('http')) {
       let cleanPath = url.replace(/^(\.\/|models\/)/, '');
       const encodedPath = cleanPath.replace(/ /g, '%20');
       
-      // FORZAR VERSIÓN NUEVA con purge parameter
-      const timestamp = Date.now(); // Cache buster
-      const newUrl = BASE_URL + 'models/' + encodedPath + '?v=' + timestamp;
+      // ✅ AHORA SÍ: BASE_URL + /models/ + archivo
+      const newUrl = `${BASE_URL}/models/${encodedPath}`;
       
-      console.log(`%c🔄 GLB redirigido con cache busting: ${url} → ${newUrl}`, 'color:#88ccff');
-      
+      console.log(`%c📦 GLB desde ZIP: ${url} → ${newUrl}`, 'color:#ff9900;font-weight:bold');
+
       return originalGLTFLoad.call(this, newUrl, onLoad, onProgress, onError);
     }
     return originalGLTFLoad.call(this, url, onLoad, onProgress, onError);
   };
-  
-  console.log('%c🔧 Parche activado con cache busting (timestamp)', 'color:#ffaa00');
+
+  console.log('%c🔥 Parche activado: usando ZIP de GitHub Releases', 'color:#ffaa00;font-weight:bold');
 })();
 
 /* ══ 1. RENDERER (siempre presente) ═══════════════════════ */
