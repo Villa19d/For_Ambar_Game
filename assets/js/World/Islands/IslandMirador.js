@@ -422,39 +422,63 @@ loader.load('models/Galaxy/galaxy2.glb', gltf => {
   g.add(m); this._galaxy = m;
 });
 
-    // ─ Partículas de galaxia — grande, vertical, lado derecho ──
     loader.load('models/Otra galaxia pero si esta grande aguas/Particulas de galaxia.glb', gltf => {
-      const part = gltf.scene;
-      const box = new THREE.Box3().setFromObject(part);
-      const size = new THREE.Vector3(); box.getSize(size);
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const targetSize = 20; // grande y llamativa
-      part.scale.setScalar(targetSize / maxDim);
-      // Posición: cielo derecho, bien alejada del observatorio
-      part.position.set(16, 13, -11);
-      // Rotar para que quede vertical y de frente (plano YZ mirando hacia -Z/observatorio)
-      part.rotation.set(Math.PI * 0.5, 0, 0); // levantarla de horizontal a vertical
-      g.add(part); this._particles = part;
-      if(gltf.animations?.length) {
-        this._particlesMixer = new THREE.AnimationMixer(part);
-        this._particlesMixer.clipAction(gltf.animations[0]).play();
-      }
-      console.log('%c✨ Partículas galaxia cargadas', 'color:#88ccff');
-    }, undefined, () => {
-      const count = 400;
-      const pos = new Float32Array(count * 3);
-      for(let i = 0; i < count; i++) {
-        const a = Math.random()*Math.PI*2, r = Math.random()*5;
-        pos[i*3]   = Math.cos(a)*r;
-        pos[i*3+1] = (Math.random()-0.5)*6; // extendido en Y (vertical)
-        pos[i*3+2] = Math.sin(a)*r * 0.3;   // aplanado en Z (disco visto de frente)
-      }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color:0x88aaff, size:0.15, transparent:true, opacity:0.7, depthWrite:false }));
-      pts.position.set(16, 13, -11);
-      g.add(pts); this._particles = pts;
+  const part = gltf.scene;
+  const box = new THREE.Box3().setFromObject(part);
+  const size = new THREE.Vector3(); box.getSize(size);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const targetSize = 20; // grande y llamativa
+  part.scale.setScalar(targetSize / maxDim);
+  
+  // Posición: cielo derecho, bien alejada del observatorio
+  part.position.set(16, 13, -11);
+  
+  // Rotar para que quede vertical y de frente
+  part.rotation.set(Math.PI * 0.5, 0, 0);
+  
+  g.add(part); 
+  this._particles = part;
+  
+  // ── ANIMACIONES: ¡IMPORTANTE! ──
+  if(gltf.animations && gltf.animations.length > 0) {
+    // Si ya existe un mixer, crear uno nuevo
+    if (this._particlesMixer) {
+      this._particlesMixer.stopAllAction();
+    }
+    this._particlesMixer = new THREE.AnimationMixer(part);
+    
+    // Reproducir TODAS las animaciones
+    gltf.animations.forEach((clip, index) => {
+      const action = this._particlesMixer.clipAction(clip);
+      action.play();
+      console.log(`%c🎬 Animación ${index} de partículas iniciada`, 'color:#88ccff');
     });
+  } else {
+    console.log('%c⚠️ El GLB de partículas no tiene animaciones', 'color:#ffaa00');
+  }
+  
+  console.log('%c✨ Partículas galaxia cargadas', 'color:#88ccff');
+  
+}, undefined, (error) => {
+  console.warn('⚠️ Error cargando partículas de galaxia:', error);
+  // Fallback: partículas procedurales
+  const count = 400;
+  const pos = new Float32Array(count * 3);
+  for(let i = 0; i < count; i++) {
+    const a = Math.random()*Math.PI*2, r = Math.random()*5;
+    pos[i*3]   = Math.cos(a)*r;
+    pos[i*3+1] = (Math.random()-0.5)*6;
+    pos[i*3+2] = Math.sin(a)*r * 0.3;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color:0x88aaff, size:0.15, transparent:true, opacity:0.7, depthWrite:false }));
+  pts.position.set(16, 13, -11);
+  g.add(pts); 
+  this._particles = pts;
+  // Las partículas procedurales no tienen animación, así que hacemos una manual
+  this._particlesUserData = { rotSpeed: 0.025 };
+});
 
     // ─ Frasco de estrellas ───────────────────────────────────
     loader.load('models/Frasco Estrellas/frasco_con_estrellas.glb', gltf => {
@@ -625,13 +649,19 @@ loader.load('models/Galaxy/galaxy2.glb', gltf => {
       this._luna.rotation.y = t*0.04;
     }
 
-    // Galaxia gira lento
-    if(this._galaxy) this._galaxy.rotation.y = t*0.04;
-    if(this._galaxyMixer) this._galaxyMixer.update(0.016);
-
-    // Partículas de galaxia rotan
-    if(this._particles) this._particles.rotation.y = t*0.025;
-    if(this._particlesMixer) this._particlesMixer.update(0.016);
+    // Partículas de galaxia - PRIORIDAD: mixer > rotación manual
+    if (this._particles) {
+  // Si tiene animaciones GLB, usar el mixer
+  if (this._particlesMixer) {
+    this._particlesMixer.update(0.016); // 60fps
+    // NO tocar rotation.y, el mixer lo controla
+  } else {
+    // Fallback: rotación manual (más rápida que antes)
+    this._particles.rotation.y += 0.035; // Velocidad constante
+    // También rotación en X para más dinamismo
+    this._particles.rotation.x += 0.005;
+  }
+}
 
     // Frasco shimmy
     if(this._frasco) this._frasco.rotation.y = Math.sin(t*0.5)*0.08;
