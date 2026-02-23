@@ -33,8 +33,12 @@ class IslandBase {
     this._buildMarker();
     this._buildDecoration();    // override en cada subclase
 
-    // Registrar zona de colisión de la isla (barrera visual)
-    colliders.push({ x: cfg.x, z: cfg.z, r: 3.5 });
+    // ── IMPORTANTE: Solo añadir collider si NO es la isla de letras ──
+    if (cfg.id !== 'letras') {
+      colliders.push({ x: cfg.x, z: cfg.z, r: 3.5 });
+    } else {
+      console.log('%c📍 Isla de letras: sin collider base', 'color:#ffaa00');
+    }
   }
 
   /* ── Plataforma base ──────────────────────────────────── */
