@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════ */
 
 (function patchGLBPaths() {
-  const BASE_URL = 'https://cdn.jsdelivr.net/gh/Villa19d/For_Ambar_Game@main/';
+  const BASE_URL = 'https://github.com/Villa19d/For_Ambar_Game/releases/download/v1.0-modelos/models.zip';
   
   const originalGLTFLoad = THREE.GLTFLoader.prototype.load;
   
